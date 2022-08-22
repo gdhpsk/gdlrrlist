@@ -139,7 +139,6 @@ async function hasCorrectAuth(req, res, authMethods) {
   return false
 }
 
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cors = require("cors")
 const mongoose = require("mongoose")
 mongoose.connect(process.env.MONGODB_URI)
@@ -281,167 +280,11 @@ app.use("/", express.static("htdocs", {
   }
 }))
 
-app.route("/notifications")
-.get(async (req, res) => {
-  let mail = await request("https://gdlrrlist.com/api/v1/client/notifications", {
-    method: "GET",
-    headers: {
-      'content-type': "application/json",
-      'authorization': `User ${getCookie("token", req)}`
-    }
-  })
-  let body = await mail.body.json()
-  if(mail.statusCode != 200) {
-    return res.render("404.ejs", body)
-  }
-  let {username} = jwt.verify(getCookie("token", req), process.env.WEB_TOKEN)
- let everything = await mailSchema.find({to: username, read: {$exists: false}})
-  for(const item of everything) {
-    item.read = true
-    await item.save()
-  }
-  let {loggedIn, editing, editable} = await getDetails(req)
-  body.loggedIn = loggedIn
-  body.editing = editing
-  body.editable = editable
-  body.active = "notifications"
-  return res.render("notifications.ejs", body)
-})
-.post(async (req, res) => {
-  let mail = await request("https://gdlrrlist.com/api/v1/client/notifications", {
-    method: "POST",
-    headers: {
-      'content-type': "application/json",
-      'authorization': `User ${getCookie("token", req)}`
-    },
-    body: JSON.stringify(req.body)
-  })
-  let body = await mail.body.json()
-  if(mail.statusCode != 201) {
-    return res.render("404.ejs", body)
-  }
-  
-  return res.redirect("/notifications")
-})
+// notifications
 
-app.get("/notifications/compose", async (req, res) => {
-  let {loggedIn, editing, editable} = await getDetails(req)
-  if(!loggedIn) return res.render("404.ejs", {error: "401 UNAUTHORIZED", message: "Please login if you want to access this page!"})
-  let getEvery = await request("https://gdlrrlist.com/api/v1/client/login", {
-    method: "GET",
-    headers: {
-      'authorization': `User ${getCookie("token", req)}`
-    }
-  })
-  let everyone = await getEvery.body.json()
-  if(req.query.record) {
-    try {
-      let record = await submitSchema.findById(req.query.record)
-      if(record) {
-        return res.render("compose.ejs", {record, loggedIn, editing, editable, everyone})
-      }
-    } catch(_) {
-      
-    }
-  }
-  let to;
-  if(req.query.to) {
-    to = {
-      username: req.query.to
-    }
-  }
-  return res.render("compose.ejs", {loggedIn, editing, editable, everyone, record: to})
-})
+app.use("/notifications", require("./scripts/notifications.js")({ getDetails, getCookie, mailSchema, submitSchema }))
 
-app.route("/notifications/hide")
-.get(async (req, res) => {
-  let mail = await request(`https://gdlrrlist.com/api/v1/client/notifications`, {
-    method: 'PATCH',
-    headers: {
-      'content-type': "application/json",
-      'authorization': `User ${getCookie("token", req)}`
-    },
-    body: JSON.stringify({
-      id: req.query.id,
-      hide: true
-    })
-  })
-  let body = await mail.body.json()
-  if(mail.statusCode != 200) {
-    return res.render("404.ejs", body)
-  }
-  return res.redirect("/notifications")
-})
-.post(async (req, res) => {
-  let mail = await request(`https://gdlrrlist.com/api/v1/client/notifications`, {
-    method: 'DELETE',
-    headers: {
-      'content-type': "application/json",
-      'authorization': `User ${getCookie("token", req)}`
-    },
-    body: JSON.stringify({
-      id: req.body.id
-    })
-  })
-  let body = await mail.body.json()
-  if(mail.statusCode != 200) {
-    return res.render("404.ejs", body)
-  }
-  return res.redirect("/notifications")
-})
-
-app.get("/notifications/from/:id", async (req, res) => {
-  let mail = await request(`https://gdlrrlist.com/api/v1/client/notifications?fromUser=true&toUser=false&number=${req.params.id}`, {
-    method: 'GET',
-    headers: {
-      'content-type': "application/json",
-      'authorization': `User ${getCookie("token", req)}`
-    }
-  })
-  let body = await mail.body.json()
-  if(mail.statusCode != 200) {
-    return res.render("404.ejs", body)
-  }
-  let {loggedIn, editing, editable} = await getDetails(req)
-  let obj = {}
-  for(const key in body.mail) {
-    obj[key] = body.mail[key]
-  }
-  obj.number = req.params.id
-  obj.loggedIn = loggedIn
-   obj.editing = editing
-   obj.editable = editable
-  obj.active = "notifications-from"
-  return res.render("notification.ejs", obj)
-})
-
-app.get("/notifications/to/:id", async (req, res) => {
-  let mail = await request(`https://gdlrrlist.com/api/v1/client/notifications?fromUser=false&toUser=true`, {
-    method: 'GET',
-    headers: {
-      'content-type': "application/json",
-      'authorization': `User ${getCookie("token", req)}`
-    }
-  })
-  let body = await mail.body.json()
-  if(mail.statusCode != 200) {
-    return res.render("404.ejs", body)
-  }
-  body.mail = body.mail.filter(e => !e.hide)[req.params.id-1]
-if(body?.mail?.hide || !body?.mail) {
-    return res.render("404.ejs", {error: "400 BAD REQUEST", message: "Please input a valid mail number!"})
-  }
-  let {loggedIn, editing, editable} = await getDetails(req)
-  let obj = {}
-  for(const key in body.mail) {
-    obj[key] = body.mail[key]
-  }
-   obj.loggedIn = loggedIn
-   obj.editing = editing
-   obj.editable = editable
-  obj.number = req.params.id
-  return res.render("notification.ejs", obj)
-})
+///
 
 app.route("/editupcoming")
 .get(async (req, res) => {
@@ -526,85 +369,17 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
   res.redirect(req.headers.referer)
 })
 
-app.route("/settings")
-.get(async (req, res) => {
- let approved = await hasAccess(true, req, res)
-  if(!approved) return res.render("404.ejs")
-   let everything = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
-  let {loggedIn, editing, editable} = await getDetails(req)
-  for(let i = 0; i < everything.length; i++) {
-    if(everything[i].id) {
-      try {
-      let user = await fetchUser(everything[i].id)
-      everything[i].tag = `${user.username}#${user.discriminator}`
-      } catch(_) {
-        continue;
-      }
-    }
-  }
-  return res.render("../misc/accessible.ejs", {editable, editing, loggedIn, everything, active: "settings"})
-})
-.post(async (req, res) => {
-   let response = await request("https://gdlrrlist.com/api/mods/settings", {
-    method: "POST",
-    headers: {
-      "authorization": `Moderator ${getCookie("token", req)}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify(req.body)
-  })
-  let body = await response.body.json()
-  if(response.statusCode != 201) {
-    return res.status(response.statusCode).render("404.ejs", body)
-  }
-  res.redirect("/settings")
-})
+///
 
-app.get("/sheets", async (req, res) => {
- let approved = await hasAccess(true, req, res, true)
-  if(!approved) return res.render("404.ejs")
-  let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
-  let loggedIn = await findToken(req)
-  let editing = false
-  let editable = false
-  if(loggedIn) {
-    editable = true
-    if(getCookie("editing", req) == "true") {
-    editing = true
-  }
-  }
-  let everything2 = await opinionSchema.find()
-  return res.render("sheets.ejs", {everything: everything2, APIKey: APIKey, loggedIn, editable, editing, active: "sheets"})
-})
-app.post("/sheets/:id/:op", async (req, res) => {
-  req.body.name = req.params.id
-  req.body.id = req.params.op
- let response = await request("https://gdlrrlist.com/api/helper/sheets/opinion", {
-    method: "PATCH",
-    headers: {
-      "authorization": `Helper ${getCookie("token", req)}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify(req.body)
-  })
-  try {
-    let body = await response.body.json()
-    return res.status(response.statusCode).render("404.ejs", body)
-  } catch(_) {
-    res.redirect(`/sheets/${req.params.id}`)
-  }
-})
+// settings
 
-app.route("/sheets/:name")
-.get(async (req, res) => {
-  let approved = await hasAccess(true, req, res, true);   if(!approved) return res.render("404.ejs")
-  let everything = await opinionSchema.findById(req.params.name)
-  if(!everything) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level name!"})
-  let levels = await levelsSchema.find().sort({position: 1})
-  
-  everything.index = levels.findIndex(e => e.name.toLowerCase() == req.params.name.toLowerCase()) != -1 ? levels.findIndex(e => e.name.toLowerCase() == req.params.name.toLowerCase())+1 : "TBD"
-  return res.render("sheettemps.ejs", {everything: everything, APIKey: APIKey})
-})
+app.use("/settings", require("./scripts/settings.js")({allowedPeople, hasAccess, getDetails, getCookie}))
+
+// sheets
+
+app.use("/sheets", require("./scripts/sheets")({ hasAccess, getDetails, getCookie, opinionSchema, levelsSchema }))
+
+///
 
 app.post("/edit61hzlevel/:name", async(req, res) => {
   let data = {}
@@ -684,6 +459,8 @@ app.post("/editlevel/:name", async(req, res) => {
   res.redirect(req.headers.referer)
 })
 
+///
+
 app.route("/login")
 .post(async (req, res) => {
   const user = await loginSchema.findOne({name: req.body.name})
@@ -723,288 +500,15 @@ app.get("/everything", async (req, res) => {
 
 // searching for stuff
 
-app.get("/search/leaderboard", async (req, res) => {
-  let approved = await hasAccess(true, req, res);   if(!approved) return res.render("404.ejs")
-  let loggedIn = await findToken(req)
-  let editing = false
-  let editable = false
-  if(loggedIn) {
-    editable = true
-    if(getCookie("editing", req) == "true") {
-    editing = true
-  }
-  }
-    return res.render("../misc/search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchlevel.js?v=3-7-22", loggedIn, editing, editable})
-})
-
-app.get("/search/nationalities", async  (req, res) => {
-   let {loggedIn, editing, editable} = await getDetails(req)
-    return res.render("../misc/search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchnations.js?v=4-7-22", loggedIn, editing, editable})
-})
-
-app.get("/search/levels", async (req, res) => {
-  let {loggedIn, editing, editable} = await getDetails(req)
-    return res.render("../misc/search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchleaderboard.js?v=3-5-22", loggedIn, editing, editable})
-})
+app.use("/search", require("./scripts/search.js")({ hasAccess, getDetails, levelsSchema, leaderboardSchema }))
 
 // discord
 
-app.post("/roles/packs/add", async (req, res) => {
-  let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
-  let that = {
-        "id": process.env.discordid,
-        "type": 0,
-        "content": ``,
-        "channel_id": process.env.discordid,
-        "author": {
-            "bot": true,
-            "id": process.env.discordid,
-            "username": "database",
-            "avatar": "76f63eb129f3c44321041be72c2fd8cc",
-            "discriminator": "0000"
-        }, 
-        "file": null,
-        "embeds": [],
-        "mentions": [],
-        "mention_roles": [],
-        "pinned": false,
-        "mention_everyone": false,
-        "tts": false,
-        "timestamp": Date.now(),
-        "edited_timestamp": null,
-        "flags": 0,
-        "components": [],
-        "webhook_id": process.env.discordid
-    }
-  let packs = await rolePacksSchema.findById("629f0d8cea10be1cf846e85d")
-  let message = "982564758609887264"
-  if(!["Legacy", "Basic", "Intermediate"].includes(req.body.category)) {
-    message = "982565026961432577"
-    packs["Level Packs"][req.body.category][req.body.id] = JSON.parse(req.body.levels)
-for(const key in packs["Level Packs"]) {
-  if(["Legacy", "Basic", "Intermediate"].includes(key)) continue;
-  if(key == "Advanced") {
-    that.content += ``
-  } else if(key == "Hardest") {
-    that.content += `THE HARDEST PACK\n`
-  } else {
-      that.content += `${key} Packs\n`
-  }
-	for(const key2 in packs["Level Packs"][key]) {
-          that.content += `<@&${key2}> (Beat ${packs["Level Packs"][key][key2].join(", ")})\n`
-      }
-      that.content += "\n\n"
-    }
-  } else {
-packs["Level Packs"][req.body.category][req.body.id] = JSON.parse(req.body.levels)
-    that.content += `Packs are here! Request them in #request list-roles:\nPack Roles\n`
-for(const key in packs["Level Packs"]) { 
-  if(key == "Advanced") break;
-      that.content += `${key} Packs\n`
-	for(const key2 in packs["Level Packs"][key]) {
-          that.content += `<@&${key2}> (Beat ${packs["Level Packs"][key][key2].join(", ")})\n`
-      }
-      that.content += "\n\n"
-    }
-    that.content += `Advanced Packs`
-  }
-  await rolePacksSchema.findById(packs._id.toString()).updateMany(null, packs)
-  res.send("gg")
-   await request(`${process.env['roles_webhook']}/messages/${message}`, {
-        method: "PATCH",
-        body: JSON.stringify(that),
-        headers: {"Content-Type": "application/json"}
-    })
-})
-
-app.post("/roles/packs/delete", async (req, res) => {
-  let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
-  let that = {
-        "id": process.env.discordid,
-        "type": 0,
-        "content": ``,
-        "channel_id": process.env.discordid,
-        "author": {
-            "bot": true,
-            "id": process.env.discordid,
-            "username": "database",
-            "avatar": "76f63eb129f3c44321041be72c2fd8cc",
-            "discriminator": "0000"
-        }, 
-        "file": null,
-        "embeds": [],
-        "mentions": [],
-        "mention_roles": [],
-        "pinned": false,
-        "mention_everyone": false,
-        "tts": false,
-        "timestamp": Date.now(),
-        "edited_timestamp": null,
-        "flags": 0,
-        "components": [],
-        "webhook_id": process.env.discordid
-    }
-  let packs = await rolePacksSchema.findById("629f0d8cea10be1cf846e85d")
-  let L = undefined
-  let message = "982564758609887264"
-  for(const key in packs["Level Packs"]) {
-    let pack = packs["Level Packs"][key]
-     delete pack[req.body.id]
-    if(pack[req.body.id]) {
-     if(["Legacy", "Basic", "Intermediate"].includes(key)) {
-       L = true
-     }
-      break;
-    }
-  }
-  
-   
-if(!L) {
-    message = "982565026961432577"
-for(const key in packs["Level Packs"]) {
-  if(["Legacy", "Basic", "Intermediate"].includes(key)) continue;
-  if(key == "Advanced") {
-    that.content += ``
-  } else if(key == "Hardest") {
-    that.content += `THE HARDEST PACK\n`
-  } else {
-      that.content += `${key} Packs\n`
-  }
-	for(const key2 in packs["Level Packs"][key]) {
-          that.content += `<@&${key2}> (Beat ${packs["Level Packs"][key][key2].join(", ")})\n`
-      }
-      that.content += "\n\n"
-    }
-  } else {
-    that.content += `Packs are here! Request them in #request list-roles:\nPack Roles\n`
-for(const key in packs["Level Packs"]) {
-  if(key == "Advanced") break;
-      that.content += `${key} Packs\n`
-	for(const key2 in packs["Level Packs"][key]) {
-          that.content += `<@&${key2}> (Beat ${packs["Level Packs"][key][key2].join(", ")})\n`
-      }
-      that.content += "\n\n"
-    }
-    that.content += `Advanced Packs`
-  }
- 
-   await request(`${process.env['roles_webhook']}/messages/${message}`, {
-        method: "patch",
-        body: JSON.stringify(that),
-        headers: {"Content-Type": "application/json"}
-    })
-  await rolePacksSchema.findById(packs._id.toString()).updateMany(null, packs)
-  res.send("gg")
-})
-
-
-
-app.get("/search/:type/:name", async (req, res) => {
-  if(req.params.type == "level") {
-    var level = await levelsSchema.findOne({name: req.params.name})
-    if(!level) return res.render("404.ejs")
-    res.json(level)
-  } else if(req.params.type == "leaderboard") {
-    var level = await leaderboardSchema.findOne({name: req.params.name})
-    if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level name!"})
-    res.json(level)
-  } else {
-    return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid type!"})
-  }
-})
+app.use("/roles/packs", require("./scripts/role_packs")({hasAccess, rolePacksSchema }))
 
 // socials
 
-app.route("/socials/add")
-.get(async(req, res) => {
-  let approved = await hasAccess(true, req, res);   if(!approved) return res.render("404.ejs")
-  let loggedIn = await findToken(req)
-  let editing = false
-  let editable = false
-  if(loggedIn) {
-    editable = true
-    if(getCookie("editing", req) == "true") {
-    editing = true
-  }
-  }
-  return res.render("../socials/add.ejs", {key: APIKey, loggedIn, editing, editable})
-})
-.post(async (req, res) => {
-  let data = {}
-   let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
-  let loggedIn = await findToken(req)
-  let editing = false
-  let editable = false
-  if(loggedIn) {
-    editable = true
-    if(getCookie("editing", req) == "true") {
-    editing = true
-  }
-  }
-  var player = await leaderboardSchema.findOne({name: req.body.name.trim()})
-  if(!player) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid player name!"})
-  if(req.body.discordid != "") {
-    let user = await fetchUser(req.body.discordid);
-    if(user) {
-      req.body.discord = `${user.username}#${user.discriminator}` 
-        }
-  }
-  let profile = ""
-  for(const key in req.body) {
-    profile += `${key}: ${req.body[key]}\n`
-  }
-  const message = `The socials of ${player.name} has been changed to this:\n\n ${profile}`
-  player.socials = req.body
-  await player.save()
-  webhook(message, null, {
-    event: "PROFILE_SOCIALS_EDIT",
-    data: {
-      new: req.body
-    }
-  })
-  return res.render("added.ejs", {text: "socials", type: "added", loggedIn, editing, editable})
-})
-
-app.route("/socials/delete")
-.get(async (req, res) => {
-  let approved = await hasAccess(true, req, res);   if(!approved) return res.render("404.ejs")
-  let loggedIn = await findToken(req)
-  let editing = false
-  let editable = false
-  if(loggedIn) {
-    editable = true
-    if(getCookie("editing", req) == "true") {
-    editing = true
-  }
-  }
-  return res.render("../socials/delete.ejs", {key: APIKey, loggedIn, editing, editable})
-})
-.post(async (req, res) => {
-   let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
-  let loggedIn = await findToken(req)
-  let editing = false
-  let editable = false
-  if(loggedIn) {
-    editable = true
-    if(getCookie("editing", req) == "true") {
-    editing = true
-  }
-  }
-  var player = await leaderboardSchema.findOne({name: req.body.name.trim()})
-  if(!player) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid player name!"})
-  const message = `The socials of ${player.name} has been deleted. (socials: ${JSON.stringify(player.socials)})`
-  console.log(player.socials)
-  player.socials = undefined
-  await player.save()
-  webhook(message, null, {
-    event: "PROFILE_SOCIALS_DELETE",
-    data: {
-      name: player.name,
-      socials: player.socials
-    }
-  })
-  return res.render("added.ejs", {text: "socials", type: "deleted", loggedIn, editing, editable})
-})
+app.use("/socials", require("./scripts/socials")({ hasAccess, leaderboardSchema, getDetails, getCookie, fetchUser, webhook }))
 
 // nationalities
 
