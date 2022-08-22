@@ -1,0 +1,23 @@
+.collapsibleBig h1:after {
+  content: '\002B';
+  color: rgba(33,33,33,1);
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible h3:after {
+  content: '\002B';
+  color: rgba(33,33,33,1);
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active h1:after {
+  content: "\2212";
+}
+
+.active h3:after {
+  content: "\2212";
+}

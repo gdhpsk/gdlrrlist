@@ -1,0 +1,46 @@
+{
+  "name": "gdlrrlist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/rest": "^0.5.0",
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
+    "cookies-js": "^1.2.3",
+    "cors": "^2.8.5",
+    "dayjs": "^1.10.7",
+    "discord-api-types": "^0.33.3",
+    "dom-storage": "^2.1.0",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-rate-limit": "^6.5.1",
+    "fs": "^0.0.1-security",
+    "got": "^12.0.1",
+    "html-to-text": "^8.2.0",
+    "jsdom": "^19.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.3",
+    "node-cron": "^3.0.1",
+    "node-fetch": "^3.2.0",
+    "node-localstorage": "^2.2.1",
+    "path": "^0.12.7",
+    "php": "^1.0.2",
+    "phpcgijs": "^1.0.0-beta7",
+    "redis": "^4.2.0",
+    "socket.io": "^4.5.1",
+    "textversionjs": "^1.1.3",
+    "undici": "^5.9.1",
+    "uuid": "^8.3.2",
+    "ws": "^8.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

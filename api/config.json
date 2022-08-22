@@ -1,0 +1,7 @@
+{
+  "429": ["429 TOO MANY REQUESTS", "You are being rate limited because you sent too many requests."],
+  "405": ["405 METHOD NOT ALLOWED", "The method you are trying to use is unavailable on this resource."],
+  "404": ["404 NOT FOUND", "The resource you were trying to search for could not be found."],
+  "401": ["401 UNAUTHORIZED", "You do not have permission to view / execute this resource. You may have also inputted your authentication header incorrectly."],
+  "400": "400 BAD REQUEST"
+}

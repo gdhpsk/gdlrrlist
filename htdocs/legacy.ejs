@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+    function deep(smt) {
+      let visibility = document.getElementById(smt).style.visibility
+        if(visibility == "hidden") {
+  document.getElementById(smt).style.visibility = "visible"
+document.getElementById(smt).style.height = "20px"
+    } else {
+    document.getElementById(smt).style.visibility = "hidden"
+          document.getElementById(smt).style.height = "0px"
+    }
+              }
+  </script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+    <link href="CSS/levelcards.css?v=2021-04-23" rel="stylesheet" type="text/css" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4543250064393866"
+     crossorigin="anonymous"></script>
+    <link href="CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+ <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+  <%- include("./navbar.ejs") %>
+  
+    <div id="levels-container"> 
+      <h1 style = "text-align:center">Legacy Demons List</h1>
+      <p style = "text-align:center">Levels that once were hard enough to make the top 150, but have since fallen from grace. We will no longer be maintaining this part of the list, but we have kept it for nostalgic reasons. Please do NOT submit records for these levels. </p>
+      <% for(let i = 150; i < levels.length; i++) { %>
+        <% if(levels.findIndex(e=>e.name=="Final Epilogue") == i-1) { %>
+             <h1 style = "text-align:center">Removed Levels</h1>
+        <p style = "text-align:center">These levels were removed due to a variety of reasons. Open their collapsibles to learn more.</p>
+          <% } %>
+      <div class="column">
+        <div class="card">
+        <button type="button" class = "collapsible" onclick="window.location.href = '/level/<%= i+1 %>'">
+            <section class = "LevelCard flex">
+            <div class="thumb ratio-16-9 js-delay-css" 
+            style="position: relative;  
+            background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
+            data-property="background-image" 
+            data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" >
+            </div>
+            <div class = "title">
+            <h2 class="<%= levels[i].name == `AAAAAAAAAAAAAAAAAAAA` ? 'Ax20' : '' %>"><%= levels[i].position %>. <%= levels[i].name %> by <%= levels[i].publisher %></h2>
+             <% if(!levels[i].removalDate) { %>
+            <h3>Victors: <%= levels[i].list.length %><br><br></h3>
+                <% } else { %>
+                  <h3>Formerly #<%= levels[i].formerRank %><br>Removed on <%= levels[i].removalDate %><br></h3>
+                  <% } %>
+            </div>
+            </section>
+            <hr/></button>
+              <div class="content"></div>
+        </div>
+          </div>
+      <% } %>
+        
+         <p class = "toTop" onclick = "topFunction()">To the top</p>
+    </div>
+<script>
+let shit = document.getElementsByTagName("input")
+  
+  for(let i = 0; i < shit.length; i++) {
+    shit[i].onclick = function(e) {
+    if(this.id.startsWith("notgood")) {
+      let number = this.id.split("notgood")[1]
+      deep("smt"+number)
+    }
+    e.stopPropagation();
+    }
+  }
+</script>
+    <!-- scripts to include -->
+     <script src="JS/dropdown.js?v=2022-04-6"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+  </body>
+</html>

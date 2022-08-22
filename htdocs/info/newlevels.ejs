@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>GD LRR Demon List</title>
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.level._id.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <style>
+      p{
+        font-weight:normal;
+      }
+    </style>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+     <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+  <%- include("../navbar.ejs") %>
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+    <div style="display: grid; place-items: center;">
+       <% if(locals.editing) { %> 
+         <p>Want to add a completion/progress? Go here: <a href="https://gdlrrlist.com/add">https://gdlrrlist.com/add</a>. To delete, go here: <a href="https://gdlrrlist.com/deletesub">https://gdlrrlist.com/deletesub</a></p>
+         <% } %>
+    <% let score = 0 
+       if(position < 76) {
+          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.001 * position)) * Math.log((1 / (0.008 * position)))))/100
+      } else if(position > 75 && position < 101) {
+          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((210 / Math.pow(position, 1.001)))))/100
+      } else if(position > 100 && position < 151) {
+          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((3.3 / Math.pow(position, .1)))))/100
+      } else {
+         score = 0// Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((3.3 / (Math.pow(position, .1))))))/100;
+      }
+          %>
+
+    <h1 id = "levelName">#<%= position %>. <%= name %></h1>
+    <p><i>published by <%= publisher %> </i></p>
+
+    <% let videoLink = "https://www.youtube.com/embed/" + ytcode %> 
+        
+    <iframe src="<%= videoLink %>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <% if(!locals.editing) { %>
+    <p>Records (<%= position < 76 ? locals.minimumPercent : 100 %>% Required)</p>
+    <% for(let i = 0; i < locals.list.length; i++) {%>
+     
+     <a href="<%= locals.list[i].link %>" target = "_blank"><strong><strong><% if(locals.list[i].nationality) { %> <abbr title="<%= locals.list[i].realnation.replace(/_/g, ' ') %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.list[i].nationality %>.svg" style="margin: -3px;"></abbr></img>&nbsp;&nbsp;<% } %>(<%= locals.list[i].hertz %>) <%= locals.list[i].name %></strong></strong></a><br>
+      <% } %>
+        <% if(position < 76 && locals.progresses[0] != "none") { %>
+        <%  for(let i = 0; i < locals.progresses.length; i++) {%>
+      <a href="<%= locals.progresses[i].link %>" target = "_blank"><% if(locals.progresses[i].nationality) { %><abbr title="<%= locals.progresses[i].realnation.replace(/_/g, ' ') %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.progresses[i].nationality %>.svg" style="margin: -3px;"></img></abbr>&nbsp;&nbsp;<% } %>(<%= locals.progresses[i].hertz %>) <%= locals.progresses[i].name %> - <%= locals.progresses[i].percent %>%</a><br>
+      <% }
+        }%>
+        <% } else { %>
+          <style>
+   table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+    }
+    td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+  </style>
+            <p>Records (<%= position < 76 ? locals.minimumPercent : 100 %>% Required)</p> 
+              <table>
+       <tr>
+         <th>Nationality</th>
+         <th>Hertz</th>
+         <th>Percent</th>
+         <th>Link</th>
+         <th>Name</th>
+         <th>Pos</th>
+         <th>Update Info</th>
+       </tr>
+    <% for(let i = 0; i < locals.list.length; i++) {%>
+      <tr>
+        <form action="https://gdlrrlist.com/editrecordcomp/<%= locals.name %>/<%= i %>" method="post">
+        <td>
+     <%= locals.list[i].realnation ? locals.list[i].realnation.replace(/_/g, " ") : "None" %>
+       </td>
+        <td><input value="<%= locals.list[i].hertz %>" name="hertz" style="width: 4ch;"></td>
+        <td>100%</td>
+        <td><input value="<%= locals.list[i].link %>" name="link" style="width: <%= locals.list[i].link.length %>ch;"></td>
+        <td><%= locals.list[i].name %></td>
+        <td><input name="pos" type="number" value="<%= i+1 %>" style="width: 5ch;"></td>
+         <td><button type="submit">Update</button></td>
+        </form>
+       </tr>
+      <% } %>
+        <% if(position < 76 && locals.progresses[0] != "none") { %>
+        <%  for(let i = 0; i < locals.progresses.length; i++) {%>
+     <tr>
+       <form action="https://gdlrrlist.com/editrecordprog/<%= locals.name %>/<%= i %>" method="post">
+        <td>
+     <%= locals.progresses[i].realnation ? locals.progresses[i].realnation.replace(/_/g, " ") : "None" %>
+       </td>
+        <td><input value="<%= locals.progresses[i].hertz %>" name="hertz" style="width: 4ch;"></td>
+       <td><%= locals.progresses[i].percent %>%</td>
+        <td><input value="<%= locals.progresses[i].link %>" name="link" style="width: <%= locals.progresses[i].link.length %>ch;"></td>
+        <td><%= locals.progresses[i].name %></td>
+         <td><%= i+1 %></td>
+         <td><button type="submit">Update</button></td>
+       </form>
+       </tr>
+      <% }
+        }%>
+        </table>
+          <% } %>
+        </div>
+
+    <!-- scripts to include -->
+    <script src="https://gdlrrlist.com/JS/collapsible.js?v=2020-10-05"></script><script src="https://gdlrrlist.com/JS/collapsiblebig.js?v=2020-10-05"></script><script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="https://gdlrrlist.com/JS/videoresize.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js"></script>
+
+  </body>
+</html>

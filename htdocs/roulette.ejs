@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    .UIbutton {
+      height: 40px;
+      width: 70px;
+      border-radius: 50px;
+    }
+  </style>
+  <script>
+    function dostuff() {
+      
+      let div = document.getElementById("levels-container")
+    div.innerHTML = `
+    <div class="column">
+        <div class="card">
+          <button type="button" class = "collapsible" onclick="window.location.href = '/level/1'">
+            <section class = "LevelCard flex">
+            <div class="thumb ratio-16-9 js-delay-css" 
+            style="position: relative;  
+            background-image: url(&quot;https://i.ytimg.com/vi/test/mqdefault.jpg&quot;);" 
+            data-property="background-image" 
+            data-property-value="url('https://i.ytimg.com/vi/test/mqdefault.jpg')" >
+            </div>
+        <div class = "title">
+        <h2>0. Sonic Wave by Your Mother</h2>
+         <h3>You have to get x percent</h3>
+        </div>
+          </section>
+          </button>
+          <div class="content"></div>
+        </div>
+          </div>`
+    }
+  </script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+  <link href="CSS/levelcards.css?v=2022-03-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+     <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+    <p style="text-align: center; font-size: 30px;">GD Low Refresh Rate Roulette</p>
+    <div style="margin-left: 8%; margin-top: 3%;">
+    <button class="UIbutton" style="background: gray !important"><i class='fa fa-gear'></i></button>
+      <p></p>
+      <button class="UIbutton" style="background: blue !important" onclick="dostuff()">Start</button>
+      </div>
+    <div id="levels-container">
+      
+    </div>
+    <!-- scripts to include -->
+    <script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js"></script>
+  </body>
+</html>

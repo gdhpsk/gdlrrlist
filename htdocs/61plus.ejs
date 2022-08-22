@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+    function deep(smt) {
+      let visibility = document.getElementById(smt).style.visibility
+        if(visibility == "hidden") {
+  document.getElementById(smt).style.visibility = "visible"
+document.getElementById(smt).style.height = "20px"
+    } else {
+    document.getElementById(smt).style.visibility = "hidden"
+          document.getElementById(smt).style.height = "0px"
+    }
+              }
+  </script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+    <link href="CSS/levelcards.css?v=2021-04-25" rel="stylesheet" type="text/css" />
+    <link href="CSS/collapsible.css?v=2022-04-25" rel="stylesheet" type="text/css" />
+    <link href="CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4543250064393866"
+     crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+  <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+  <%- include("./navbar.ejs") %>
+  
+    <div id="levels-container"> 
+      <h1 style = "text-align:center">61hz+ levels</h1>
+      <p style = "text-align:center">Here, we feature any list-worthy demons that have been beaten on 61-75hz but are not eligible for normal rankings due to not having a 60hz victor. This is to recognize the achievements of 61-75hz players and also to encourage 60hz players to beat these levels to get them ranked by making them more known to the community.
+        <br>
+        <br>
+        NOTE: Unless you COMPLETE one of these levels on 60hz, please do NOT submit records for these levels.
+        <br>
+        <br></p>
+      <% if(!locals.editing) { %>
+      <% for(let i = 0; i < levels.length; i++) { %>
+         <div class="column">
+        <div class="card">
+          <button type="button" class = "collapsible">
+      <section class = "LevelCard flex">
+      <div class="thumb ratio-16-9 js-delay-css" 
+      style="position: relative; background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
+      data-property="background-image" 
+      data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=<%= levels[i].ytcode %>','_blank')"
+      title="Clicking on the image will take you to the verification video.">
+      </div>
+      <div class = "title">
+      <h2><%= levels[i].name %> by <%= levels[i].publisher %></h2>
+      <h3>Estimated <%= levels[i].ranking %></h3><br>
+      </div>
+      </section>
+      <hr/></button>
+        <div class="content" style>
+          <% for(let j = 0; j < levels[i].list.length; j++) { %>
+            <div style="margin-bottom: 25px;">
+            <% if(j == 0) { %> <h5>Completions<br></h5> <% } %>
+          <%  if (objOfNations[levels[i].list[j].name]) { %>
+                    <abbr title='<%= objOfNations[levels[i].list[j].name].replace(/_/g, " ") %>'><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= nationabbr[objOfNations[levels[i].list[j].name].replace(/_/g, ' ').toLowerCase()] %>.svg" style="display: inline;"></img></abbr>
+            <% } %><h6 style="display:inline;">(<%= levels[i].list[j].hertz %>) <%= levels[i].list[j].name %> - <a href = "<%= levels[i].list[j].link %>" target = "_blank"><%= levels[i].list[j].link %></a></h6>
+              </div>
+         <% } %>
+        </div>
+        </div>
+         </div>
+        <% } %>
+          <% } else { %>
+            <% for(let i = 0; i < levels.length; i++) { %>
+          <div class="column">
+        <div class="card">
+          <button type="button" class = "collapsible">
+          <form action="/delete61hertz/<%= levels[i].name %>" method="post"><input type="submit" value="Delete level"></input></form>
+          <br>
+          <input type="button" value="Add level onto the list" id="notgood<%= i %>"></input>
+          <div id="smt<%= i %>" style="visibility: hidden; height: 0px;"><form action="/move61hzlevel/<%= levels[i].name %>" method="post"><input placeholder="minimumPercent?" name="minimumPercent" type="number"></input><br><input type = "number" placeholder="Add at #?" name="placement" required></input><input type="submit" value="Submit"></input></form></div> <br>
+          <br>
+          <form action="/edit61hzlevel/<%= levels[i].name %>" method="post">
+          ytcode: <input type="text" name="ytcode" value="<%= levels[i].ytcode %>"></input>
+          
+      <section class = "LevelCard flex">
+      <div class="thumb ratio-16-9 js-delay-css" 
+      style="position: relative; background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
+      data-property="background-image" 
+      data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=<%= levels[i].ytcode %>','_blank')"
+      title="Clicking on the image will take you to the verification video.">
+      </div>
+      <div class = "title">
+      <h2><input type="number" name="placement" value="<%= levels[i].position %>" style="width: 3ch"/>. <%= levels[i].name %> by <input type="text" name="publisher" value="<%= levels[i].publisher %>" style="width: <%= levels[i].publisher.length %>ch"></input></h2>
+      <h3>Estimated <input type="text" name="ranking" value="<%= levels[i].ranking %>" style="width: 30ch"></input></h3><input type="submit" value="Submit New Info"></input><br><br>
+      </div>
+      </section>
+      <hr/></button>
+             </form>
+        <div class="content" style>
+          <% for(let j = 0; j < levels[i].list.length; j++) { %>
+            <div style="margin-bottom: 25px;">
+            <% if(j == 0) { %> <h5>Completions<br></h5> <% } %>
+          <%  if (objOfNations[levels[i].list[j].name]) { %>
+                    <abbr title='<%= objOfNations[levels[i].list[j].name].replace(/_/g, " ") %>'><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= nationabbr[objOfNations[levels[i].list[j].name].replace(/_/g, ' ').toLowerCase()] %>.svg" style="display: inline;"></img></abbr>
+            <% } %>
+              <form action="/edit61hzrecord/<%= levels[i].name %>/<%= levels[i].list[j]._id %>" method="post">
+              <h6 style="display:inline;">(<input type="text" name="hertz" value="<%= levels[i].list[j].hertz %>" style="width: 3ch;"/>) <input type="text" name="name" value="<%= levels[i].list[j].name %>" style="width: <%= levels[i].list[j].name.length+2 %>ch;"/> - <input type="text" name="link" value="<%= levels[i].list[j].link %>" style="width: <%= levels[i].list[j].link.length+2 %>ch;"/> <input type="submit" value="Submit"/></h6>
+              </form>
+              </div>
+         <% } %>
+       </div>
+        </div>
+         </div>
+        <% } %>
+            <% } %>
+          <p class = "toTop" onclick = "topFunction()">To the top</p>
+    </div>
+
+<script>
+  let shit = document.getElementsByTagName("input")
+  for(let i = 0; i < shit.length; i++) {
+    shit[i].onclick = function(e) {
+    if(this.id.startsWith("notgood")) {
+      let number = this.id.split("notgood")[1]
+      deep("smt"+number)
+    }
+    e.stopPropagation();
+    }
+  }
+</script>
+    <!-- scripts to include -->
+    <script src="JS/collapsible.js?v=2020-10-06"></script><script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>  
+        </body>
+</html>

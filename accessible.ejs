@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <style>
+     table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+    }
+    td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+  </style>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+  <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+    <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })();
+    </script>
+    <!--<body style="background-color:white;">-->
+      
+    <%- include("./htdocs/navbar.ejs") %>
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+     <table>
+       <tr>
+      <th>Name</th>
+      <th>Tag</th>
+      <th>Delete user</th>
+     </tr>
+       <% for(let i = 0; i < everything.length; i++) { %>
+       <tr>
+         <td><%= everything[i].name || everything[i].id %><%= everything[i].id ? ` (${everything[i].tag})` : "" %></td>
+         <td><select name="tag" id="<%= everything[i].name %>-selection"><option value='spectator'>Spectator <%= everything[i].tag == "spectator" ? "(currently)" : "" %></option>
+ <option value='helper'>Helper <%= everything[i].tag == "helper" ? "(currently)" : "" %></option>
+         <option value='moderator'>Moderator <%= everything[i].tag == "moderator" ? "(currently)" : "" %></option>
+         <option value='leader'>Leader of List <%= everything[i].tag == "leader" ? "(currently)" : "" %></option>
+         </select>
+           <button type="button" onclick='patchReq({name: "<%= everything[i].name %>", tag: "<%= everything[i].tag %>"})'>Submit</button><p id="<%= everything[i].name %>"></p></td>
+         <td><button type="button" onclick='deleteReq({name: "<%= everything[i].name %>", tag: "<%= everything[i].tag %>"})'>Delete</button></td>
+       </tr>
+         <% } %>
+         </table>
+            <br>
+           <p>Want to add someone? Add them here:</p>
+           <form action="/settings" method="post">
+             <label>Name</label>
+             <input type="text" name="name" placeholder="Account name"></input>
+             <br>
+             <label>Level</label>
+             <select name="tag"><option value="spectator">spectator</option>
+  <option value="helper">helper</option>
+  <option value="moderator">moderator</option>
+  <option value="leader">leader</option></select>
+             <br>
+             <button type="submit">Add</button></form>
+    <!-- scripts to include -->
+    <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js"></script>
+           <script>
+    async function patchReq(obj) {
+      var e = document.getElementById(`${obj.name}-selection`);
+var value = e.value;
+var text = e.options[e.selectedIndex].text.split(" ")[0];
+      obj.tag = text.toLowerCase()
+      let data = await fetch("https://gdlrrlist.com/api/leader/settings", {
+        method: "PATCH",
+      headers: {  
+    'Content-Type': 'application/json',
+        'authorization': `Leader ${getCookie("token")}`
+   },
+   body: JSON.stringify(obj)
+      })
+      try {
+        let json = await data.json()
+        document.getElementById(obj.name).innerText = json.message
+      } catch(_) {
+        window.location.reload()
+      }
+    }
+    async function deleteReq(obj) {
+      let data = await fetch("https://gdlrrlist.com/api/mods/settings", {
+        method: "DELETE",
+      headers: {  
+    'Content-Type': 'application/json',
+        'authorization': `Moderator ${getCookie("token")}`
+   },
+   body: JSON.stringify(obj)
+      })
+      try {
+        let json = await data.json()
+        document.getElementById(obj.name).innerText = json.message
+      } catch(_) {
+        window.location.reload()
+      }
+    }
+  </script>
+  </body>
+</html>

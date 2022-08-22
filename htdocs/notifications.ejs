@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+    function deep(smt) {
+      let visibility = document.getElementById(smt).style.visibility
+        if(visibility == "hidden") {
+  document.getElementById(smt).style.visibility = "visible"
+document.getElementById(smt).style.height = "20px"
+    } else {
+    document.getElementById(smt).style.visibility = "hidden"
+          document.getElementById(smt).style.height = "0px"
+    }
+              }
+  </script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+    <link href='https://css.gg/search.css' rel='stylesheet'>
+    <link href="CSS/levelcards.css?v=2021-04-23" rel="stylesheet" type="text/css" />
+    <link href="CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+ <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+  <%- include("./navbar.ejs") %>
+
+    <h2 style="text-align: center;">Want to compose an email? compose one <a href="https://gdlrrlist.com/notifications/compose">here</a></h2>
+    <% let fromUser = locals.mail.filter(e => e.from == locals.username) %>
+    <% let toUser = locals.mail.filter(e => e.to == locals.username && !e.hide) %>
+  <div id="fromUser" style="width: 45%; float: left;">
+<h1 style="text-align: center;">Emails sent</h1>
+    <div class="search-bar" style="display: flex; justify-content: center;">
+        <div class="search-bar-input">
+          <input id = "search-field" placeholder="type to search..." style="text-align: center; width: 100%;">
+        </div>
+      </div>
+    <div id = "fromUserEmails">
+  <% for(let i = 0; i < fromUser.length; i++) { %>
+     <br></br>
+    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/from/<%= i+1 %>'">
+      <div class = "title">
+              <h3 class = "date"><%= fromUser[i].subject %></h3><sup>To: <%= fromUser[i].to %></sup>
+            </div>
+    </button>
+  <% } %>
+  </div>
+  </div>
+
+    <div id="toUser" style="width: 45%; float: right;">
+      <h1 style="text-align: center;">Emails received</h1>
+      <div class="search-bar" style="display: flex; justify-content: center;">
+        <div class="search-bar-input">
+          <input id = "search-field-2" placeholder="type to search..." style="text-align: center; width: 100%;">
+        </div>
+      </div>
+      <div id = "toUserEmails">
+  <% for(let i = 0; i < toUser.length; i++) { %>
+    <br></br>
+    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/to/<%= i+1 %>'">
+      <div class = "title">
+              <h3 class = "date"><%= toUser[i].subject %></h3><sup>From: <%= toUser[i].from %></sup>
+            </div>
+    </button>
+  <% } %>
+  </div>
+  </div>
+<script>
+  let allActualVals = JSON.parse("<%= JSON.stringify(locals.mail) %>".replaceAll("&#34;", '"'))
+  document.getElementById("search-field").addEventListener("input", fromUser)
+  document.getElementById("search-field-2").addEventListener("input", toUser)
+function fromUser() {
+  let {value} = this
+  console.log(value)
+  let allVals = JSON.parse("<%= JSON.stringify(locals.mail) %>".replaceAll("&#34;", '"'))
+  allVals = allVals.filter(e => (e.subject.toLowerCase().includes(value.toLowerCase().trim()) || e.message.toLowerCase().includes(value.toLowerCase().trim()) || e.to.toLowerCase().includes(value.toLowerCase().trim())) && e.from == "<%= locals.username %>")
+  let txt = ``
+  for(const item of allVals) {
+    txt += ` <br></br>
+    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/from/${allActualVals.filter(e => e.from == "<%= locals.username %>").findIndex(e => e._id == item._id) + 1}'">
+      <div class = "title">
+              <h3 class = "date">${item.subject}</h3><sup>To: ${item.to}</sup>
+            </div>
+    </button>`
+  }
+
+  document.getElementById("fromUserEmails").innerHTML = txt
+}
+  function toUser() {
+  let {value} = this
+  console.log(value)
+  let allVals = JSON.parse("<%= JSON.stringify(locals.mail) %>".replaceAll("&#34;", '"'))
+    
+  allVals = allVals.filter(e => (e.subject.toLowerCase().includes(value.toLowerCase().trim()) || e.message.toLowerCase().includes(value.toLowerCase().trim()) || e.from.toLowerCase().includes(value.toLowerCase().trim())) && !e.hide && e.to == "<%= locals.username %>")
+  
+      let txt = ""
+  for(const item of allVals) {
+    txt += `<br></br>
+    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/to/${allActualVals.filter(e => e.to == "<%= locals.username %>" && !e.hide).findIndex(e => e._id == item._id) + 1}'">
+      <div class = "title">
+              <h3 class = "date">${item.subject}</h3><sup>To: ${item.to}</sup>
+            </div>
+    </button>`
+  }
+
+ document.getElementById("toUserEmails").innerHTML = txt
+}
+</script>
+    <!-- scripts to include -->
+     <script src="JS/collapsible.js?v=2020-10-06"></script>
+     <script src="JS/dropdown.js?v=2022-04-6"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+  </body>
+</html>

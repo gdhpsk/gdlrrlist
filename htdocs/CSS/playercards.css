@@ -1,0 +1,15 @@
+.trigger_popup_fricc {
+    cursor: pointer;
+    text-align:left;
+    font-size: 20px;
+}
+.trigger_popup_fricc:hover {
+    color:lightseagreen;
+}
+body.dark-theme .trigger_popup_fricc:hover{
+  color:rgb(164, 165, 165);
+}
+.playerlevelEntry{
+  font-size:14px;
+  float: left;
+}

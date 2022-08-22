@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
+        #name {
+           background-color:rgb(66, 64, 64);
+            width: 1000px;
+               height: 1480px;
+            color:white;
+            margin-left: auto;
+            margin-right: auto;
+           position: center;
+           border-radius: 30px;
+        }
+        #deez {
+            text-align: center;
+            font-family: 'Poppins';
+            line-height: 30px;
+            font-size: 40px
+        }
+        #font {
+            font-family: 'Poppins';
+            line-height: 30px;
+            font-size: 40px
+        }
+    </style>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <title>Document</title>
+</head>
+<body>
+    <br><br><br><br><br><br>
+    <div id="name">
+        <br><br><br><br>
+      <p id="deez" onclick="window.open(`/editupcoming`, `_self`)">Change upcoming changes message (discord)</p>
+      
+        <p id="deez" onclick="window.open(`/add`, `_self`)">Add a completion / progress</p>
+      <p id="deez" onclick="window.open(`/deletesub`, `_self`)">Delete a completion / progress</p>
+      <p id="deez" onclick="window.open(`/submissions`, `_self`)">Check form submissions</p> 
+      <p id="deez" onclick="window.open(`/addlevel`, `_self`)">Add a level</p>
+       <p id="deez" onclick="window.open(`/add61hertzlevel`, `_self`)">Add a 61hz+ level</p>
+      <p id="deez" onclick="window.open(`/nationalities/add`, `_self`)">Add / Change a nationality</p>
+      <p id="deez" onclick="window.open(`/socials/add`, `_self`)">Add / Change Socials</p>
+      <p id="deez" onclick="window.open(`/nationalities/delete`, `_self`)">Delete a nationality</p>
+      <p id="deez" onclick="window.open(`/socials/delete`, `_self`)">Delete a persons socials</p>
+      <p id="deez" onclick="window.open(`/ban`, `_self`)">Ban a user</p>
+      <p id="deez" onclick="window.open(`/bans`, `_self`)">View bans</p>
+      <p id="deez" onclick="window.open(`/search/levels/`, `_self`)">Find the JSON/name of a level</p>
+      <p id="deez" onclick="window.open(`/search/leaderboard/`, `_self`)">Find a leaderboard profile name/JSON of a profile</p>
+       <p id="deez" onclick="window.open(`/changename`, `_self`)">Change the name of a leaderboard profile</p>      
+      <p id="deez" onclick="window.open(`/sheets`, `_self`)">Level opinion sheets</p>
+      <p id="deez" onclick="window.open(`/search/nationalities`, `_self`)">Find the name of a flag</p>
+    </div>
+  <script>
+    if("<%= locals.data %>") {
+        var test = "<%= locals.data %>".replace(/&#34;/g, `"`)
+       var json = JSON.parse(test)
+       for(const key in json) {
+        window.localStorage.setItem(key, json[key])
+       }
+    }
+  </script>
+</body>
+</html>

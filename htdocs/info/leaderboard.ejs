@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>GD LRR Demon List</title>
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.level._id.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <style>
+      p{
+        font-weight:normal;
+      }
+    </style>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+     <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+  <%- include("../navbar.ejs") %>
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+    <div style="display: grid; place-items: center;">
+      <h1><% if (!locals.nationality) { %>
+                <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr>
+            <% } else { %>
+               <abbr title="<%= locals.realnation %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.nationality %>.svg"></img></abbr>
+          <%  } %> # <%= placement %> - <%= name %> (<%= points %> points)</h1>
+        <% if(locals.socials) { %>
+          <% for(const key in locals.socials) { %>
+            <% if(socials[key] && key != "name" && key != "discordid") { %>
+            <p><%= key %>: <% if(key == "discord") { %><%= socials[key] %><% } else { %><a href="<%= socials[key] %>" target="_blank"><%= socials[key] %></a><% } %></p>
+              <% } %>
+            <% } %>
+         <% } %>
+
+      <h2>Completions</h2>
+      <table>
+        <tr>
+          <th class="rank_number center">#</th>
+          <th>Name</th>
+          <th class = "center">Points</th>
+        </tr>
+        <% if(progs[0]) {
+    for(let i = 0; i < progs.length; i++) { %>
+      
+          <% if(progs[i].points == 0) break; 
+             if(progs[i].percent != 100) continue; %>
+        <tr>
+          <td>
+            # <%= progs[i].placement %>
+          </td>
+          <td>
+            <a href="https://gdlrrlist.com/level/<%= progs[i].placement%>"><%= progs[i].name %></a>
+          </td>
+          <td>
+            <%= progs[i].points %> points
+          </td>
+        </tr>
+      <% } 
+        } %>
+      </table>
+
+      
+
+    <h2>Legacy</h2>
+        <table>
+        <tr>
+          <th class="rank_number center">#</th>
+          <th>Name</th>
+        </tr>
+        <% if(progs[0]) {
+    for(let i = 0; i < progs.length; i++) { %>
+      
+          <% if(progs[i].points != 0) continue;
+            if(progs[i].percent != 100) continue; %>
+        <tr>
+          <td>
+            <i># <%= progs[i].placement %></i>
+          </td>
+          <td>
+            <i><a href="https://gdlrrlist.com/level/<%= progs[i].placement%>"><%= progs[i].name %></a></i>
+          </td>
+        </tr>
+      <% } 
+        } %>
+      </table> 
+
+        <h2>Progresses</h2>
+        <table>
+        <tr>
+          <th class="rank_number center">#</th>
+          <th>Name</th>
+          <th>%</th>
+          <th class = "center">Points</th>
+        </tr>
+        <% if(progs[0]) {
+    for(let i = 0; i < progs.length; i++) { %>
+      
+          <% 
+             if(progs[i].percent == 100 || progs[i].placement > 75) continue; %>
+        <tr>
+          <td>
+            # <%= progs[i].placement %>
+          </td>
+          <td>
+            <a href="https://gdlrrlist.com/level/<%= progs[i].placement%>"><%= progs[i].name %></a>
+          </td>
+          <td>
+            <%= progs[i].percent %>%
+          </td>
+          <td>
+            <%= progs[i].points %> points
+          </td>
+        </tr>
+      <% } 
+        } %>
+      </table>
+        <br>
+    </div>
+    <!-- scripts to include -->
+    <script src="https://gdlrrlist.com/JS/collapsible.js?v=2020-10-05"></script><script src="https://gdlrrlist.com/JS/collapsiblebig.js?v=2020-10-05"></script><script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="https://gdlrrlist.com/JS/videoresize.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js"></script>
+
+  </body>
+</html>

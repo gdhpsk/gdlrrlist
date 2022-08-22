@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+    function deep(smt) {
+      let visibility = document.getElementById(smt).style.visibility
+        if(visibility == "hidden") {
+  document.getElementById(smt).style.visibility = "visible"
+document.getElementById(smt).style.height = "20px"
+    } else {
+    document.getElementById(smt).style.visibility = "hidden"
+          document.getElementById(smt).style.height = "0px"
+    }
+              }
+  </script>
+   <% 
+     function score(position) {
+     let score = 0 
+       if(position < 76) {
+          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.001 * position)) * Math.log((1 / (0.008 * position)))))/100
+      } else if(position > 75 && position < 101) {
+          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((210 / Math.pow(position, 1.001)))))/100
+      } else if(position > 100 && position < 151) {
+          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((3.3 / Math.pow(position, .1)))))/100
+      } else {
+         score = 0// Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((3.3 / (Math.pow(position, .1))))))/100;
+      }
+        return score
+        }
+          %>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+  <link href="CSS/levelcards.css?v=2022-03-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+     <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+
+    <%- include("./navbar.ejs") %>
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+      <br>
+      <p style="text-align: center;">Want to be able to edit other stuff? Go to the everything link <a href="/everything">Here</a></p>
+      <br>
+      <div class="search-bar" style="display: grid; place-items: center;">
+        <div class="search-bar-input">
+          <i class="fa fa-search"></i>
+          <input id = "search-field" placeholder="type to search...">
+        </div>
+      </div>
+      <br>
+      <br>
+    <div id="levels-container"> 
+      <% for(let i = 0; i < levels.length; i++) { %>
+        <% let bannedUsers = 0 %>
+              <% for(let j = 0; j < levels[i].list.length; j++) {
+                let user = locals.leaderboards.find(e => e.name == levels[i].list[j].name)
+                if(user?.ban) {
+                  bannedUsers += 1
+                }
+               } %>
+        <div class="column">
+        <div class="card">
+          <input type="button" value="Delete level" id="notgood<%= i %>"></input>
+          <div id="smt<%= i %>" style="visibility: hidden; height: 0px;"><form action="/deletelevel/<%= levels[i].name %>" method="post"><input placeholder="Reason?" name="reason"></input><input type="submit" value="Submit"></input></form></div> <br>
+          <form action="/editlevel/<%= levels[i].name %>" method="post">
+          ytcode: <input type="text" name="ytcode" value="<%= levels[i].ytcode %>"></input>
+        <button type="button" class = "collapsible" onclick="window.location.href = '/level/<%= levels[i].position %>'">
+            <section class = "LevelCard flex">
+            <div class="thumb ratio-16-9 js-delay-css" 
+            style="position: relative;  
+            background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
+            data-property="background-image" 
+            data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=<%= levels[i].ytcode %>','_blank')"
+            title="Clicking on the image will take you to the verification video.">
+            </div>
+        <div class = "title">
+        <h2><input type="number" name="placement" value="<%= levels[i].position %>" style="width: 5ch"/>. <%= levels[i].name %> by <input type="text" name="publisher" value="<%= levels[i].publisher %>" style="width: <%= levels[i].publisher.length %>ch"></input></h2>
+        <h3>Victors: <%= levels[i].list.length - bannedUsers %><% if(i < 150) { %><br>Score: <%= score(i+1) %> <% } %><% if(i < 75) { %><br>minimumPercent: <input type="text" name="minimumPercent" value="<%= levels[i].minimumPercent %>" style="width: 3ch"></input><% } %><br><input type="submit" value="Submit New Info"></input><br>
+        </h3>
+        </div>
+       </section>
+        <hr/></button>
+          <div class="content"></div>
+        </div>
+          </div>
+          </form>
+      <% } %>
+         
+    </div>
+        <p class = "toTop" onclick = "topFunction()">To the top</p>
+
+        <script>
+  let shit = document.getElementsByTagName("input")
+  for(let i = 0; i < shit.length; i++) {
+    shit[i].onclick = function(e) {
+    if(this.id.startsWith("notgood")) {
+      let number = this.id.split("notgood")[1]
+      deep("smt"+number)
+    }
+    e.stopPropagation();
+    }
+  }
+</script>
+
+ <script>
+   let score = <%- score %>
+    let data = <%- JSON.stringify(locals.levels) %>
+     let leaderboard_data = <%- JSON.stringify(locals.leaderboards) %>
+    var searchBar = document.getElementById("search-field");
+var div = document.getElementById("levels-container");
+
+document.getElementById("search-field").addEventListener("input", onTextEntered)
+
+async function onTextEntered() {
+  let obj = {}
+  let searchText = this.value.toLowerCase();
+  document.getElementById("search-field").addEventListener("input", onTextEntered)
+  
+     data.forEach(user => {
+      if(user.name.toLowerCase().includes(searchText)) {
+       obj[user.name] = data.find(e => e.name == user.name)
+      }
+     })
+        let txt = ""
+        if(searchText != "") {
+        for(const key in obj) {
+          let i = Object.keys(obj).indexOf(key)
+          let bannedPeople = 0
+          let levels = Object.values(obj)
+          for(let j = 0; j < levels[i].list.length; j++) {
+            let user = leaderboard_data.find(e => e.name == levels[i].list[j].name)
+                if(user?.ban) {
+                  bannedPeople += 1
+                }
+          }
+          txt += `
+               <div class="column">
+        <div class="card">
+          <input type="button" value="Delete level" id="notgood${i}"></input>
+          <div id="smt${i}" style="visibility: hidden; height: 0px;"><form action="/deletelevel/${levels[i].name}" method="post"><input placeholder="Reason?" name="reason"></input><input type="submit" value="Submit"></input></form></div> <br>
+          <form action="/editlevel/${levels[i].name}" method="post">
+          ytcode: <input type="text" name="ytcode" value="${levels[i].ytcode}"></input>
+        <button type="button" class = "collapsible" onclick="window.location.href = '/level/${levels[i].position}'">
+            <section class = "LevelCard flex">
+            <div class="thumb ratio-16-9 js-delay-css" 
+            style="position: relative;  
+            background-image: url(&quot;https://i.ytimg.com/vi/${levels[i].ytcode}/mqdefault.jpg&quot;);" 
+            data-property="background-image" 
+            data-property-value="url('https://i.ytimg.com/vi/${levels[i].ytcode}/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=${levels[i].ytcode}','_blank')"
+            title="Clicking on the image will take you to the verification video.">
+            </div>
+        <div class = "title">
+        <h2><input type="number" name="placement" value="${levels[i].position}" style="width: 5ch"/>. ${levels[i].name} by <input type="text" name="publisher" value="${levels[i].publisher}" style="width: ${levels[i].publisher.length}ch"></input></h2>
+        <h3>Victors: ${levels[i].list.length - bannedPeople}${levels[i].position < 150 ? `<br>Score: ${score(levels[i].position)}` : ""}${levels[i].position < 75 ? `<br>minimumPercent: <input type="text" name="minimumPercent" value="${levels[i].minimumPercent}" style="width: 3ch"></input><br>` : ""}<br><input type="submit" value="Submit New Info"></input><br>
+        </h3>
+        </div>
+       </section>
+        <hr/></button>
+          <div class="content"></div>
+        </div>
+          </div>
+          </form>
+            `
+        }
+        } else {
+          txt = `<% for(let i = 0; i < levels.length; i++) { %>
+        <div class="column">
+        <div class="card">
+          <input type="button" value="Delete level" id="notgood<%= i %>"></input>
+          <div id="smt<%= i %>" style="visibility: hidden; height: 0px;"><form action="/deletelevel/<%= levels[i].name %>" method="post"><input placeholder="Reason?" name="reason"></input><input type="submit" value="Submit"></input></form></div> <br>
+          <form action="/editlevel/<%= levels[i].name %>" method="post">
+          ytcode: <input type="text" name="ytcode" value="<%= levels[i].ytcode %>"></input>
+        <button type="button" class = "collapsible" onclick="window.location.href = '/level/<%= levels[i].position %>'">
+            <section class = "LevelCard flex">
+            <div class="thumb ratio-16-9 js-delay-css" 
+            style="position: relative;  
+            background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
+            data-property="background-image" 
+            data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=<%= levels[i].ytcode %>','_blank')"
+            title="Clicking on the image will take you to the verification video.">
+            </div>
+        <div class = "title">
+        <h2><input type="number" name="placement" value="<%= levels[i].position %>" style="width: 5ch"/>. <%= levels[i].name %> by <input type="text" name="publisher" value="<%= levels[i].publisher %>" style="width: <%= levels[i].publisher.length %>ch"></input></h2>
+        <h3>Victors: <%= levels[i].list.length %><% if(i < 150) { %><br>Score: <%= score(i+1) %> <% } %><% if(i < 75) { %><br>minimumPercent: <input type="text" name="minimumPercent" value="<%= levels[i].minimumPercent %>" style="width: 3ch"></input><% } %><br><input type="submit" value="Submit New Info"></input><br>
+        </h3>
+        </div>
+       </section>
+        <hr/></button>
+          <div class="content"></div>
+        </div>
+          </div>
+          </form>
+      <% } %>`
+        }
+        document.getElementById("levels-container").innerHTML = txt
+  let shit = document.getElementsByTagName("input")
+  for(let i = 0; i < shit.length; i++) {
+    shit[i].onclick = function(j) {
+    if(this.id.startsWith("notgood")) {
+      let number = this.id.split("notgood")[1]
+      deep("smt"+number)
+    }
+    j.stopPropagation();
+    }
+  }
+}
+  </script>
+    <!-- scripts to include -->
+    <script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+  </body>
+</html>

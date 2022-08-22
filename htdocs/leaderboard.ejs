@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+    <link href='https://css.gg/search.css' rel='stylesheet'>
+    <link href="CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/leaderboard.css?v=2021-11-15" rel="stylesheet" type="text/css" />
+    <link href="CSS/playercards.css?v=2021-03-24" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4543250064393866"
+     crossorigin="anonymous"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+     <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+      <%- include("./navbar.ejs") %>
+  <div style="display: grid; place-items:center; text-align: center;">
+    <h1>Leaderboard</h1>
+      <p>Click on a player's name for some additional information. It may take a second to load.</p>
+      <div class="search-bar">
+        <div class="search-bar-input">
+          <i class="gg-search"></i>
+          <input id = "search-field" placeholder="type to search...">
+        </div>
+      </div>
+      <br><br>
+      <select id="typething"></select>
+      <br></br>
+  </div>
+    <div id="leaderboard" style = "display: grid; place-items:center; text-align: center;"> 
+      <table id="rank_table">
+        <thead>
+          <tr>
+            <th id="flag_column"></th>
+            <th class="rank_number center">#</th>
+            <th>Name</th>
+            <th class = "center">Points</th>
+          </tr>
+        </thead>
+        <tbody id="rank_table_body">
+          <% if(last < parseInt(page)) {
+              page = 0;
+               } %>
+          <% let zeroindex = 50 * (parseInt(page) + 1) %>
+            <% if(last == page) {
+              zeroindex = profiles.findIndex(e => e.points == 0)
+              
+            } %>
+            <% for (let i = 50 * page; i < zeroindex; i++) { %>
+               <tr>
+          <td><% if (!profiles[i].nationality) { %>
+                <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr>
+            <% } else { %>
+               <abbr title="<%= profiles[i].nationreal %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= profiles[i].nationality %>.svg"></img></abbr>
+          <%  } %>
+            </td>
+          <td class="rank_number"><b>#<%= profiles[i].pos %></b></td>
+          <td class="trigger_popup_fricc" onclick = 'window.location.href = "/leaderboard/<%= encodeURIComponent(profiles[i].name) %>"'><%= profiles[i].name %></td> 
+          <td><%= profiles[i].points %></td>
+        </tr>
+              <% } %>
+        </tbody>
+      </table>
+    </div>
+  <div style="display: flex; flex-direction: row; justify-content: center;">
+   <% if(parseInt(locals.page) != 0) { %> <button id = "back-button" onclick = "backPage()" style="font-size: 30px;">back</button> <% } %>
+    <% if(parseInt(locals.page) < parseInt(locals.last)) { %> <button id = "next-button" onclick = "nextPage()" style="font-size: 30px;">next</button> <% } %>
+      </div>
+    <!-- scripts to include -->
+    
+
+    <script src="JS/dropdown.js"></script>
+    <script src="JS/darkbutton.js?v=2022-07-30"></script>
+      
+      <script>
+    let data = <%- JSON.stringify(locals.profiles) %>
+    data.splice(data.findIndex(e => e.points == 0))
+    var searchBar = document.getElementById("search-field");
+var div = document.getElementById("leaderboard");
+
+document.getElementById("search-field").addEventListener("input", onTextEntered)
+
+async function onTextEntered() {
+  let obj = {}
+  let searchText = this.value.toLowerCase();
+  document.getElementById("search-field").addEventListener("input", onTextEntered)
+  
+     data.forEach(user => {
+      if(user.name.toLowerCase().includes(searchText)) {
+       obj[user.name] = data.find(e => e.name == user.name)
+      }
+     })
+        let txt = ""
+        if(searchText != "") {
+        for(const key in obj) {
+          txt += `
+               <tr>
+          <td> ${!obj[key]?.nationality ? '<abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr>' : `<abbr title="${obj[key].nationreal}" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/${obj[key].nationality}.svg"></img></abbr>`}
+          
+            </td>
+          <td class="rank_number"><b>#${obj[key]?.pos}</b></td>
+          <td class="trigger_popup_fricc" onclick = 'window.location.href = "/leaderboard/${encodeURIComponent(obj[key]?.name)}"'>${obj[key]?.name}</td> 
+          <td>${obj[key]?.points}</td>
+        </tr>
+            `
+        }
+        } else {
+          txt = `<% for (let i = 50 * page; i < zeroindex; i++) { %>
+               <tr>
+          <td><% if (!profiles[i].nationality) { %>
+                <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr>
+            <% } else { %>
+               <abbr title="<%= profiles[i].nationreal %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= profiles[i].nationality %>.svg"></img></abbr>
+          <%  } %>
+            </td>
+          <td class="rank_number"><b>#<%= profiles[i].pos %></b></td>
+          <td class="trigger_popup_fricc" onclick = 'window.location.href = "/leaderboard/<%= encodeURIComponent(profiles[i].name) %>"'><%= profiles[i].name %></td> 
+          <td><%= profiles[i].points %></td>
+        </tr>
+              <% } %>`
+        }
+        document.getElementById("leaderboard").innerHTML = `
+      <table id="rank_table">
+        <thead>
+          <tr>
+            <th id="flag_column"></th>
+            <th class="rank_number center">#</th>
+            <th>Name</th>
+            <th class = "center">Points</th>
+          </tr>
+        </thead>
+        <tbody id="rank_table_body">
+          
+        </tbody>
+      </table>`
+        document.getElementById("rank_table_body").innerHTML = txt
+}
+  </script>
+      <script>
+        let nation_selector = document.getElementById("typething")
+        let flag_data = <%- JSON.stringify(flag_data) %>
+       for(const key in flag_data) {
+                        nation_selector.innerHTML += `<option value="${key}">${key}</option>`
+                       }
+         function logger() {
+       let nation = this.value
+           let data = <%- JSON.stringify(locals.profiles) %>
+    data.splice(data.findIndex(e => e.points == 0))
+          data = data.filter(e => e?.nationreal?.toLowerCase() == nation)
+           let txt = ""
+        if(nation != "International") {
+        for(let i = 0; i < data.length; i++) {
+          txt += `
+               <tr>
+          <td> ${!data[i]?.nationality ? '<abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr>' : `<abbr title="${data[i].nationreal}" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/${data[i].nationality}.svg"></img></abbr>`}
+          
+            </td>
+          <td class="rank_number"><b>#${data[i]?.pos}</b></td>
+          <td class="trigger_popup_fricc" onclick = 'window.location.href = "/leaderboard/${encodeURIComponent(data[i]?.name)}"'>${data[i]?.name}</td> 
+          <td>${data[i]?.points}</td>
+        </tr>
+            `
+        }
+        } else {
+          txt = `<% for (let i = 50 * page; i < zeroindex; i++) { %>
+               <tr>
+          <td><% if (!profiles[i].nationality) { %>
+                <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr>
+            <% } else { %>
+               <abbr title="<%= profiles[i].nationreal %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= profiles[i].nationality %>.svg"></img></abbr>
+          <%  } %>
+            </td>
+          <td class="rank_number"><b>#<%= profiles[i].pos %></b></td>
+          <td class="trigger_popup_fricc" onclick = 'window.location.href = "/leaderboard/<%= encodeURIComponent(profiles[i].name) %>"'><%= profiles[i].name %></td> 
+          <td><%= profiles[i].points %></td>
+        </tr>
+              <% } %>`
+        }
+        document.getElementById("leaderboard").innerHTML = `
+      <table id="rank_table">
+        <thead>
+          <tr>
+            <th id="flag_column"></th>
+            <th class="rank_number center">#</th>
+            <th>Name</th>
+            <th class = "center">Points</th>
+          </tr>
+        </thead>
+        <tbody id="rank_table_body">
+          
+        </tbody>
+      </table>`
+        document.getElementById("rank_table_body").innerHTML = txt
+      }
+        document.getElementById("typething").addEventListener("change", logger, false)  
+      
+      </script>
+    <script>
+        var page = parseInt("<%- locals.page %>")
+      var altpage = parseInt("<%- locals.page %>")
+      function nextPage(){
+        page++;
+        window.location = "/leaderboard.html?page="+page;
+      }
+  
+      function backPage(){
+        if(page > 0) page--;
+        window.location = "/leaderboard.html?page="+page;
+      }
+    </script>
+    <script defer>
+    </script>
+  </body>
+</html>

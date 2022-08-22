@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+  <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2022-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+    <!--<body style="background-color:white;">-->
+      
+    <%- include("../htdocs/navbar.ejs") %>
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+      <h1 style = "text-align:center">LRR Demon List Submission #<%= locals.number %></h1>
+    <br></br>
+      <p style="text-align: center; font-size: 30px;">
+        Username - <%= locals.username %> <br></br>
+        LRR Account - <%= locals.account || "Secret API feature :))" %> <br></br>
+        Demon - <%= locals.demon %> <br></br>
+        Date - <%= locals.date || "Dates were not recorded when this record was submitted." %> <br></br>
+        Last Updated - <%= locals.edited || locals.date %> <br></br>
+        Refresh Rate/FPS - <%= locals.hertz %> <br></br>
+        Progress - <%= locals.progress %> <br></br>
+        Raw Footage - <% if(locals.raw) { %><a href="<%= locals.raw %>" target="_blank"><%= locals.raw %></a> <% } else { %> No raw footage was provided. <% } %><br></br>
+        Video - <a href="<%= locals.video %>" target="_blank"><%= locals.video %></a><br></br><iframe width="854" height="480" src="<%= locals.embed %>" frameborder="0" allowfullscreen></iframe><br></br>
+          Comments - <%= locals.comments || "there were no comments provided." %> <br></br>
+      </p>
+            <div style="display: grid; place-items: center;">
+              <form action="https://gdlrrlist.com/submissions/status" method="post">
+                <label style="font-size: 30px;">Status</label>
+                <br></br>
+                <select name="status">
+                  
+                  <option <% if(locals.status == "accepted") { %> selected <% } %> >accepted</option>
+                    <option <% if(locals.status == "denied") { %> selected <% } %> >denied</option>
+                  <option <% if(locals.status == "pending" || !locals.status) { %> selected <% } %>>pending</option>
+                </select>
+                <input type="hidden" name="id" value="<%= locals._id %>">
+                    <br></br>
+              <button type="submit" style="font-size: 30px;">Update</button>
+            </form>
+               <br></br>
+              <button type="button" style="font-size: 30px;" onclick="window.location.href = 'https://gdlrrlist.com/notifications/compose?record=<%= locals._id %>'">Email User</button>
+              <br>
+              <button type="button" style="font-size: 30px;" onclick="window.location.href = 'https://gdlrrlist.com/add?record=<%= locals._id %>'">Add submission</button>
+              <br>
+              </div>
+
+    <!-- scripts to include -->
+      <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+    <script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js"></script>
+  </body>
+</html>

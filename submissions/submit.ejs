@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+  <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+    <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+    <!--<body style="background-color:white;">-->
+    <%- include("../htdocs/navbar.ejs") %>
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+      <h1 style = "text-align:center">LRR Demon List Submission Form</h1>
+      <h4 style = "text-align:center">The form used to submit any records for levels on the LRR Demon List. If you're submitting a record for someone else, PLEASE check the site first to make sure it hasn't already been submitted. Also, don't send nonsense, it just wastes our time. Also, if submitting a progress, make sure your record percentage is greater than or equal to the required percentage.
+<br></br>
+RECORD GUIDELINES!<br>
+Record submissions to this list also follows Pointercrates guidelines! Make sure to read them here: <a href="https://pointercrate.com/guidelines/" target="_blank">https://pointercrate.com/guidelines/</a>
+<br></br>
+NEW GUIDELINES AS OF JULY 23, 2022<br>
+Make sure to read the new guidelines on the homepage to see what was changed, these are very important for record submitting!</br>
+<br></br>
+LRR Exclusive guidelines:
+<br>
+- An fps counter is required for ANY record submission.
+<br>
+- We only accept records that are 75fps or below!
+<br>
+- Raw footage alone without clicks usually will not be accepted.
+<br>
+- Following megahack hacks banned: TPS Bypass, Stable Pulse, Trail Bug Fix
+<br>
+- If using megahack v6 or higher: required to show megahack menu in raw footage, and required to use the megahack fps counter.
+<br>
+- For IOS records using everyplay, required to exit the recording and go back into Geometry Dash to exit the level (example in the discord server).</h4>
+
+    <form action="/submit" method="post">
+      <div style="display: grid; place-items: center;">
+        <label>Username</label>
+        <br>
+        <input type="text" placeholder="Username" name="username" required></input>
+        <br></br>
+        <label>Demon</label>
+        <br>
+        <input type="text" placeholder="Demon" name="demon" required></input>
+        <br></br>
+        <label>Refresh Rate/FPS (put Mobile/M if mobile):</label>
+        <br>
+        <input type="text" placeholder="hertz" name="hertz" required></input>
+        <br></br>
+        <label>Progress: (e.g. '56', '95', '100') Levels need to be in the Main List for non-100% progresses to apply.</label>
+        <br>
+        <input type="number" placeholder="progress" name="progress" required></input>
+        <br></br>
+         <label>Raw Footage? (Read guidelines above)</label>
+        <br>
+        <input type="url" placeholder="Raw Footage Video" name="raw"></input>
+        <br></br>
+        <label>Video</label>
+        <br>
+        <input type="url" placeholder="Video" name="video" required></input>
+        <br></br>
+        <label>Notes/Comments</label>
+        <h6>Add whatever you want us to know about your record here (e.g. explanations for anything that may seem suspicious, LDM proofs, level IDs if you played on a copy, your hopes and dreams, etc.)</h6>
+        <input type="text" placeholder="comments" name="comments" style="width:70%; height: 100px;"></input>
+        <br></br>
+        <button type="submit" style="border-radius: 15px; font-size: 40px;">Submit</button>
+        <br></br>
+      </div>
+    </form>
+
+    <!-- scripts to include -->
+    <script src="JS/dropdown.js"></script>
+      <script src="JS/darkbutton.js?v=2022-07-30"></script>
+  </body>
+</html>

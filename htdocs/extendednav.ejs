@@ -1,0 +1,24 @@
+
+  <div id="myExtendedNav" class="dropdown-extendedNav">
+          <a onclick="" class="btn-toggle2 nav-buttons"><i class="fa-solid fa-circle-half-stroke"></i>&nbsp;&nbsp;Day/Night</a>
+           <a class="nav-buttons <%= locals.active == 'submit' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/submit"><i class="fa fa-file-o"></i>&nbsp;&nbsp;Submit</a>
+    <% if(locals.loggedIn) {%>
+    <a class="nav-buttons <%= locals.active == 'notifications' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/notifications"><i class="fa fa-bell"></i>&nbsp;&nbsp;Notifications</a>
+      <% } %>
+           <% if(locals.editable) { %>
+          <a class="nav-buttons <%= locals.active == 'settings' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/settings"><i class="fa fa-gear"></i>&nbsp;&nbsp;Settings</a>
+            <a class="nav-buttons <%= locals.active == 'search' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/alllevels"><i class="fa fa-search"></i>&nbsp;&nbsp;Search</a>
+             <% if(["61plus", "lrr-levels"].includes(locals.active)) { %>
+            <a onclick="addCook()"><i class='fas fa-edit'></i>&nbsp;&nbsp;Edit Info</a>
+              <% } %>
+             <a class="nav-buttons <%= locals.active == 'submissions' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/submissions"><i class="fas fa-book"></i>&nbsp;&nbsp;Submissions</a>
+                <a class="nav-buttons <%= locals.active == 'sheets' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/sheets"><i class="fa fa-file-text-o"></i>&nbsp;&nbsp;Sheets</a>
+                <a class="nav-buttons <%= locals.active == 'bans' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/bans"><i class="fas fa-hammer"></i>&nbsp;&nbsp;Bans</a>
+              <a href="https://gdlrrlist.com/everything"><i class="fas fa-tools"></i>&nbsp;&nbsp;Everything Link</a>
+            <% } %>
+              <% if(!locals.loggedIn) {%>
+    <a onclick="openSwal()"><i class="fa fa-sign-in"></i>&nbsp;&nbsp;Log In</a>
+    <% } else { %>
+      <a onclick="logout()"><i class='fas fa-sign-out'></i>&nbsp;&nbsp;Log Out</a>
+      <% } %>
+</div>

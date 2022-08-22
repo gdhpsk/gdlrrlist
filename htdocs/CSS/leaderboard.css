@@ -1,0 +1,45 @@
+.nationality {
+    /*background-size: contain;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;*/
+    width: 1.2em;
+    position: relative;
+    /* line-height: 1em;*/
+}
+
+.pjgfgh {
+  text-align: left;
+  font-size: 14px;
+}
+
+body.dark-theme .swal2-modal{
+  background-color: #323131;
+}
+
+#leaderboard {
+  width:95%;
+  max-width:650px;
+  margin:auto;
+}
+
+#flag_column {
+  min-width:1.2em;
+}
+
+#rank_table_body {
+  margin: 0 auto;
+}
+
+.rank_number {
+  width:2em;
+}
+
+.center {
+  text-align:center;
+}
+
+.gg-search {
+  display:inline-block;
+}

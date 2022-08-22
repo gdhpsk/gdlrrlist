@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+    function deep(smt) {
+      let visibility = document.getElementById(smt).style.visibility
+        if(visibility == "hidden") {
+  document.getElementById(smt).style.visibility = "visible"
+document.getElementById(smt).style.height = "20px"
+    } else {
+    document.getElementById(smt).style.visibility = "hidden"
+          document.getElementById(smt).style.height = "0px"
+    }
+              }
+  </script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+    <link href='https://css.gg/search.css' rel='stylesheet'>
+    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-04-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+ <script>
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+  <%- include("./navbar.ejs") %>
+  <br><br>
+    <form action="https://gdlrrlist.com/notifications" method="post">
+      <div style="display: grid; place-items: center;">
+        <label for="browser">To</label>
+<br>
+<select name="to">
+  <optgroup label="Moderators">
+  <% for(const item of locals.everyone) {%>
+   <% if(!item.mod) continue %>
+     <% if(locals.record?.username == item.name) { %>
+      <option value="<%= item.name %>" selected><%= item.name %></option>
+     <% } else { %>
+      <option value="<%= item.name %>"><%= item.name %></option>
+    <% } %>
+  <% } %>
+  </optgroup>
+    <optgroup label="Users">
+  <% for(const item of locals.everyone) { %>
+    <% if(item.mod) continue %>
+      <% if(locals.record?.username == item.name) { %>
+      <option value="<%= item.name %>" selected><%= item.name %></option>
+     <% } else { %>
+      <option value="<%= item.name %>"><%= item.name %></option>
+    <% } %>
+  <% } %>
+  </optgroup>
+</select>
+        <br></br>
+        <label>Subject</label>
+        <br>
+        <input type="text" placeholder="subject" value="<%= locals.record?.demon ? `Info reguarding your submission for ${locals.record.demon}` : '' %>" name="subject" style="width: 600px;" required></input>
+        <br></br>
+        <label>Message</label>
+      <br>
+      <textarea name="message" style="width: 1000px; height: 1000px;" required><%= locals.record?.demon ? `Reguarding your record on the level ${locals.record.demon}, ` : '' %></textarea>
+        <br></br>
+        <button type="submit" style="border-radius: 15px; font-size: 40px;">Submit</button>
+        <br></br>
+      </div>
+    </form>
+    
+    <!-- scripts to include -->
+     <script src="https://gdlrrlist.com/JS/collapsible.js?v=2020-10-06"></script>
+     <script src="https://gdlrrlist.com/JS/dropdown.js?v=2022-04-6"></script><script src="https://gdlrrlist.com/JS/videoresize.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
+  </body>
+</html>
+
+<!-- <form action="https://gdlrrlist.com/notifications" method="post">
+      <label>To:</label>
+      <br>
+      <input type="text" name="to">
+      <br>
+      <label>Subject:</label>
+      <br>
+      <input type="text" name="subject">
+      <br>
+      <label>Message</label>
+      <br>
+      <textarea name="subject" style="width: 10%; height: 150px;"></textarea>
+    </form> -->

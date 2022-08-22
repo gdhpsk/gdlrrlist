@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <style>
+
+    table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+    }
+    td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+    
+  </style>
+  <script>
+    let stuff = JSON.parse("<%= JSON.stringify(everything) %>".replaceAll('&#34;', '"')
+  </script>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+    <link href="/CSS/levelcards.css?v=2021-03-28" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+    <!--<body style="background-color:white;">-->
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+     <% let ok = 0
+       everything.opinions.forEach((opinion) => {
+       if(opinion.average) {
+         ok += opinion.average
+       }
+       })
+      ok = ok / everything.opinions.length
+       %>
+       <% let ok2 = 0
+       everything.opinions.filter(e => !e.outlier).forEach((opinion) => {
+         ok2 += opinion.average
+       })
+      ok2 = ok2 / everything.opinions.filter(e => !e.outlier).length
+       %>
+         <p id="error-message"></p>
+         <table>
+       <tr>
+      <th>Level?</th>
+      <th>Placed?</th>
+      <th>Average</th>
+      <th>W/o outliers</th>
+      <th>Add opinion</th>
+        <th>Delete sheet</th>
+         <th>Go back to sheets</th>
+     </tr>
+         <tr>
+           <td><%= everything._id %></td>
+           <td><%= everything.index %></td>
+           <td><%= ok %></td>
+           <td><%= ok2 %></td>
+           <td><button type="button" onclick='putREQ("<%= everything._id %>")'>+</button></td>
+       <td><button type="button" onclick='deleteREQ("<%= everything._id %>")'>Delete sheet</button></td>
+           <td><button type="button" onclick="window.location.href = 'https://gdlrrlist.com/sheets'">Go Back</button></td>
+         </tr>
+       </table>
+       <br></br>
+      <table>
+     <tr>
+      <th>Player</th>
+      <th>Harder than</th>
+      <th>Easier than</th>
+       <th>Range</th>
+       <th>Opinion Value</th>
+       <th>Progresses</th>
+       <th>Reliable?</th>
+        <th>Outlier?</th>
+       <th>Comments</th>
+       <th>Submit any new info</th>
+     </tr>
+        
+       <% for(let i = 0; i < everything.opinions.length; i++) { %>
+         <tr>
+           <form action="/sheets/<%= everything._id %>/<%= everything.opinions[i]._id %>" method="post">
+           <td><textarea name="tag"><%= locals.everything.opinions[i].tag %></textarea></td>
+           <td><textarea name="above"><%= locals.everything.opinions[i].above.level %></textarea></td>
+           <td><textarea name="below"><%= locals.everything.opinions[i].below.level %></textarea></td>
+           <td><textarea name="range"><%= locals.everything.opinions[i].range %></textarea></td>
+           <td><input type="number" name="average" value="<%= locals.everything.opinions[i].average %>"></input></td>
+           <td><textarea name="progresses"><%= locals.everything.opinions[i].progresses %></textarea></td>
+          <td><textarea name="reliable"><%= locals.everything.opinions[i].reliable %></textarea></td>
+           <td><select name="outlier"><option value="<%= everything.opinions[i].outlier ? 'true' : 'false' %>"><%= everything.opinions[i].outlier ? 'true' : 'false' %></option>
+  <option value="<%= everything.opinions[i].outlier ? 'false' : 'true' %>"><%= everything.opinions[i].outlier ? 'false' : 'true' %></option></select></td>
+           <td><textarea name="comments"><%= locals.everything.opinions[i].comments %></textarea></td>
+           <td><button type="submit">Submit</button>
+           </form>
+           <br>
+           <button type="button" onclick='deleteOpinion({name: "<%= locals.everything._id %>", id: "<%= locals.everything.opinions[i]._id %>"})'>Delete</button></td>
+         </tr>
+         <% } %>
+           </table>
+     <script>
+       async function deleteREQ(name) {
+      let data = await fetch("https://gdlrrlist.com/api/helper/sheets", {
+        method: "DELETE",
+      headers: {  
+    'Content-Type': 'application/json'
+   },
+   body: JSON.stringify({
+     name
+   })
+})
+      try {
+        let json = await data.json()
+        document.getElementById("error-message").innerText = json.message
+      } catch(_) {
+        window.location.href = "https://gdlrrlist.com/sheets"
+      }
+    };
+       async function putREQ(name) {
+      let data = await fetch("https://gdlrrlist.com/api/helper/sheets", {
+        method: "PUT",
+      headers: {  
+    'Content-Type': 'application/json'
+   },
+   body: JSON.stringify({
+     name
+   })
+})
+         let json = await data.json()
+      if(data.status != 201) {
+        document.getElementById("error-message").innerText = json.message
+      } else {
+        window.location.reload()
+      }
+    };
+       async function deleteOpinion(obj) {
+      let data = await fetch("https://gdlrrlist.com/api/helper/sheets/opinion", {
+        method: "DELETE",
+      headers: {  
+    'Content-Type': 'application/json'
+   },
+   body: JSON.stringify(obj)
+})
+      try {
+        let json = await data.json()
+        document.getElementById("error-message").innerText = json.message
+      } catch(_) {
+        window.location.reload()
+      }
+    };
+       
+      (() => {
+    if(localStorage.getItem("theme") == "dark") {
+      document.getElementById("wesure").className = "dark-theme"
+    } else {
+      document.getElementById("wesure").className = ""
+    }
+  })()
+    </script>
+    <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+  </body>
+</html>

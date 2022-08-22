@@ -1,0 +1,213 @@
+<script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script defer>
+
+  function getCookie(cname) {
+  var cookies = ` ${document.cookie}`.split(";");
+  var val = "";
+  for (var i = 0; i < cookies.length; i++) {
+    var cookie = cookies[i].split("=");
+    if (cookie[0] == ` ${cname}`) {
+      return cookie[1];
+    }
+  }
+  return "";
+}
+  
+  if(localStorage.getItem("notif-1") != "seen") {
+    Swal.fire({
+      confirmButtonText: "Exit",
+      title: "LRR LIST WEBSITE NEWS",
+      html: `<p>There is now a mailing system implemented in the LRR Demon List! Mods will be able to send you mail about your record (if they have any questions). To access it, you must first be logged in via the \"More...\" tab in the navigation bar, and then on the same dropdown, click on \"Notifications\". Here, you will receive your mail. Have a nice day! :)</p>`,
+      confirmButtonColor: localStorage.getItem("theme") == "dark" ? "black" : undefined,
+      background: localStorage.getItem("theme") == "dark" ? "#333333" : "white"
+    })
+    localStorage.setItem("notif-1", "seen")
+  }
+
+  fetch("https://gdlrrlist.com/api/v1/client/notifications?fromUser=false&toUser=true", {
+    method: "GET",
+    headers: {
+      authorization: `User ${getCookie("token")}`
+    }
+  })
+  .then(function (response) {
+    if(response.status != 200) return {mail: []}
+    return response.json();
+  })
+  .then(function (data) {
+    if(data.mail.filter(e => !e.read).length) {
+      alert(`Please check your mail! You have ${data.mail.filter(e => !e.read).length} unread notifications. You can check by either going to https://gdlrrlist.com/notifications or clicking on the "More..." navigation bar button and then clicking on "Notifications".`)
+    }
+  })
+  .catch(function (err) {
+    
+  });
+  
+</script>
+<script>
+  let permission = Notification.permission;
+  if(permission === "default") {
+    requestAndShowPermission();
+}
+  function getCookie(cname) {
+  var cookies = ` ${document.cookie}`.split(";");
+  var val = "";
+  for (var i = 0; i < cookies.length; i++) {
+    var cookie = cookies[i].split("=");
+    if (cookie[0] == ` ${cname}`) {
+      return cookie[1];
+    }
+  }
+  return "";
+}
+
+  let socket = new WebSocket("wss://gdlrrlist.com")
+  socket.onopen = () => {
+    socket.close()
+  }
+
+  socket.onclose = function yes() {
+     socket = new WebSocket("wss://gdlrrlist.com")
+
+    socket.onopen = () => {
+        socket.send(JSON.stringify({
+            token: getCookie("token")
+        }))
+        socket.onmessage = message => {
+            let data = JSON.parse(message.data)
+            if(!data.error && data.message) {
+          
+              let permission = Notification.permission;
+if(permission === "granted") {
+   showNotification(data);
+} else if(permission === "default"){
+   requestAndShowPermission();
+} else {
+  const audio = new Audio("https://gdlrrlist.com/notification.mp3");
+  audio.play();
+}
+            }
+        }
+    }
+
+    socket.onclose = yes
+  }
+  
+
+  function showNotification(data) {
+  let title = data.subject;
+   let icon = "https://gdlrrlist.com/icon.png"
+   let body = data.message;
+   let notification = new Notification(data.from, { body, icon });
+
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          notification.close();
+        } catch(_) {
+          
+        }
+        resolve()
+      }, 5000)
+    })
+    
+   notification.onclick = () => { 
+          notification.close();
+          window.open("https://gdlrrlist.com/notifications")
+   }
+}
+
+function requestAndShowPermission() {
+   Notification.requestPermission()
+}
+  
+  function addCook() {
+  if(getCookie("editing") == "true") {
+    document.cookie = "editing=false; path=/"
+  } else {
+    document.cookie = "editing=true; path=/"
+  }
+    window.location = window.location
+  }
+  function logout() {
+  document.cookie = "token=; Max-Age=0; path=/; domain="
+    window.location = window.location
+  }
+  function dosmt(type) {
+    let name = document.getElementById(`name-${type}`).value
+    let password = document.getElementById(`password-${type}`).value
+    if(!password || !name) return
+    let password2 = document.getElementById(`password2-${type}`)?.value
+            $.post(`https://gdlrrlist.com/${type}`, {name: name, password2: password2, password: password}, function(data, status, xhr) {
+              let message = JSON.parse(data)?.message
+              let error_message_p = type == "signup" ? "deeping" : "deepin"
+               if(message) {
+                 document.getElementById(error_message_p).innerText = message
+               } else {
+                  document.cookie = `token=${JSON.parse(data).authCode}; path=/; Max-Age=604800`
+                 window.location.href = "/"
+               }
+            }, 'text')
+  }
+  function openSwal() {
+    Swal.fire({
+      confirmButtonText: "Exit",
+      title: "Login",
+      html: `
+<form>
+<div style="display: grid; place-items: center;">
+        <label>Username</label>
+        <input type="text" placeholder="username" id="name-login"></input>
+        <br>
+        <label>Password</label>
+        <input type="password" placeholder="password" id="password-login"></input>
+        <br>
+        <button type="button" onclick="dosmt('login')" style="border: none; background-color: #08c; color: white;"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Log In</p></button>
+      </div>
+</form>
+<br>
+      <p id="deepin"></p>
+      <p>Want to make a new account? Sign up here:</p>
+<form>
+      <div style="display: grid; place-items: center;">
+        <label>Username</label>
+        <input type="text" placeholder="username" id="name-signup"></input>
+        <br>
+        <label>Password</label>
+        <input type="password" placeholder="password" id="password-signup"></input>
+        <br>
+        <label>Repeat password</label>
+        <input type="password" placeholder="password" id="password2-signup"></input>
+        <br>
+        <button type="button" onclick="dosmt('signup')" style="border: none; background-color: #08c; color: white;"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Sign Up</p></button>
+      </div>
+</form>
+<p id="deeping"></p>`,
+      confirmButtonColor: localStorage.getItem("theme") == "dark" ? "black" : undefined,
+      background: localStorage.getItem("theme") == "dark" ? "#333333" : "white"
+    })
+  }
+</script>
+<ul class="nav">
+         <li class="redir"><a class="nav-buttons extendedNav" onclick="showRemainingNav()">More...</a></li>
+      <%- include("./extendednav.ejs") %>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'leaderboard' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/leaderboard.html">Leaderboard</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == '61plus' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/61plus.html">61hz+ Levels</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'legacy' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/legacy.html">Legacy List</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'extended' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/extended.html">Extended List</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'index' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/index.html">Main List</a></li>
+    <li class="titlebox"><a href="https://gdlrrlist.com" class="titlebox-href">GD LRR Demon List</a></li>
+    <li>
+    <button onclick="dropMenu()" class="dropbtn">Go To...</button>
+        <div id="myDropdown" class="dropdown-content">
+            <a class="nav-buttons <%= locals.active == 'index' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/index.html">Main List</a>
+            <a class="nav-buttons <%= locals.active == 'extended' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/extended.html">Extended List</a>
+            <a class="nav-buttons <%= locals.active == 'legacy' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/legacy.html">Legacy List</a>
+            <a class="nav-buttons <%= locals.active == '61plus' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/61plus.html">61hz+ levels</a>
+            <a class="nav-buttons <%= locals.active == 'leaderboard' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/leaderboard.html">Leaderboard</a>
+          <a class="nav-buttons extendedNav" onclick="showRemainingNav()">More...</a>
+        </div>
+    </li>
+</ul>
