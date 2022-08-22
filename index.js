@@ -542,7 +542,7 @@ app.route("/settings")
       }
     }
   }
-  return res.render("../accessible.ejs", {editable, editing, loggedIn, everything, active: "settings"})
+  return res.render("../misc/accessible.ejs", {editable, editing, loggedIn, everything, active: "settings"})
 })
 .post(async (req, res) => {
    let response = await request("https://gdlrrlist.com/api/mods/settings", {
@@ -718,7 +718,7 @@ return res.json({status: 200, authCode: token})
 
 app.get("/everything", async (req, res) => {
   let approved = await hasAccess(true, req, res);   if(!approved) return res.render("404.ejs")
-  return res.render("../main.ejs", {APIKEY: APIKey})
+  return res.render("../misc/main.ejs", {APIKEY: APIKey})
 })
 
 // searching for stuff
@@ -734,17 +734,17 @@ app.get("/search/leaderboard", async (req, res) => {
     editing = true
   }
   }
-    return res.render("../search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchlevel.js?v=3-7-22", loggedIn, editing, editable})
+    return res.render("../misc/search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchlevel.js?v=3-7-22", loggedIn, editing, editable})
 })
 
 app.get("/search/nationalities", async  (req, res) => {
    let {loggedIn, editing, editable} = await getDetails(req)
-    return res.render("../search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchnations.js?v=4-7-22", loggedIn, editing, editable})
+    return res.render("../misc/search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchnations.js?v=4-7-22", loggedIn, editing, editable})
 })
 
 app.get("/search/levels", async (req, res) => {
   let {loggedIn, editing, editable} = await getDetails(req)
-    return res.render("../search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchleaderboard.js?v=3-5-22", loggedIn, editing, editable})
+    return res.render("../misc/search.ejs", {script: "https://gdlrrlist.com/extrascripts/searchleaderboard.js?v=3-5-22", loggedIn, editing, editable})
 })
 
 // discord

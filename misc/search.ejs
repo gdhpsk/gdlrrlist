@@ -1,5 +1,42 @@
 <!DOCTYPE html>
 <html>
+  <style>
+    .search-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+input {
+  font-size: 1rem;
+}
+
+.user-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: .25rem;
+  margin-top: 1rem;
+}
+
+.card {
+  border: 1px solid black;
+  background-color: white;
+  padding: .5rem;
+}
+
+.card > .header {
+  margin-bottom: .25rem;
+}
+
+.card > .body {
+  font-size: .8rem;
+  color: #777;
+}
+
+.hide {
+  display: none;
+}
+  </style>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
@@ -23,36 +60,21 @@
   <body class = "" id="wesure">
     <!--<body style="background-color:white;">-->
       
-    <%- include("./htdocs/navbar.ejs") %>
+   <%- include("../htdocs/navbar.ejs") %>
 
     <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
-      <form action="/changerecordpos" method="post">
-      <div style="display: grid; place-items: center;">
-        <label>Level</label>
-        <br>
-        <input type="text" placeholder="Level" name="level" required></input>
-        <br></br>
-        <label>Type</label>
-        <br>
-        <select name="type">
-  <option value="list">Completions</option>
-  <option value="progresses">progresses</option>
-        </select>
-        <br></br>
-        <label>Player name</label>
-        <br>
-        <input type="text" placeholder="name" name="name" required></input>
-        <br></br>
-        <label>Move to</label>
-        <br>
-        <input type="number" placeholder="move to" name="moved" required></input>
-        <br></br>
-        <button type="submit" style="border-radius: 15px; font-size: 40px;">Submit</button>
-        <br></br>
-      </div>
-    </form>
-
+     <div class="search-wrapper">
+    <label for="search">Search</label>
+    <input type="search" id="search" data-search>
+  </div>
+  <div class="user-cards" data-user-cards-container></div>
+  <template data-user-template>
+    <div class="card">
+      <div class="header" data-header></div>
+      <div class="body" data-body></div>
+    </div>
+  </template>
     <!-- scripts to include -->
      <script>
       (() => {
@@ -64,5 +86,6 @@
   })()
     </script>
     <script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js"></script>
+    <script src="<%= locals.script %>"></script>
   </body>
 </html>
