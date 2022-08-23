@@ -9,7 +9,7 @@ const app = express.Router()
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-const {APIKey, discord_token} = process.env
+const {discord_token} = process.env
 const levels_point_calc = require("./levels_point_calc")
 const levels_progs_calc = require("./levels_progs_calc")
 const {request} = require("undici")

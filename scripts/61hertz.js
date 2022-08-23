@@ -19,6 +19,43 @@ module.exports = (obj) => {
   res.redirect(req.headers.referer)
 })
 
+  app.post("/edit61hzlevel/:name", async(req, res) => {
+  let data = {}
+  let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
+  let level = await sixtyoneSchema.findOne({name: req.params.name})
+  data.old = level
+  if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level name!"})
+   let message = `The following info on the 61hz+ level ${level.name} has been changed:\n`
+   for(const key in req.body) {
+     level[key] = req.body[key]
+     message += `${key}: ${req.body[key]}\n`
+   }
+  await level.save()
+  data.new = level
+  if(req.body.placement != level.position) {
+  var everything = await sixtyoneSchema.find().sort({position: 1})
+  var index = everything.findIndex(e => e._id == level._id.toString())
+    if(req.body.placement == 0 || req.body.placement > everything.length) return res.render("404.ejs", {error: "400 Bad Request", message: `Please input a valid placement between 1 and ${everything.length+1}!`})
+    everything[index].position = req.body.placement
+   await everything[index].save()
+    message += `placement: #${index+1} to #${req.body.placement}`
+    let start = index+1 > req.body.placement ? req.body.placement-1 : index
+    let end = index+1 < req.body.placement ? index+1 : req.body.placement
+  for(let i = start; i < end; i++) {
+   await sixtyoneSchema.findOneAndUpdate({name: everything[i].name}, {
+     $set: {
+       position: i+1
+     }
+   })
+  }
+}
+  webhook(message, null, {
+    event: "61_HERTZ_LEVEL_CHANGE",
+    data
+  })
+  res.redirect(req.headers.referer)
+})
+
 app.route("/add61hertzlevel")
 .get(async (req, res) => {
   let approved = await hasAccess(true, req, res);   if(!approved) return res.render("404.ejs")
