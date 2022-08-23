@@ -131,6 +131,10 @@ if(req.body.video) {
   if(hasSubmitted && hasSubmitted._id.toString() != req.body.id) return res.status(400).json({error: config["400"], message: "You have already submitted a record for this level! If you have any questions about your record, please contact the staff team."})
 
     let submission = await submitSchema.findById(req.body.id)
+    let data = {
+      new: req.body.status,
+      old: submission.status
+    }
 if(submission.status != req.body.status) {
     if(req.body.status == "accepted") {
         try {
@@ -169,6 +173,10 @@ if(submission.status != req.body.status) {
        if(alr.statusCode == 429) {
          return res.status(429).send({error: config["429"][0], message: config["429"][1]})
        }
+       webhook(`The status of the submission has been changed to ${data.new}`, null, {
+    event: "SUBMISSION_STATUS_UPDATE",
+    data
+  })
      } catch(_) {
        
      }
