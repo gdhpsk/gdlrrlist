@@ -21,6 +21,8 @@ module.exports = async (server, options) => {
       body: that
     })
     server(JSON.stringify(real), options)
+    } catch(_) {
+      
     }
   }
   return real

@@ -154,6 +154,7 @@ app.use((req, res, next) => {
   next()
 })
 app.use("/api", api);
+app.use(cookieParser())
 app.use("/", express.static("sounds"));
 app.use("/api", require("./api/api.js")(hasCorrectAuth, webhook, send_to_client));
 
@@ -320,7 +321,7 @@ app.use("/nationalities", require("./scripts/nationalities")({ hasAccess, leader
 
 // regular levels
 
-app.use("/", require("./scripts/levels")({ hasAccess, getDetails, levelsSchema, leaderboardSchema, webhook }))
+app.use("/", require("./scripts/levels")({ hasAccess, getDetails, levelsSchema, leaderboardSchema, webhook, getCookie }))
 
 // 61hz+ levels
 
@@ -328,7 +329,7 @@ app.use("/", require("./scripts/61hertz")({ hasAccess, getDetails, sixtyoneSchem
 
 // records
 
-app.use("/", require("./scripts/records")({ hasAccess, getDetails, levelsSchema, leaderboardSchema, webhook, submitSchema }))
+app.use("/", require("./scripts/records")({ hasAccess, getDetails, getCookie }))
 
 // mod submissions manager
 app.use("/submissions", require("./scripts/submissions")({ getDetails, getCookie }))

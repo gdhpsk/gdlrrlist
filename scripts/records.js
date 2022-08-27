@@ -4,7 +4,7 @@ const {request} = require("undici")
 app.use(express.urlencoded({ extended: true }))
 
 module.exports = (obj) => {
-  let { hasAccess, getDetails, levelsSchema, leaderboardSchema, webhook, submitSchema, getCookie } = obj
+  let { hasAccess, getDetails, getCookie } = obj
 
   app.route("/deletesub")
 .get(async (req, res) => {
@@ -34,10 +34,18 @@ app.route("/add")
   let {loggedIn, editing, editable} = await getDetails(req)
   if(req.query.record) {
     try {
-      let info = await submitSchema.findById(req.query.record)
-      if(info) {
+     const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions`, {
+    headers: {
+      authorization: `Helper ${getCookie("token", req)}`
+    }
+  })
+  let json = await submissions.body.json()
+  if(submissions.statusCode == 200) {
+    let info = json.find(e => e._id == req.query.record)
+    if(info) {
         return res.render("../adding/addsub.ejs", {loggedIn, editing, editable, info})
       }
+  }
     } catch(_) {
       
     }

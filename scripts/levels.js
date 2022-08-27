@@ -1,50 +1,25 @@
 const express = require("express")
 const app = express.Router()
+const {request} = require("undici")
 app.use(express.urlencoded({ extended: true }))
 
 module.exports = (obj) => {
-  let { hasAccess, getDetails, leaderboardSchema, levelsSchema, webhook } = obj
+  let { hasAccess, getDetails, leaderboardSchema, levelsSchema, webhook, getCookie } = obj
 
   app.post("/editlevel/:name", async(req, res) => {
-  let data = {}
-  let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
-  let level = await levelsSchema.findOne({name: req.params.name})
-  if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level name!"})
-  data.old = level
-  let message = `The following info on the level ${level.name} has been changed:\n`
-   for(const key in req.body) {
-     level[key] = req.body[key]
-     if(key != "position") {
-     message += `${key}: ${req.body[key]}\n`
-     }
-   }
-  await level.save()
-  data.new = level
-  if(req.body.placement != level.position) {
-    
-    req.body.placement = parseInt(req.body.placement)
-  var everything = await levelsSchema.find().sort({position: 1})
-  var index = everything.findIndex(e => e._id == level._id.toString())
-    if(req.body.placement == 0 || req.body.placement > everything.length) return res.render("404.ejs", {error: "400 Bad Request", message: `Please input a valid placement between 1 and ${everything.length+1}!`})
-    everything[index].position = req.body.placement
-    await everything[index].save()
-    message += `placement: #${index+1} to #${req.body.placement}`
-    let start = index+1 > req.body.placement ? req.body.placement-1 : index
-    let end = index+1 < req.body.placement ? index+1 : req.body.placement
-  for(let i = start; i < end; i++) {
-   await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
-     $set: {
-       position: i+2
-     }
-   })
-  }
-}
-  webhook(message, null, {
-    event: "LEVEL_EDIT",
-    data
+    req.body.name = req.params.name
+    let response = await request("https://gdlrrlist.com/api/helper/levels", {
+      method: "PATCH",
+      body: JSON.stringify(req.body),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Helper ${getCookie("token", req)}`
+      }
+    })
+    let body = await response.body.json()
+    if(response.statusCode != 200) return res.render("404.ejs", body)
+    res.redirect(req.headers.referer)
   })
-  res.redirect(req.headers.referer)
-})
 
   app.post("/editrecordcomp/:level/:id", async (req, res) => {
   let data = {}
