@@ -8,29 +8,7 @@ module.exports = (obj) => {
 app.post("/add", async (req, res) => {
   let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
   let that = {
-        "id": process.env.discordid,
-        "type": 0,
         "content": ``,
-        "channel_id": process.env.discordid,
-        "author": {
-            "bot": true,
-            "id": process.env.discordid,
-            "username": "database",
-            "avatar": "76f63eb129f3c44321041be72c2fd8cc",
-            "discriminator": "0000"
-        }, 
-        "file": null,
-        "embeds": [],
-        "mentions": [],
-        "mention_roles": [],
-        "pinned": false,
-        "mention_everyone": false,
-        "tts": false,
-        "timestamp": Date.now(),
-        "edited_timestamp": null,
-        "flags": 0,
-        "components": [],
-        "webhook_id": process.env.discordid
     }
   let packs = await rolePacksSchema.findById("629f0d8cea10be1cf846e85d")
   let message = "982564758609887264"
@@ -76,33 +54,11 @@ for(const key in packs["Level Packs"]) {
 app.post("/delete", async (req, res) => {
   let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
   let that = {
-        "id": process.env.discordid,
-        "type": 0,
         "content": ``,
-        "channel_id": process.env.discordid,
-        "author": {
-            "bot": true,
-            "id": process.env.discordid,
-            "username": "database",
-            "avatar": "76f63eb129f3c44321041be72c2fd8cc",
-            "discriminator": "0000"
-        }, 
-        "file": null,
-        "embeds": [],
-        "mentions": [],
-        "mention_roles": [],
-        "pinned": false,
-        "mention_everyone": false,
-        "tts": false,
-        "timestamp": Date.now(),
-        "edited_timestamp": null,
-        "flags": 0,
-        "components": [],
-        "webhook_id": process.env.discordid
     }
   let packs = await rolePacksSchema.findById("629f0d8cea10be1cf846e85d")
   let L = undefined
-  let message = "982564758609887264"
+  let message = process.env.roles_message
   for(const key in packs["Level Packs"]) {
     let pack = packs["Level Packs"][key]
      delete pack[req.body.id]
@@ -116,7 +72,7 @@ app.post("/delete", async (req, res) => {
   
    
 if(!L) {
-    message = "982565026961432577"
+    message = process.env.roles_message
 for(const key in packs["Level Packs"]) {
   if(["Legacy", "Basic", "Intermediate"].includes(key)) continue;
   if(key == "Advanced") {

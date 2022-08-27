@@ -10,6 +10,7 @@ module.exports = async (server, options) => {
         "embeds": embeds ? embeds : [],
         "components": []
     }
+    try {
     let real = {
       message_data: that,
       event: info.event,
@@ -20,6 +21,7 @@ module.exports = async (server, options) => {
       body: that
     })
     server(JSON.stringify(real), options)
+    }
   }
   return real
 }
