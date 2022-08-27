@@ -4,6 +4,7 @@ const allowedPeople = require("../schemas/allowedPeople.js")
 const jwt = require("jsonwebtoken")
 const opinionSchema = require("../schemas/opinions.js")
 const levelsSchema = require("../schemas/levels.js")
+const leaderboardSchema = require("../schemas/leaderboard.js")
 let routes = {}
 const dayjs = require("dayjs")
 const submitSchema = require("../schemas/submissions.js")
@@ -62,9 +63,9 @@ router.use(express.urlencoded({ extended: true }))
        name: req.body.name
      }
    })
-    return res.status(201).send(item)
+    return res.status(201).json(item)
   }
- return res.status(200).send(everything)
+ return res.status(200).json(everything)
 })
 
   router.route("/sheets/opinion")
@@ -132,8 +133,8 @@ if(req.body.video) {
 
     let submission = await submitSchema.findById(req.body.id)
     let data = {
-      new: req.body.status,
-      old: submission.status
+      old: submission.status,
+      status: req.body.status
     }
 if(submission.status != req.body.status) {
     if(req.body.status == "accepted") {
@@ -173,14 +174,14 @@ if(submission.status != req.body.status) {
        if(alr.statusCode == 429) {
          return res.status(429).send({error: config["429"][0], message: config["429"][1]})
        }
-       webhook(`The status of the submission has been changed to ${data.new}`, null, {
-    event: "SUBMISSION_STATUS_UPDATE",
-    data
-  })
      } catch(_) {
        
      }
     }
+  webhook(`A submissions status has been ${req.body.status}!`, [{description: `A submission by ${submission.username} has been ${submission.status}. (submission: [${submission.demon} ${submission.progress}% on ${submission.hertz}](${submission.video}), comments: ${submission.comments || "none"})`}], {
+    event: "STATUS_UPDATE",
+    data
+  })
 }
 
     for(const key in req.body) {
@@ -189,7 +190,179 @@ if(submission.status != req.body.status) {
       }
     }
     await submission.save()
+    
     return res.json(submission)
+})
+
+  router.route("/records")
+  .put(async (req, res) => {
+    if(!req.body.demon || !req.body.username || !req.body.hertz || !req.body.progress || !req.body.video) return res.status(400).json({error: config["400"], message: "Please input ALL the following arguments: 'demon', 'username', 'hertz', 'progress', and 'video'."})
+  var level = await levelsSchema.findOne({name: req.body.demon})
+  var user = await leaderboardSchema.findOne({name: req.body.username.trim()})
+    if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
+  if(!user) {
+   user = await leaderboardSchema.create({name: req.body.username.trim(), levels: [], progs: ["none"]})
+  }
+
+
+    var obj = {
+      name: req.body.username.trim(),
+      link: req.body.video.trim(),
+      hertz: req.body.hertz.trim()
+    }
+    try {
+      new URL(obj.link)
+    } catch(_) {
+      res.status(400).json({error: config["400"], message: "Please input a valid video URL!"}) 
+    }
+  if(obj.hertz.toLowerCase() == "mobile") return res.status(400).json({error: config["400"], message: "Did you mean to input 'M'? lol!"}) 
+  if(req.body.progress < 100) {
+    var everything = await levelsSchema.find().sort({position: 1})
+    if(everything.findIndex(e => e.name == level.name) > 74) return res.status(400).json({error: config["400"], message: "This level does not have a listpercent!"})
+    obj.percent = req.body.progress
+    level.progresses = level.progresses.filter(e => e.name != obj.name)
+    if(level.progresses[0] != "none") {
+      await level.progresses.push(obj)
+    } else {
+      level.progresses[0] = obj
+    }
+    await level.save()
+    user.progs = user.progs.filter(e => e.name != level.name)
+    if(user.progs[0]) {
+      if(user.progs[0] != "none") {
+        user.progs.push({name: level.name, percent: obj.percent})
+      } else {
+        user.progs[0] = {name: level.name, percent: obj.percent}
+      }
+    } else {
+        user.progs.push({name: level.name, percent: obj.percent})
+    }
+    await user.save()
+  } else if(req.body.progress == 100) {
+    if(level.list[0] != "none") {
+       level.list.push(obj)
+    } else {
+      level.list[0] = obj
+    }
+    level.progresses = level.progresses.filter(e => e?.name != obj.name)
+    if(!level.progresses[0]) {
+      level.progresses[0] == "none"
+    }
+    await level.save()
+    if(user.levels[0]) {
+      if(user.levels[0] != "none") {
+        user.levels.push(level.name)
+      } else {
+        user.levels[0] = level.name
+      }
+    } else {
+        user.levels.push(level.name)
+    }
+    user.progs = user.progs.filter(e => e.name != level.name)
+    if(!user.progs[0]) {
+      user.progs[0] == "none"
+    }
+    await user.save()
+  } else {
+    return res.status(400).json({error: config["400"], message: "Percentage out of range."})
+  }
+  webhook(`A completion / progress has been added on the level ${level.name}. (submission: [${req.body.progress}% by ${obj.name} on ${obj.hertz}](${obj.link}))`, null, {
+    event: "RECORD_ADD",
+    data: {
+      name: obj.name,
+      level: req.body.demon.trim(),
+      progress: req.body.progress,
+      link: obj.link,
+      hertz: obj.hertz
+    }
+  })
+  if(req.query.record) {
+    try {
+      let something = await submitSchema.findById(req.query.record)
+  if(something) {
+  webhook("A submission has been archived!", [{description: `A submission by ${something.username} has been archived. (submission: [${something.demon} ${something.progress}% on ${something.hertz}](${something.video}), comments: ${something.comments || "none"})`}], {
+    event: "SUBMISSION_ARCHIVE",
+    data: something
+  })
+  something.status = "accepted"
+    await something.save()
+
+      await request("https://gdlrrlist.com/api/v1/client/notifications", {
+        method: "POST",
+        headers: {
+          'content-type': 'application/json',
+          'authorization': `User ${getCookie("token", req)}`
+        },
+        body: JSON.stringify({
+          subject: `Information about your ${something.demon} ${something.progress}% submission`,
+          message: `Your submission has been accepted by the LRR List Moderators! Submission: ${something.demon} ${something.progress}%`,
+          to: something.account
+        })
+      })
+  }
+    } catch(_) {
+      
+    }
+  }
+  return res.status(201).json({
+      name: obj.name,
+      level: req.body.demon.trim(),
+      progress: req.body.progress,
+      link: obj.link,
+      hertz: obj.hertz
+    })
+})
+  .delete(async (req, res) => {
+  let message;
+  let level = await levelsSchema.findOne({name: req.body.demon.trim()})
+  if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
+  if(req.body.progress < 100) {
+    let record = level.progresses.findIndex(e => e.name == req.body.username.trim() && e.percent == req.body.progress)
+    var player = await leaderboardSchema.findOne({name: req.body.username.trim()})
+    if(record == -1) res.status(400).json({error: config["400"], message: "This record does not exist!"})
+    message = `A progess of the level ${level.name} by [${player.name}](${level.progresses[record].link}) has been deleted. (Progress: ${level.progresses[record].percent}%)`
+    level.progresses = level.progresses.filter(e => e.name != req.body.username.trim() || e.percent != req.body.progress)
+    if(level.progresses.length == 0) {
+      level.progresses = ["none"]
+    }
+    if(!player) return res.status(400).json({error: config["400"], message: "Please input a valid player name!"})
+    player.progs = player.progs.filter(e => e.name != level.name || e.percent != req.body.progress)
+    if(player.progs.length == 0) {
+      player.progs = ["none"]
+    }
+    await level.save()
+    await player.save()
+    if(player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
+      await leaderboardSchema.findByIdAndDelete(player._id.toString())
+    }
+  } else if(req.body.progress == 100) {
+    let record = level.list.findIndex(e => e.name == req.body.username.trim())
+    if(record == -1) res.status(400).json({error: config["400"], message: "This record doesn't exist!"})
+    var player = await leaderboardSchema.findOne({name: req.body.username.trim()})
+    if(!player) return res.status(400).json({error: config["400"], message: "Please input a valid player name!"})
+    message = `A completion of the level ${level.name} by [${player.name}](${level.list[record].link}) has been deleted. `
+    level.list = level.list.filter(e => e.name != req.body.username.trim())
+    if(level.list.length == 0) {
+      level.list = ["none"]
+    }
+    player.levels = player.levels.filter(e => e != level.name)
+    await level.save()
+    await player.save()
+    if(player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
+      await leaderboardSchema.findByIdAndDelete(player._id.toString())
+    }
+  }
+  webhook(message, null, {
+    event: "RECORD_DELETE",
+    data: {
+      name: req.body.username.trim(),
+      level: req.body.demon.trim(),
+      progress: req.body.progress,
+      link: req.body.video.trim(),
+      hertz: req.body.hertz.trim()
+    }
+  })
+  return res.sendStatus(203)
 })
   
   for(let i = 0; i < router.stack.length; i++) {

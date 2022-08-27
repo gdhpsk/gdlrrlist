@@ -136,4 +136,5 @@ router.get("/nationalities", async (req, res) => {
   }
     res.json(obj)
 })
+
 module.exports = router

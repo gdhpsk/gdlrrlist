@@ -28,34 +28,25 @@
     <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
       
-      <form>
+      <form action="https://gdlrrlist.com/test" method="post">
 <div style="display: grid; place-items: center;">
   <p style="text-align: center;">Login: </p>
         <label>Username</label>
-        <input type="text" placeholder="username" id="name-login"></input>
+        <input type="text" placeholder="username" name="info[1][name]"></input>
         <br>
         <label>Password</label>
-        <input type="password" placeholder="password" id="password-login"></input>
+        <input type="password" placeholder="password" name="info[1][password]"></input>
         <br>
-        <button type="button" onclick="dosmt('login')" style="border: none; background-color: #08c; color: white;"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Log In</p></button>
+  <label>Username</label>
+        <input type="text" placeholder="username" name="info[2][name]"></input>
+        <br>
+        <label>Password</label>
+        <input type="password" placeholder="password" name="info[2][password]"></input>
+        <br>
+        <button type="submit"><p>Log In</p></button>
       </div>
 </form>
 <br>
-      <p id="deepin" style="text-align: center"></p>
-      <p style="text-align: center;">Want to make a new account? Sign up here:</p>
-<form>
-      <div style="display: grid; place-items: center;">
-        <label>Username</label>
-        <input type="text" placeholder="username" id="name-signup"></input>
-        <br>
-        <label>Password</label>
-        <input type="password" placeholder="password" id="password-signup"></input>
-        <br>
-        <label>Repeat password</label>
-        <input type="password" placeholder="password" id="password2-signup"></input>
-        <br>
-        <button type="button" onclick="dosmt('signup')" style="border: none; background-color: #08c; color: white;"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Sign Up</p></button>
-      </div>
 </form>
 <p id="deeping" style="text-align: center"></p>
     <!-- scripts to include -->

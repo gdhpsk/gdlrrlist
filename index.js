@@ -280,6 +280,14 @@ app.use("/", express.static("htdocs", {
   }
 }))
 
+app.route("/test")
+  .get((req, res) => {
+    res.render("../misc/test.ejs")
+  })
+.post((req, res) => {
+  res.json(req.body)
+})
+
 // notifications
 
 app.use("/notifications", require("./scripts/notifications.js")({ getDetails, getCookie, mailSchema, submitSchema }))
@@ -294,7 +302,7 @@ app.use("/sheets", require("./scripts/sheets")({ hasAccess, getDetails, getCooki
 
 
 // authentication
-app.use("/", require("./scripts/auth.js")({ loginSchema }))
+app.use("/", require("./scripts/auth.js")({ loginSchema, hasCorrectAuth }))
 
 // searching for stuff
 app.use("/search", require("./scripts/search.js")({ hasAccess, getDetails, levelsSchema, leaderboardSchema }))
