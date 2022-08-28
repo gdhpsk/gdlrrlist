@@ -120,24 +120,23 @@ router.use(express.urlencoded({ extended: true }))
   await level.save()
   data.new = level
   if(req.body.placement != level.position) {
-    
     req.body.placement = parseInt(req.body.placement)
-  var everything = await levelsSchema.find().sort({position: 1})
-  var index = everything.findIndex(e => e._id == level._id.toString())
+    var everything = await levelsSchema.find().sort({position: 1})
+    var index = everything.findIndex(e => e._id == level._id.toString())
     if(req.body.placement == 0 || req.body.placement > everything.length) return res.status(400).json({error: config["400"], message: `Please input a valid placement between 1 and ${everything.length+1}!`})
     everything[index].position = req.body.placement
     await everything[index].save()
     message += `placement: #${index+1} to #${req.body.placement}`
     let start = index+1 > req.body.placement ? req.body.placement-1 : index
     let end = index+1 < req.body.placement ? index+1 : req.body.placement
-  for(let i = start; i < end; i++) {
-   await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
-     $set: {
-       position: i+2
-     }
-   })
+    for(let i = start; i < end; i++) {
+      await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
+        $set: {
+          position: i+2
+        }
+      })
+    }
   }
-}
   webhook(message, null, {
     event: "LEVEL_EDIT",
     data
