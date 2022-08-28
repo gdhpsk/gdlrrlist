@@ -131,7 +131,7 @@ module.exports = (authFunction, webhook, rate_lim) => {
           }
         }
       })
-      res.status(200).send(newlev)
+      return res.status(200).send(newlev)
     })
     .delete(async (req, res) => {
       var level = await levelsSchema.findOne({ name: req.body.name.trim() })
@@ -204,7 +204,7 @@ module.exports = (authFunction, webhook, rate_lim) => {
           reason: req.body.reason ? req.body.reason.trim() : "not provided"
         }
       })
-      res.status(200).send(level)
+      return res.status(200).send(level)
     })
 
   for (let i = 0; i < router.stack.length; i++) {
