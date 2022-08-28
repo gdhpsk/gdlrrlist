@@ -14,6 +14,8 @@
 //     status: "200 OK"
 //   })
 // })
+const {REST} = require("@discordjs/rest")
+const {Routes} = require("discord-api-types/v10")
 const rest = new REST({version: '10'}).setToken(discord_token);
 const fetchUser = async id => rest.get(Routes.user(id));
 const config = require("./config.json")
