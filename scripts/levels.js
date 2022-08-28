@@ -108,78 +108,17 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
 
 app.route("/deletelevel/:name") 
 .post(async (req, res) => {
-  let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
   req.body.name = req.params.name
-  var level = await levelsSchema.findOne({name: req.body.name.trim()})
-  if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level name!"})
-  for(let i = 0; i < level.list.length; i++) {
-    var player = await leaderboardSchema.findOne({name: level.list[i].name})
-    if(player) {
-      player.levels = player.levels.filter(e => e != level.name)
-      await player.save()
-      if(player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
-      await leaderboardSchema.findByIdAndDelete(player._id.toString())
-    }
-    } else {
-      console.log(level.list[i].name)
-    }
-  }
-  if(level.progresses) {
-    if(level.progresses[0] != "none") {
-      for(let i = 0; i < level.progresses.length; i++) {
-    var player = await leaderboardSchema.findOne({name: level.progresses[i].name})
-    if(player) {
-      player.progs = player.progs.filter(e => e.name != level.name)
-      if(player.progs.length == 0) {
-        player.progs[0] = "none"
-      }
-      await player.save()
-      if(player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
-      await leaderboardSchema.findByIdAndDelete(player._id.toString())
-    }
-    } else {
-      console.log(level.progresses[i].name)
-    }
-  }
-    }
-  }
-  if(req.body.reason != "") {
-    var everything = await levelsSchema.find().sort({position: 1})
-    let obj4 = {
-      position: everything.length+1,
-      name: level.name,
-      ytcode: level.ytcode,
-      removalDate: dayjs(Date.now()).format("MMMM D, YYYY"),
-      formerRank: level.position,
-      publisher: level.publisher,
-      list: [
-      {
-          "name": "Removed",
-          "link": ` ${req.body.reason.trim()}`,
-          "hertz": "60"
-      }
-    ]
-  }
-     await levelsSchema.create(obj4)
-    await levelsSchema.findByIdAndDelete(level._id.toString())
-  } else {
-    await levelsSchema.findOneAndDelete({name: req.body.name.trim()})
-  }
-  var everything = await levelsSchema.find().sort({position: 1})
-  for(let i = level.position-1; i < everything.length; i++) {
-    await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
-     $set: {
-       position: i+1
-     }
-   })
-  }
-  webhook(`A level by the name of ${req.body.name.trim()} has been deleted. (reason: ${req.body.reason ? req.body.reason.trim() : "not provided"})`, {
-    event: "LEVEL_DELETE",
-    data: {
-      name: req.body.name.trim(),
-      reason: req.body.reason ? req.body.reason.trim() : "not provided"
+  let response = await request("https://gdlrrlist.com/api/moderator/levels", {
+    method: "DELETE",
+    body: JSON.stringify(req.body),
+    headers: {
+      'content-type': 'application/json',
+      'authorization': `Moderator ${getCookie("token", req)}`
     }
   })
+  let body = await response.body.json()
+  if(response.statusCode != 200) {return res.render("404.ejs", body)}
   res.redirect(req.headers.referer)
 })
   return app
