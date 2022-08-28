@@ -14,7 +14,8 @@
 //     status: "200 OK"
 //   })
 // })
-
+const rest = new REST({version: '10'}).setToken(discord_token);
+const fetchUser = async id => rest.get(Routes.user(id));
 const config = require("./config.json")
 const { default: mongoose } = require("mongoose")
 const allowedPeople = require("../schemas/allowedPeople.js")
