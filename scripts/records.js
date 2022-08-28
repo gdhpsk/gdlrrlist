@@ -16,8 +16,10 @@ module.exports = (obj) => {
   let response = await request("https://gdlrrlist.com/api/helper/records", {
     method: "DELETE",
     headers: {
-      'authorization': `Helper ${getCookie("token", req)}`
-    }
+      'authorization': `Helper ${getCookie("token", req)}`,
+      'content-type': "application/json" 
+    },
+    body: JSON.stringify(req.body)
   })
   if(response.statusCode != 203) {
     let body = await response.body.json()
@@ -56,8 +58,10 @@ app.route("/add")
   let response = await request("https://gdlrrlist.com/api/helper/records", {
     method: "PUT",
     headers: {
-      'authorization': `Helper ${getCookie("token", req)}`
-    }
+      'authorization': `Helper ${getCookie("token", req)}`,
+       'content-type': "application/json" 
+    },
+    body: JSON.stringify(req.body)
   })
   let body = await response.body.json()
   if(response.statusCode != 201) return res.render("404.ejs", body)
