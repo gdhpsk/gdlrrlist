@@ -93,53 +93,18 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
   return res.render("../adding/addlevel.ejs", {loggedIn, editing, editable})
 })
 .post(async (req, res) => {
-  let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
-  let {loggedIn, editing, editable} = await getDetails(req)
-  var obj = {
-    name: req.body.username.trim(),
-    link: req.body.link.trim(),
-    hertz: req.body.hertz.trim()
-  }
-  req.body.list = [obj]
-  req.body.progresses = ["none"]
-  if(!req.body.minimumPercent) {
-    delete req.body.minimumPercent
-  }
-  if(req.body.placement < 76 && !req.body.minimumPercent) return res.render("404.ejs", {error: "400 Bad Request", message: "This placement requires a minimum percent to be included!"})
-  req.body.name = req.body.name.trim()
-  req.body.ytcode = req.body.ytcode.trim()
-  req.body.publisher = req.body.publisher.trim()
-  req.body.position = req.body.placement-1
-  var newlev = new levelsSchema(req.body)
-  var player = await leaderboardSchema.findOne({name: obj.name})
-    if(!player) {
-      await leaderboardSchema.create({name: obj.name, levels: [newlev.name], progs: ["none"]})
-    } else {
-      player.levels.push(newlev.name)
-    await  player.save()
-    }
- await levelsSchema.insertMany([newlev])
-  let everything = await levelsSchema.find().sort({position: 1})
-  for(let i = 0; i < everything.length; i++) {
-    await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
-     $set: {
-       position: i+1
-     }
-   })
-  }
-  webhook(`A new level by the name of ${newlev.name} has been added at #${req.body.placement}. (completion: [${obj.name} on ${obj.hertz}${isNaN(obj.hertz) ? "" : "hz"}](${obj.link}))`, null, {
-    event: "LEVEL_ADD",
-    data: {
-      name: newlev.name,
-      placement: req.body.placement,
-      completion: {
-        name: obj.name,
-        link: obj.link,
-        hertz: obj.hertz
-      }
+  req.body.name = req.params.name
+  let response = await request("https://gdlrrlist.com/api/moderator/addlevel", {
+    method: "PATCH",
+    body: JSON.stringify(req.body),
+    headers: {
+      'content-type': 'application/json',
+      'authorization': `Moderator ${getCookie("token", req)}`
     }
   })
-  return res.render("added.ejs", {text: "level", type: "added", loggedIn, editing, editable})
+  let body = await response.body.json()
+  if(response.statusCode != 200) return res.render("404.ejs", body)
+  res.redirect(req.headers.referer)
 })
 
 app.route("/deletelevel/:name") 
