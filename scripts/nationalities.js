@@ -4,7 +4,7 @@ app.use(express.urlencoded({ extended: true }))
 const {request} = require("undici")
 
 module.exports = (obj) => {
-  let { hasAccess, getDetails, webhook, leaderboardSchema } = obj
+  let { hasAccess, getDetails, webhook, leaderboardSchema, getCookie } = obj
 
   app.route("/add")
     .get(async (req, res) => {

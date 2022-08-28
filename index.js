@@ -317,7 +317,7 @@ app.use("/socials", require("./scripts/socials")({ hasAccess, leaderboardSchema,
 
 // nationalities
 
-app.use("/nationalities", require("./scripts/nationalities")({ hasAccess, leaderboardSchema, getDetails, webhook }))
+app.use("/nationalities", require("./scripts/nationalities")({ hasAccess, leaderboardSchema, getDetails, webhook, getCookie }))
 
 // regular levels
 
