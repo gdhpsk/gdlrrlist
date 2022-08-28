@@ -93,7 +93,7 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
   return res.render("../adding/addlevel.ejs", {loggedIn, editing, editable})
 })
 .post(async (req, res) => {
-  let response = await request("https://gdlrrlist.com/api/moderator/levels", {
+  let response = await request("https://gdlrrlist.com/api/mods/levels", {
     method: "POST",
     body: JSON.stringify(req.body),
     headers: {
@@ -109,7 +109,7 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
 app.route("/deletelevel/:name") 
 .post(async (req, res) => {
   req.body.name = req.params.name
-  let response = await request("https://gdlrrlist.com/api/moderator/levels", {
+  let response = await request("https://gdlrrlist.com/api/mods/levels", {
     method: "DELETE",
     body: JSON.stringify(req.body),
     headers: {
