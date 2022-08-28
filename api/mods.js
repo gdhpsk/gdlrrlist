@@ -18,6 +18,8 @@
 const config = require("./config.json")
 const { default: mongoose } = require("mongoose")
 const allowedPeople = require("../schemas/allowedPeople.js")
+const levelsSchema = require("../schemas/levels.js")
+const leaderboardSchema = require("../schemas/leaderboard.js")
 const jwt = require("jsonwebtoken")
 let routes = {}
 
