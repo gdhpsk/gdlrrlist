@@ -17,9 +17,6 @@ module.exports = async (server, options) => {
       date: Date.now(),
       data: info.data
     }
-    rest.post(process.env.webhook, {
-      body: that
-    })
     server(JSON.stringify(real), options)
     } catch(_) {
       
