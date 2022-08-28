@@ -103,8 +103,8 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
   })
   let body = await response.body.json()
   if(response.statusCode != 200) {return res.render("404.ejs", body)}
-  else {return res.render("added.ejs", {text: "level", type: "added", loggedIn, editing, editable})}
   res.redirect(req.headers.referer)
+  return res.render("added.ejs", {text: "level", type: "added", loggedIn, editing, editable})
 })
 
 app.route("/deletelevel/:name") 

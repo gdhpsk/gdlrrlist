@@ -130,6 +130,7 @@ router.route("/levels")
         }
       }
     })
+    req.status(200).send(newlev)
   })
   
 for(let i = 0; i < router.stack.length; i++) {
