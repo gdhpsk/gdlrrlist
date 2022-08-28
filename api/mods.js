@@ -85,7 +85,6 @@ router.route("/settings")
 
 router.route("/levels")
   .post(async (req, res) => {
-    let {loggedIn, editing, editable} = await getDetails(req)
     var obj = {
       name: req.body.username.trim(),
       link: req.body.link.trim(),
