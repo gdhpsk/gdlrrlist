@@ -83,7 +83,7 @@ router.route("/settings")
   return res.sendStatus(204)
 })
 
-router.route("/addlevel")
+router.route("/levels")
   .patch(async (req, res) => {
     let {loggedIn, editing, editable} = await getDetails(req)
     var obj = {
@@ -96,7 +96,7 @@ router.route("/addlevel")
     if(!req.body.minimumPercent) {
       delete req.body.minimumPercent
     }
-    if(req.body.placement < 76 && !req.body.minimumPercent) return res.render("404.ejs", {error: "400 Bad Request", message: "This placement requires a minimum percent to be included!"})
+    if(req.body.placement < 76 && !req.body.minimumPercent) return res.status(400).json({error: config["400"], message: "This placement requires a minimum percent to be included!"})
     req.body.name = req.body.name.trim()
     req.body.ytcode = req.body.ytcode.trim()
     req.body.publisher = req.body.publisher.trim()

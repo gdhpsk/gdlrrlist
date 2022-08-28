@@ -94,8 +94,8 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
 })
 .post(async (req, res) => {
   req.body.name = req.params.name
-  let response = await request("https://gdlrrlist.com/api/moderator/addlevel", {
-    method: "PATCH",
+  let response = await request("https://gdlrrlist.com/api/moderator/levels", {
+    method: "POST",
     body: JSON.stringify(req.body),
     headers: {
       'content-type': 'application/json',
