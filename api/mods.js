@@ -206,7 +206,41 @@ module.exports = (authFunction, webhook, rate_lim) => {
       })
       return res.status(200).send(level)
     })
-
+  router.route("/nationalities")
+    .post(async (req, res) => {
+      var player = await leaderboardSchema.findOne({ name: req.body.name.trim() })
+      if (!player) return res.status(400).json({ error: config["400"], message: "Please input a valid player name!" })
+      const message = `The nationality of ${player.name} has been changed from ${!player.nationality ? "nothing" : player.nationality.trim()} to ${req.body.nationality.trim()}`
+      webhook(message, null, {
+        event: "PROFILE_NATIONALITY_ADD",
+        data: {
+          name: player.name,
+          nationality: {
+            previously: !player.nationality ? "nothing" : player.nationality.trim(),
+            now: req.body.nationality.trim()
+          }
+        }
+      })
+      player.nationality = req.body.nationality.trim()
+      await player.save()
+      return res.status(200).send(player)
+    })
+    .delete(async (req, res) => {
+      var player = await leaderboardSchema.findOne({ name: req.body.name.trim() })
+      if (!player) return res.status(400).json({ error: config["400"], message: "Please input a valid player name!" })
+      const message = `The nationality of ${player.name} has been deleted. (nationality: ${player.nationality.trim()})`
+      console.log(player.nationality.trim())
+      player.nationality = undefined
+      await player.save()
+      webhook(message, null, {
+        event: "PROFILE_NATIONALITY_DELETE",
+        data: {
+          name: player.name,
+          nationality: "nothing"
+        }
+      })
+      return res.status(200).send(player)
+    })
   for (let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
     if (stack?.path) {
