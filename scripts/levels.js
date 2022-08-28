@@ -93,7 +93,6 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
   return res.render("../adding/addlevel.ejs", {loggedIn, editing, editable})
 })
 .post(async (req, res) => {
-  req.body.name = req.params.name
   let response = await request("https://gdlrrlist.com/api/moderator/levels", {
     method: "POST",
     body: JSON.stringify(req.body),
@@ -103,7 +102,8 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
     }
   })
   let body = await response.body.json()
-  if(response.statusCode != 200) return res.render("404.ejs", body)
+  if(response.statusCode != 200) {return res.render("404.ejs", body)}
+  else {return res.render("added.ejs", {text: "level", type: "added", loggedIn, editing, editable})}
   res.redirect(req.headers.referer)
 })
 

@@ -84,7 +84,7 @@ router.route("/settings")
 })
 
 router.route("/levels")
-  .patch(async (req, res) => {
+  .post(async (req, res) => {
     let {loggedIn, editing, editable} = await getDetails(req)
     var obj = {
       name: req.body.username.trim(),
@@ -130,7 +130,6 @@ router.route("/levels")
         }
       }
     })
-    return res.status(200).render("added.ejs", {text: "level", type: "added", loggedIn, editing, editable})
   })
   
 for(let i = 0; i < router.stack.length; i++) {
