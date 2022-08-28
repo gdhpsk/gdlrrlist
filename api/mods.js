@@ -241,6 +241,47 @@ module.exports = (authFunction, webhook, rate_lim) => {
       })
       return res.status(200).send(player)
     })
+  router.route("/socials")
+    .post(async (req, res) => {
+      var player = await leaderboardSchema.findOne({ name: req.body.name.trim() })
+      if (!player) return res.status(400).json({ error: config["400"], message: "Please input a valid player name!" })
+      if (req.body.discordid != "") {
+        let user = await fetchUser(req.body.discordid);
+        if (user) {
+          req.body.discord = `${user.username}#${user.discriminator}`
+        }
+      }
+      let profile = ""
+      for (const key in req.body) {
+        profile += `${key}: ${req.body[key]}\n`
+      }
+      const message = `The socials of ${player.name} has been changed to this:\n\n ${profile}`
+      player.socials = req.body
+      await player.save()
+      webhook(message, null, {
+        event: "PROFILE_SOCIALS_EDIT",
+        data: {
+          new: req.body
+        }
+      })
+      res.status(200).send(player)
+    })
+    .delete(async (req, res) => {
+      var player = await leaderboardSchema.findOne({ name: req.body.name.trim() })
+      if (!player) return res.status(400).json({ error: config["400"], message: "Please input a valid player name!" })
+      const message = `The socials of ${player.name} has been deleted. (socials: ${JSON.stringify(player.socials)})`
+      console.log(player.socials)
+      player.socials = undefined
+      await player.save()
+      webhook(message, null, {
+        event: "PROFILE_SOCIALS_DELETE",
+        data: {
+          name: player.name,
+          socials: player.socials
+        }
+      })
+      res.status(200).send(player)
+    })
   for (let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
     if (stack?.path) {
