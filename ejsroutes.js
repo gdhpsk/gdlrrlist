@@ -60,7 +60,7 @@ app.get("/", async (req, res) => {
     editing = true
   }
   }
-  res.render("homepage.ejs", {editable, editing, loggedIn: loggedIn.exists})
+  res.render("homepage.ejs", {editable, editing, loggedIn: loggedIn.exists, profile: loggedIn.name})
 })
 
 app.get("/404.ejs", (req, res) => {

@@ -40,6 +40,9 @@
   <%- include("./navbar.ejs") %>
     <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
+    <% if(locals.profile) { %> 
+      <h5 style = "text-align:center">Welcome back, <%= locals.profile %>!</h5>
+    <% } %>
     <div id="levels-container"> 
       <h1 style = "text-align:center">The Geometry Dash Low Refresh Rate Demon List</h1>
       <h3 style = "text-align:center">Now on its own website as opposed to a slow, limited <a target = "_blank" href = "https://sites.google.com/view/lrrdemonlist/about-the-list?authuser=0">Google Site!</a></h3>
