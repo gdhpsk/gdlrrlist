@@ -356,10 +356,16 @@ if(submission.status != req.body.status) {
   let message;
   let level = await levelsSchema.findOne({name: req.body.demon.trim()})
   if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
+    let dataTwo = {
+      name: req.body.username.trim(),
+      level: req.body.demon.trim(),
+      progress: req.body.progress
+    }
   if(req.body.progress < 100) {
     let record = level.progresses.findIndex(e => e.name == req.body.username.trim() && e.percent == req.body.progress)
     var player = await leaderboardSchema.findOne({name: req.body.username.trim()})
     if(record == -1) res.status(400).json({error: config["400"], message: "This record does not exist!"})
+    
     message = `A progess of the level ${level.name} by [${player.name}](${level.progresses[record].link}) has been deleted. (Progress: ${level.progresses[record].percent}%)`
     level.progresses = level.progresses.filter(e => e.name != req.body.username.trim() || e.percent != req.body.progress)
     if(level.progresses.length == 0) {
@@ -394,13 +400,7 @@ if(submission.status != req.body.status) {
   }
   webhook(message, null, {
     event: "RECORD_DELETE",
-    data: {
-      name: req.body.username.trim(),
-      level: req.body.demon.trim(),
-      progress: req.body.progress,
-      link: req.body.video.trim(),
-      hertz: req.body.hertz.trim()
-    }
+    data: dataTwo
   })
   return res.sendStatus(203)
 })
