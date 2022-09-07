@@ -8,6 +8,7 @@ const opinionSchema = require("../../schemas/opinions.js")
 const levelsSchema = require("../../schemas/levels.js")
 const dayjs = require("dayjs")
 let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/
+
 let routes = {}
 
 module.exports = (authFunction, webhook, rate_lim) => {
@@ -32,6 +33,19 @@ router.get("/ML", async (req, res) => {
   let html = await ok.body.text()
   const dom = new JSDOM(html);
   let obj = []
+let arr_of_yt_ids = []
+
+
+  let all_pointer_demons = []
+    let count = 0
+while(true) {
+  let level_i = await request(`https://pointercrate.com/api/v2/demons/listed?limit=100&after=${count*100}`)  
+  let levels = await level_i.body.json()
+  all_pointer_demons.push(...levels)
+  if(levels.length != 100) break
+  count++
+}
+  
   for(let j = 2; j < dom.window.document.getElementsByClassName("oKdM2c Kzv0Me").length; j++) {
     let txt = ""
   let level = dom.window.document.getElementsByClassName("oKdM2c Kzv0Me")[j].getElementsByClassName("CDt4Ke zfr3Q").item(0)
@@ -42,10 +56,10 @@ router.get("/ML", async (req, res) => {
  txt = JSDOM.fragment(txt).textContent.split("(~")[0]
 let g = {}
 g.name = txt.split(`"`)[1].trim()
-let level_i = await request(`https://pointercrate.com/api/v2/demons/?name=${g.name}`)
-let level_id = await level_i.body.json()
-if(level_id.length != 0) {
-  g.pointercrateID = level_id[0].id
+    
+let level_id = all_pointer_demons.find(e => e.name == g.name)
+if(level_id) {
+  g.pointercrateID = level_id.id
 }
 g.creators =  {
   host: txt.split("(")[0].split("by")[1].trim()
@@ -61,13 +75,7 @@ for(let x = 0; x < records.length; x++) {
     name,
     link: parts.find(e => e.toLowerCase().includes("youtu") || e.toLowerCase().startsWith("https://"))
   })
-  let daa = await request(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${reg.exec(recordarr[x].link)}&key=${process.env.ytkey}`)
-  let data = await daa.body.json()
-  if(data.items.length == 0) {
-    recordarr[x].uploadDate = dayjs().format("M/D/YYYY")
-  } else {
-    recordarr[x].uploadDate = dayjs(Date.parse(data.items[0].snippet.publishedAt)).format("M/D/YYYY")
-  }
+  arr_of_yt_ids.push(reg.exec(recordarr[x].link)[1])
   if(!recordarr[x].link.startsWith("https://")) {
     recordarr[x].link = `https://${recordarr[x].link}`
   }
@@ -80,10 +88,33 @@ for(let x = 0; x < records.length; x++) {
 g.records = recordarr
 obj.push(g)
 }
-  res.json(obj)
-// fs.writeFile("./smt.json", JSON.stringify(obj), function(e, d) {
 
-// })
+  let count2 = 0
+  let arr_of_yt_results = []
+  while(true) {
+    let daafast = await request(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${arr_of_yt_ids.slice(count2, count2+50)}&key=${process.env.ytkey}`)
+    let datafast = await daafast.body.json()
+    arr_of_yt_results.push(...datafast.items)
+    if(arr_of_yt_ids.slice(count2, count2+50).length != 50) break;
+    count2 += 50
+  }
+  Object.values(obj).forEach(item => {
+    item.records.forEach(e => {
+      try {
+      let data = arr_of_yt_results.find(o => o.id == reg.exec(e.link)[1])
+      
+      if(!data) {
+    e.uploadDate = dayjs().format("M/D/YYYY")
+  } else {
+    e.uploadDate = dayjs(Date.parse(data.snippet.publishedAt)).format("M/D/YYYY")
+  }
+        } catch(_) {
+        
+      }
+    })
+  })
+
+  res.json(obj)
 })
 
 router.get("/", async (req, res) => {
