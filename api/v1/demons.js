@@ -117,6 +117,34 @@ obj.push(g)
   res.json(obj)
 })
 
+router.get("/MLL", async (req, res) => {
+  let list = await request("https://gdlrrlist.com/api/v1/demons/ML")
+  let array = await list.body.json()
+  let obj = {}
+  for(let item of array) {
+    for(let record of item.records) {
+      if(!obj[record.name]) {
+        obj[record.name] = {
+          levels: [
+            {
+              name: item.name,
+              hertz: record.hertz,
+              link: record.link
+            }
+          ]
+        }
+      } else {
+        obj[record.name].levels.push({
+              name: item.name,
+              hertz: record.hertz,
+              link: record.link
+            })
+      }
+    }
+  }
+  res.json(obj)
+})
+
 router.get("/", async (req, res) => {
   let config = {
     position: {
