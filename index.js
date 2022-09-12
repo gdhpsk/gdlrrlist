@@ -61,6 +61,7 @@ server.on("connection", (socket) => {
   }))
         socket.isAlive = true
       socket.user = user.name
+        return
       }
       if(json_msg?.token) {
         if(json_msg.token === process.env.WEBSOCKET_TOKEN) {
