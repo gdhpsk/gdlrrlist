@@ -49,7 +49,19 @@ server.on("connection", (socket) => {
   socket.on("message", async message => {
     try {
       let json_msg = JSON.parse(message)
-      
+      if(json_msg?.discord) {
+        if(json_msg.secret != process.env.WEBSOCKET_TOKEN) return socket.send(JSON.stringify({
+    error: "401 UNAUTHORIZED",
+    message: "You are not allowed to authorize in this fasion."
+  }))
+        let user = await loginSchema.findOne({discord: json_msg.discord})
+        if(!user) return socket.send(JSON.stringify({
+    error: "404 NOT FOUND",
+    message: "Could not find the discord ID provided!"
+  }))
+        socket.isAlive = true
+      socket.user = user.name
+      }
       if(json_msg?.token) {
         if(json_msg.token === process.env.WEBSOCKET_TOKEN) {
           socket.isAlive = true

@@ -74,6 +74,17 @@ router.route("/login")
   res.json(array)
 })
 
+router.post("/discord_auth", authenticator, async (req, res) => {
+  let auth = req.headers.authorization.split(" ")
+  let {username} = jwt.verify(auth[1], process.env.WEB_TOKEN)
+  await loginSchema.findOneAndUpdate({name: username}, {
+    $set: {
+      discord: req.body.id
+    }
+  })
+  res.sendStatus(204)
+})
+
 router.post("/signup", async (req, res) => {
   if(!req.body.password) return res.status(400).json({error: config["400"], message: "Please input a 'password' field!"})
   if(req.body.password != req.body.password2) return res.status(400).json({error: config["400"], message: "Your passwords do not match! Please include a 'password2' variable if you haven't already!"})
