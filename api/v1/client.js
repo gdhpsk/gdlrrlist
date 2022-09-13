@@ -85,7 +85,8 @@ router.post("/discord_auth", authenticator, async (req, res) => {
   let {username} = jwt.verify(auth[1], process.env.WEB_TOKEN)
   await loginSchema.findOneAndUpdate({name: username}, {
     $set: {
-      discord: req.body.id
+      discord: req.body.id,
+      message: req.body.message
     }
   })
   res.sendStatus(204)
