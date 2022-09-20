@@ -17,7 +17,7 @@ const {WebSocketServer} = require("ws");
 
 const {request} = require("undici")
 
-const http_server = require("http").createServer(app)
+const http_server = require("http").createServer(app);
 
 let server = new WebSocketServer({server: http_server});
 

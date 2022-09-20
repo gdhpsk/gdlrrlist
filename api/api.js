@@ -46,13 +46,15 @@ router.use(async (req, res, next) => {
   }
 })
 
+const ip = (req) => (req.headers['x-forwarded-for'] || req.connection.remoteAddress).split(",")[0]
+
 const rate_limit_func = (ms, max_requests) => rateLimit({
 	windowMs: ms,
 	max: max_requests,
 	message: {error: config["429"][0], message: config["429"][1]},
-  keyGenerator: (request, response) => request.headers.authorization?.split(" ")?.[1] ?? request.ip,
+  keyGenerator: (request, response) => request.headers.authorization?.split(" ")?.[1] ?? ip(request),
   handler: async (request, response, next, options) => {
-    let hashedToken = await bcrypt.hash(request.headers?.authorization?.split(" ")[1] ?? request.ip, 10)
+    let hashedToken = await bcrypt.hash(request.headers?.authorization?.split(" ")[1] ?? ip(request), 10)
     await rateLimitSchema.create({
       path: request.url.split("?")[0],
       token: hashedToken,
