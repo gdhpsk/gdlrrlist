@@ -43,7 +43,7 @@ const loginSchema = require("./schemas/logins.js")
 const sixtyoneSchema = require("./schemas/61hertz.js")
 const rolePacksSchema = require("./schemas/role_packs.js")
 const leaderboardSchema = require("./schemas/leaderboard.js")
-const mailSchema = require("./schemas/mail.js")
+const mailSchema = require("./schemas/mail.js") 
 
 server.on("connection", (socket) => {
   socket.on("message", async message => {
