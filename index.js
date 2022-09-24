@@ -50,7 +50,7 @@ server.on("connection", (socket) => {
     try {
       let json_msg = JSON.parse(message)
       if(json_msg?.discord) {
-        if(json_msg.secret != process.env.WEBSOCKET_TOKEN) return socket.send(JSON.stringify({
+        if(json_msg.secret != process.env.secret) return socket.send(JSON.stringify({
     error: "401 UNAUTHORIZED",
     message: "You are not allowed to authorize in this fasion."
   }))

@@ -52,7 +52,7 @@ router.route("/login")
 })
 .patch(authenticator, rate_lim(60000, 1), async (req, res) => {
   if(req.body.discord) {
-    if(req.body.secret != process.env.WEBSOCKET_TOKEN) res.status(400).json({error: config["401"][0], message: config["401"][1]})
+    if(req.body.secret != process.env.secret) res.status(400).json({error: config["401"][0], message: config["401"][1]})
     let user = await loginSchema.findOne({discord: req.body.discord})
     if(!user) return res.status(400).json({error: config["400"], message: "I could not find a discord ID linked to this account!"})
   }
@@ -80,7 +80,7 @@ router.route("/login")
 })
 
 router.post("/discord_auth", authenticator, async (req, res) => {
-  if(req.body.secret != process.env.WEBSOCKET_TOKEN) return res.status(401).json({error: config["401"][0], message: config["401"][1]})
+  if(req.body.secret != process.env.secret) return res.status(401).json({error: config["401"][0], message: config["401"][1]})
   let auth = req.headers.authorization.split(" ")
   let {username} = jwt.verify(auth[1], process.env.WEB_TOKEN)
   await loginSchema.findOneAndUpdate({name: username}, {
