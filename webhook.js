@@ -1,6 +1,7 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const {REST} = require("@discordjs/rest")
 const rest = new REST({version: '9'}).setToken(process.env.discord_token)
+const mod_log = require("./schemas/mod_log")
 
 module.exports = async (server, options) => {
   async function real(message, embeds, info) {
@@ -21,6 +22,7 @@ module.exports = async (server, options) => {
       body: that
     })
     server(JSON.stringify(real), options)
+    await mod_log.create(real)
     } catch(_) {
       
     }
