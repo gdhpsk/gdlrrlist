@@ -24,10 +24,12 @@ router.use(async (req, res, next) => {
   next()
 })
 
+  const ip = (req) => (req.headers['x-forwarded-for'] || req.connection.remoteAddress).split(",")[0]
+
 router.use(async (req, res, next) => {
   let rateLimits = await rateLimitSchema.find()
   let isRateLimited = await rateLimits.find(async e => {
-    let bool = await bcrypt.compare(req.headers.authorization?.split(" ")?.[1] ?? req.ip, e.token)
+    let bool = await bcrypt.compare(req.headers.authorization?.split(" ")?.[1] ?? ip(req), e.token)
     return bool
   })
   if(!!isRateLimited) {
@@ -45,8 +47,6 @@ router.use(async (req, res, next) => {
    return next()
   }
 })
-
-const ip = (req) => (req.headers['x-forwarded-for'] || req.connection.remoteAddress).split(",")[0]
 
 const rate_limit_func = (ms, max_requests) => rateLimit({
 	windowMs: ms,

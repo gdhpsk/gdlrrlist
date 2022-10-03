@@ -210,6 +210,7 @@ module.exports = (authFunction, webhook, rate_lim) => {
       })
       return res.status(200).send(level)
     })
+  
   router.route("/nationalities")
     .post(async (req, res) => {
       var player = await leaderboardSchema.findOne({ name: req.body.name.trim() })
