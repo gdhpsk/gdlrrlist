@@ -218,7 +218,7 @@ if(submission.status != req.body.status) {
        
      }
     }
-  webhook(`A submissions status has been ${req.body.status}!`, [{description: `A submission by ${submission.username} has been ${submission.status}. (submission: [${submission.demon} ${submission.progress}% on ${submission.hertz}](${submission.video}), comments: ${submission.comments || "none"})`}], {
+  webhook(`A submissions status has been ${submission.status}!`, [{description: `A submission by ${submission.username} has been ${submission.status}. (submission: [${submission.demon} ${submission.progress}% on ${submission.hertz}](${submission.video}), comments: ${submission.comments || "none"})`}], {
     event: "STATUS_UPDATE",
     data
   })
