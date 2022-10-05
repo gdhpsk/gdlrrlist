@@ -124,16 +124,19 @@ router.use(express.urlencoded({ extended: true }))
     var everything = await levelsSchema.find().sort({position: 1})
     var index = everything.findIndex(e => e._id == level._id.toString())
     if(req.body.placement == 0 || req.body.placement > everything.length) return res.status(400).json({error: config["400"], message: `Please input a valid placement between 1 and ${everything.length+1}!`})
-    everything[index].position = req.body.placement
-    await everything[index].save()
+    let newlev = new levelsSchema(everything[index])
+    newlev.position = req.body.placement+1
+    await levelsSchema.findByIdAndDelete(everything[index]._id)
+   await levelsSchema.insertMany([newlev])
     message += `placement: #${index+1} to #${req.body.placement}`
     // Fix these algs later
     let start = index+1 > req.body.placement ? req.body.placement-1 : index
     let end = req.body.placement
+    everything = await levelsSchema.find().sort({position: 1})
     for(let i = 0; i < everything.length; i++) {
       await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
         $set: {
-          position: i+2
+          position: i+1
         }
       })
     }
