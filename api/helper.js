@@ -127,8 +127,9 @@ router.use(express.urlencoded({ extended: true }))
     everything[index].position = req.body.placement
     await everything[index].save()
     message += `placement: #${index+1} to #${req.body.placement}`
+    // Sigma 1 => 2
     let start = index+1 > req.body.placement ? req.body.placement-1 : index
-    let end = index+1 < req.body.placement ? index+1 : req.body.placement
+    let end = req.body.placement
     for(let i = start; i < end; i++) {
       await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
         $set: {
