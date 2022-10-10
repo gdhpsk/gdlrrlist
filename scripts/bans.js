@@ -19,7 +19,7 @@ module.exports = (obj) => {
       body: JSON.stringify(req.body),
       headers: {
         'content-type': 'application/json',
-        'authorization': `Helper ${getCookie("token", req)}`
+        'authorization': `Moderator ${getCookie("token", req)}`
       }
     })
     let body = await response.body.json()
@@ -34,7 +34,7 @@ app.route("/ban/:id")
       body: JSON.stringify(req.body),
       headers: {
         'content-type': 'application/json',
-        'authorization': `Helper ${getCookie("token", req)}`
+        'authorization': `Moderator ${getCookie("token", req)}`
       }
     })
     let everything = await response.body.json()
