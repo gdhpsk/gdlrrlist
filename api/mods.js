@@ -41,7 +41,75 @@ module.exports = (authFunction, webhook, rate_lim) => {
     }
     next()
   })
-
+router.route("/bans")
+.get(async (req, res) => {
+  let everything = await leaderboardSchema.find({ban: true})
+  res.json(everything)
+})
+.post(async (req, res) => {
+  let ban_times = {
+    "1": 7776000000,
+    "2": 15552000000,
+    "3": 31536000000,
+    "4": "permanent"
+  }
+  let user = await leaderboardSchema.findOne({name: req.body.username})
+  if(!user) return res.status(400).json({error: config["400"], message: "Invalid user provided!"})
+  req.body.ban_time = ban_times[req.body.ban_time]
+  user.ban = true
+  user.ban_reason = req.body.reason ?? "A reason was not provided"
+  if(req.body.ban_time != "permanent") {
+  user.ban_time = new Date(Date.now()+req.body.ban_time).toISOString()
+  let actual_time = dateToCron(new Date(user.ban_time))
+  let task = cron.schedule(actual_time, async () => {
+    try {
+		user.ban = undefined
+    user.ban_time = undefined
+    user.ban_reason = undefined
+    await user.save()
+    task.stop()
+    } catch(_) {
+      
+    }
+	});
+  } else {
+    user.ban_time = "permanent"
+  }
+  await user.save()
+  webhook(`A leaderboard profile by the name of ${req.body.username} has been banned ${!isNaN(req.body.ban_time) ?  `for ${req.body.ban_time / 86400000} days` : "permanently"}`, null, {
+    event: "PROFILE_BAN_ADD",
+    data: {
+      name: req.body.username,
+      reason: req.body.reason ?? "A reason was not provided",
+      time: !isNaN(req.body.ban_time) ?  `for ${req.body.ban_time / 86400000} days` : "permanently",
+    }
+  })
+    return res.status(201).json({
+      name: req.body.username,
+      reason: req.body.reason ?? "A reason was not provided",
+      time: !isNaN(req.body.ban_time) ?  `for ${req.body.ban_time / 86400000} days` : "permanently",
+    })
+})
+.delete(async (req, res) => {
+  try {
+    let person = await leaderboardSchema.findById(req.params.id)
+    if(!person) return res.status(400).json({error: config["400"], message: "Invalid Object ID provided!"})
+    person.ban = undefined
+    person.ban_time = undefined
+    person.ban_reason = undefined
+    await person.save()
+    webhook(`A leaderboard profile by the name of ${person.name} has been unbanned`, null, {
+      event: "PROFILE_BAN_REMOVE",
+      data: {
+        name: person.name
+      }
+    })
+  } catch(_) {
+    return res.status(400).json({error: config["400"], message: "Invalid Object ID provided!"})
+  }
+   return res.sendStatus(204)
+})
+  
   router.route("/settings")
     .post(rate_lim(60000, 1), async (req, res) => {
       let { name, tag } = req.body

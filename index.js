@@ -346,7 +346,7 @@ app.use("/", require("./scripts/records")({ hasAccess, getDetails, getCookie }))
 app.use("/submissions", require("./scripts/submissions")({ getDetails, getCookie }))
 
 // bans
-app.use("/", require("./scripts/bans")({ hasAccess, getDetails, dateToCron, leaderboardSchema, webhook }))
+app.use("/", require("./scripts/bans")({ hasAccess, getDetails, getCookie, dateToCron, leaderboardSchema, webhook }))
 
 // editing upcoming changes
 
