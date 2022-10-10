@@ -104,7 +104,7 @@ router.route("/bans")
 })
 .delete(async (req, res) => {
   try {
-    let person = await leaderboardSchema.findById(req.params.id)
+    let person = await leaderboardSchema.findById(req.body.id)
     if(!person) return res.status(400).json({error: config["400"], message: "Invalid Object ID provided!"})
     person.ban = undefined
     person.ban_time = undefined

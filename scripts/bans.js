@@ -62,8 +62,10 @@ app.get("/bans", async (req, res) => {
 })
 
 app.get("/bans/delete/:id", async (req, res) => {
+  req.body.id = req.params.id
   let response = await request("https://gdlrrlist.com/api/mods/bans", {
       method: "DELETE",
+     body: JSON.stringify(req.body),
       headers: {
         'content-type': 'application/json',
         'authorization': `Moderator ${getCookie("token", req)}`
