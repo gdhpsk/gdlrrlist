@@ -29,7 +29,7 @@ router.use(express.urlencoded({ extended: true }))
   next()
 })
 
-  router.patch("/records/edit/comp", async (req, res) => {
+  router.patch("/records/comp", async (req, res) => {
     let data = {}
   let level = await levelsSchema.findOne({name: req.body.level})
     try {
@@ -70,7 +70,7 @@ router.use(express.urlencoded({ extended: true }))
   res.sendStatus(204)
 })
 
-  router.patch("/records/edit/prog", async (req, res) => {
+  router.patch("/records/prog", async (req, res) => {
     let data = {}
   let level = await levelsSchema.findOne({name: req.body.level})
   if(!level) return res.status(400).json({error: config["400"], message: "Plese input a valid level name!"})

@@ -24,7 +24,7 @@ module.exports = (obj) => {
   app.post("/editrecordcomp/:level/:id", async (req, res) => {
   req.body.level = req.params.level
     req.body.id = req.params.id
-    let response = await request("https://gdlrrlist.com/api/helper/edit/records/comp", {
+    let response = await request("https://gdlrrlist.com/api/helper/records/comp", {
       method: "PATCH",
       body: JSON.stringify(req.body),
       headers: {
@@ -43,7 +43,7 @@ module.exports = (obj) => {
 app.post("/editrecordprog/:level/:id", async (req, res) => {
    req.body.level = req.params.level
     req.body.id = req.params.id
-    let response = await request("https://gdlrrlist.com/api/helper/edit/records/prog", {
+    let response = await request("https://gdlrrlist.com/api/helper/records/prog", {
       method: "PATCH",
       body: JSON.stringify(req.body),
       headers: {
