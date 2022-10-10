@@ -27,6 +27,17 @@ const jwt = require("jsonwebtoken")
 const dayjs = require("dayjs")
 let routes = {}
 
+const dateToCron = (date) => {
+  const seconds = date.getSeconds();
+    const minutes = date.getMinutes();
+    const hours = date.getHours();
+    const days = date.getDate();
+    const months = date.getMonth() + 1;
+    const dayOfWeek = date.getDay();
+
+    return `${seconds} ${minutes} ${hours} ${days} ${months} ${dayOfWeek}`;
+};
+
 module.exports = (authFunction, webhook, rate_lim) => {
   const express = require("express")
   const router = express.Router()
