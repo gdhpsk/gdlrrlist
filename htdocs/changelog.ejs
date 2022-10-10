@@ -39,21 +39,31 @@
         <h1 style = "text-align:center">Changelog</h1>
         <p style = "text-align:center">Every change that this list has ever experienced (after the creation of the Google Site), sorted by most recent at the top and least recent towards the bottom.</p>
       <p style = "text-align:center">This list changelog is no longer being maintained, but will be kept on the site directory for archive and research purposes. The changelog that is maintained is on our Discord server. please join.</p>
-      <% for(const item of everything) { %>
-        <% if(item.event == "RECORD_ADD") { %>
+      <% while(everything.length > 0) { %>
+      <% let array = [] %>
+      <% for(let i = 0; i < everything.length; i++) { %>
+        <% if(getDate(everything[i]) != getDate(everything[i-1])) {
+          break;
+        }
+          array.push(everything[i]) %>
+          <% } %>
+            <% everything.splice(0, array.length) %>
           <div class = "column">
             <div class = "card">
             <button class = "collapsible">
                 <div class = "title">
-                    <h3 class = "date"><%= getDate(item.date) %> Changes:</h3>
+                    <h3 class = "date"><%= getDate(array[0].date) %> Changes:</h3>
                 </div>
             </button>
                 <div class = "content">
+                  <% for(const item of array) { %>
+                  <% if(item.event == "RECORD_ADD") { %>
                     <p dir="ltr">A completion / progress has been added on the level xo. (submission: <a href="<%= item.data.link %>" target="_blank"><%= item.data.progress %>% by <%= item.data.name %> on <%= item.data.hertz %><%= isNaN(item.data.hertz) ? "" : "hz"%></a>)</p>
+                      <% }
+                        }%>
                 </div>
             </div>
-          </div>
-          <% } %>
+                    </div>
       <% } %>
     </div>
 

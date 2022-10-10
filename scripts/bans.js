@@ -71,9 +71,12 @@ app.get("/bans/delete/:id", async (req, res) => {
         'authorization': `Moderator ${getCookie("token", req)}`
       }
     })
-    let body = await response.body.text()
-    if(response.statusCode != 204) return res.render("404.ejs", body)
-   return res.redirect("/bans")
+    try {
+    let body = await response.body.json()
+   return res.render("404.ejs", body)
+    } catch(_) {
+    return res.redirect("/bans")
+    }
 })
   return app
 }
