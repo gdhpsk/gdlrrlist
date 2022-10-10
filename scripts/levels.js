@@ -33,7 +33,7 @@ module.exports = (obj) => {
       }
     })
     let body = await response.body.json()
-    if(response.statusCode != 203) return res.render("404.ejs", body)
+    if(response.statusCode != 204) return res.render("404.ejs", body)
     res.redirect(req.headers.referer)
 })
 
@@ -49,7 +49,7 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
       }
     })
     let body = await response.body.json()
-    if(response.statusCode != 203) return res.render("404.ejs", body)
+    if(response.statusCode != 204) return res.render("404.ejs", body)
     res.redirect(req.headers.referer)
 })
   

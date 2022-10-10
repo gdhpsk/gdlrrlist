@@ -240,8 +240,7 @@ module.exports = (authFunction, webhook, rate_lim) => {
       webhook(message, null, {
         event: "PROFILE_NATIONALITY_DELETE",
         data: {
-          name: player.name,
-          nationality: "nothing"
+          name: player.name
         }
       })
       return res.status(200).send(player)

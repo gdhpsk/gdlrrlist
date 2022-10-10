@@ -23,7 +23,9 @@ router.use(express.urlencoded({ extended: true }))
 .patch(async (req, res) => {
   let {name, tag} = req.body
   if(!name || !tag) return res.status(400).json({error: config["400"], message: `Please input both a "name" field and a "tag" field in your request!`})
-  let data = {}
+  let data = {
+    username: name
+  }
   let everything = await allowedPeople.findById("6270b923564c64eb5ed912a4")
   let person = everything.allowed.findIndex(e => e.name == req.body.name)
   if(person == -1) return res.status(400).json({error: config["400"], message: "Please input a valid username or discord ID!"})

@@ -13,9 +13,10 @@ const {discord_token} = process.env
 const levels_point_calc = require("./levels_point_calc")
 const levels_progs_calc = require("./levels_progs_calc")
 const {request} = require("undici")
-
+const logsSchema = require("./schemas/mod_log.js")
 const {REST} = require("@discordjs/rest")
 const {Routes} = require("discord-api-types/v10")
+const dayjs = require("dayjs")
 
 const rest = new REST({version: '10'}).setToken(discord_token);
 
@@ -468,6 +469,20 @@ app.get("/leaderboard/:name", async (req, res) => {
   obj["editable"] = editable
   obj["active"] = "leaderboard-profile"
   res.render("info/leaderboard.ejs", obj)
+})
+
+app.get("/changelog.html", async (req, res) => {
+  let everything = await logsSchema.find().sort({date: -1})
+  let getDate = (date) => {
+    let realDate;
+    try {
+      realDate = new Intl.DateTimeFormat(req.headers["accept-language"].split(",")[0]).format(date)
+    } catch(_) {
+      realDate = date
+    }
+    return dayjs(realDate).format("MMMM D, YYYY")
+  }
+  res.render("changelog.ejs", {everything, getDate})
 })
 
 module.exports = app
