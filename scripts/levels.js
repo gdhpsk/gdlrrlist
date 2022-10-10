@@ -22,68 +22,35 @@ module.exports = (obj) => {
   })
 
   app.post("/editrecordcomp/:level/:id", async (req, res) => {
-  let data = {}
-  let approved = await hasAccess(false, req, res, true)
-  if(!approved) return res.render("404.ejs")
-  let level = await levelsSchema.findOne({name: req.params.level})
-  req.params.id = parseInt(req.params.id)
-  if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Plese input a valid level name!"})
-  let record = level.list[req.params.id]
-  if(!record) return res.render("404.ejs", {error: "400 Bad Request", message: "Record number out of range."})
-  data.old = record
-  let message = `The following record by the name ${record.name} on the level ${level.name} has been updated:\n`
-  for(const key in req.body) {
-    if(key != "pos") {
-    record[key] = req.body[key]
-      message += `${key}: ${req.body[key]}\n`
-    }
-  }
-  data.new = record
-  level.list.splice(req.params.id, 1)
-  level.list.splice(req.params.id, 0, record)
-  if(req.params.id != req.body.pos-1) {
-    if(req.params.id > req.body.pos-1) {
-    level.list.splice(req.body.pos-1, 0, record)
-    level.list.splice(req.params.id+1, 1)
-  } else {
-    level.list.splice(req.body.pos, 0, record)
-   level.list.splice(req.params.id, 1) 
-  }
-    message += `pos: ${req.body.pos}`
-  }
-  await level.save()
-  webhook(message, null, {
-    event: "RECORD_EDIT",
-    data
-  })
-  res.redirect(req.headers.referer)
+  req.body.level = req.params.level
+    req.body.id = req.params.id
+    let response = await request("https://gdlrrlist.com/api/helper/edit/records/comp", {
+      method: "PATCH",
+      body: JSON.stringify(req.body),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Helper ${getCookie("token", req)}`
+      }
+    })
+    let body = await response.body.json()
+    if(response.statusCode != 203) return res.render("404.ejs", body)
+    res.redirect(req.headers.referer)
 })
 
 app.post("/editrecordprog/:level/:id", async (req, res) => {
-  let data = {}
-   let approved = await hasAccess(false, req, res, true)
-  if(!approved) return res.render("404.ejs")
-  let level = await levelsSchema.findOne({name: req.params.level})
-  if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Plese input a valid level name!"})
-  let record = level.progresses[req.params.id]
-  if(!record) return res.render("404.ejs", {error: "400 Bad Request", message: "Record number out of range."})
-  data.old = record
-  let message = `The following record by the name ${record.name} on the level ${level.name} has been updated:\n`
-  for(const key in req.body) {
-    if(key != "pos") {
-    record[key] = req.body[key]
-      message += `${key}: ${req.body[key]}`
-    }
-  }
-  data.new = record
-  level.progresses.splice(req.params.id, 1)
-  level.progresses.splice(req.params.id, 0, record)
-  webhook(message, null, {
-    event: "RECORD_DELETE",
-    data
-  })
-  await level.save()
-  res.redirect(req.headers.referer)
+   req.body.level = req.params.level
+    req.body.id = req.params.id
+    let response = await request("https://gdlrrlist.com/api/helper/edit/records/prog", {
+      method: "PATCH",
+      body: JSON.stringify(req.body),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Helper ${getCookie("token", req)}`
+      }
+    })
+    let body = await response.body.json()
+    if(response.statusCode != 203) return res.render("404.ejs", body)
+    res.redirect(req.headers.referer)
 })
   
   app.route("/addlevel")

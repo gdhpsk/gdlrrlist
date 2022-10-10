@@ -29,6 +29,78 @@ router.use(express.urlencoded({ extended: true }))
   next()
 })
 
+  router.patch("/records/edit/comp", async (req, res) => {
+    let data = {}
+  let level = await levelsSchema.findOne({name: req.body.level})
+    try {
+      parseInt(req.body.id)
+    } catch(_) {
+      return res.status(400).json({error: config["400"], message: "Plese input a valid record ID for the 'id' field!"})
+    }
+  req.body.id = parseInt(req.body.id)
+  if(!level) return res.status(400).json({error: config["400"], message: "Plese input a valid level name in the 'level' field!"})
+  let record = level.list[req.params.id]
+  if(!record) return res.status(400).json({error: config["400"], message: "Record number out of range."})
+  data.old = record
+  let message = `The following record by the name ${record.name} on the level ${level.name} has been updated:\n`
+  for(const key in req.body) {
+    if(key != "pos") {
+    record[key] = req.body[key]
+      message += `${key}: ${req.body[key]}\n`
+    }
+  }
+  data.new = record
+  level.list.splice(req.params.id, 1)
+  level.list.splice(req.params.id, 0, record)
+  if(req.params.id != req.body.pos-1) {
+    if(req.params.id > req.body.pos-1) {
+    level.list.splice(req.body.pos-1, 0, record)
+    level.list.splice(req.params.id+1, 1)
+  } else {
+    level.list.splice(req.body.pos, 0, record)
+   level.list.splice(req.params.id, 1) 
+  }
+    message += `pos: ${req.body.pos}`
+  }
+  await level.save()
+  webhook(message, null, {
+    event: "RECORD_EDIT",
+    data
+  })
+  res.sendStatus(203)
+})
+
+  router.patch("/records/edit/prog", async (req, res) => {
+    let data = {}
+  let level = await levelsSchema.findOne({name: req.body.level})
+  if(!level) return res.status(400).json({error: config["400"], message: "Plese input a valid level name!"})
+    try {
+      parseInt(req.body.id)
+    } catch(_) {
+      return res.status(400).json({error: config["400"], message: "Plese input a valid record ID for the 'id' field!"})
+    }
+  req.body.id = parseInt(req.body.id)
+  let record = level.progresses?.[req.body.id]
+  if(!record) return res.status(400).json({error: config["400"], message: "Record number out of range."})
+  data.old = record
+  let message = `The following record by the name ${record.name} on the level ${level.name} has been updated:\n`
+  for(const key in req.body) {
+    if(key != "pos") {
+    record[key] = req.body[key]
+      message += `${key}: ${req.body[key]}`
+    }
+  }
+  data.new = record
+  level.progresses.splice(req.params.id, 1)
+  level.progresses.splice(req.params.id, 0, record)
+  webhook(message, null, {
+    event: "RECORD_DELETE",
+    data
+  })
+  await level.save()
+  res.sendStatus(203)
+})
+
   router.route("/sheets")
 .delete(async (req, res) => {
   if(!req.body.name) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})

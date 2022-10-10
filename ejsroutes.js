@@ -77,9 +77,9 @@ app.get("/roulette", (req, res) => {
 
 app.get("/61plus.html", async (req, res) => {
   let everything = await sixtyoneSchema.find().sort({position: 1})
-  let obj = await request("https://gdlrrlist.com/api/nationalities")
+  let obj = await request("https://gdlrrlist.com/api/v1/leaderboard/nationalities")
   let objOfNations = await obj.body.json()
-   let obj2 = await request("https://gdlrrlist.com/api/nations")
+   let obj2 = await request("https://gdlrrlist.com/api/v1/leaderboard/nations")
   let nationabbr = await obj2.body.json()
    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)
@@ -225,7 +225,7 @@ app.get("/leaderboard.html", async (req, res) => {
       }
     }
   }
-  let dat = await request("https://gdlrrlist.com/api/nations")
+  let dat = await request("https://gdlrrlist.com/api/v1/leaderboard/nations")
   let nationabbr = await dat.body.json()
   let everything = await levelsSchema.find().sort({position: 1})
   let everything2 = await leaderboardSchema.find({ban: {$exists: false}})

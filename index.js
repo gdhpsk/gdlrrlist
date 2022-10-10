@@ -5,7 +5,6 @@ const path = require("path")
 const dayjs = require("dayjs")
 const cron = require("node-cron")
 const bcrypt = require("bcrypt")
-const api = require("./api.js")
 const allowedPeople = require("./schemas/allowedPeople.js")
 const point_calc = require("./point_calc")
 const cookieParser = require("cookie-parser")
@@ -166,7 +165,6 @@ app.use((req, res, next) => {
   }
   next()
 })
-app.use("/api", api);
 app.use(cookieParser())
 app.use("/", express.static("sounds"));
 app.use("/api", require("./api/api.js")(hasCorrectAuth, webhook, send_to_client));

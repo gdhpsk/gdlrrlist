@@ -13,7 +13,7 @@ searchInput.addEventListener("input", e => {
   })
 })
 
-fetch("https://gdlrrlist.com/api/")
+fetch("https://gdlrrlist.com/api/v1/demons")
   .then(res => res.json())
   .then(real => {
     const data = Object.values(real)

@@ -13,7 +13,7 @@ searchInput.addEventListener("input", e => {
   })
 })
 
-fetch("https://gdlrrlist.com/api/leaderboard")
+fetch("https://gdlrrlist.com/api/v1/leaderboard")
   .then(res => res.json())
   .then(real => {
     const data = Object.values(real)
