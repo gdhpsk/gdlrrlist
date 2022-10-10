@@ -32,7 +32,7 @@ module.exports = (obj) => {
         'authorization': `Helper ${getCookie("token", req)}`
       }
     })
-    let body = await response.body.json()
+    let body = await response.body.text()
     if(response.statusCode != 204) return res.render("404.ejs", body)
     res.redirect(req.headers.referer)
 })
@@ -48,7 +48,7 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
         'authorization': `Helper ${getCookie("token", req)}`
       }
     })
-    let body = await response.body.json()
+    let body = await response.body.text()
     if(response.statusCode != 204) return res.render("404.ejs", body)
     res.redirect(req.headers.referer)
 })
