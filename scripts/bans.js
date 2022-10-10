@@ -30,8 +30,7 @@ module.exports = (obj) => {
 app.route("/ban/:id")
 .get(async (req, res) => {
   let response = await request("https://gdlrrlist.com/api/mods/bans", {
-      method: "DELETE",
-      body: JSON.stringify(req.body),
+      method: "GET",
       headers: {
         'content-type': 'application/json',
         'authorization': `Moderator ${getCookie("token", req)}`
@@ -64,7 +63,7 @@ app.get("/bans", async (req, res) => {
 
 app.get("/bans/delete/:id", async (req, res) => {
   let response = await request("https://gdlrrlist.com/api/mods/bans", {
-      method: "GET",
+      method: "DELETE",
       headers: {
         'content-type': 'application/json',
         'authorization': `Moderator ${getCookie("token", req)}`
