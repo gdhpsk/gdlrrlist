@@ -452,8 +452,8 @@ if(submission.status != req.body.status) {
     let record = level.progresses.findIndex(e => e.name == req.body.username.trim() && e.percent == req.body.progress)
     var player = await leaderboardSchema.findOne({name: req.body.username.trim()})
     if(record == -1) res.status(400).json({error: config["400"], message: "This record does not exist!"})
-    dataTwo.link = level.progresses[record].link
-    dataTwo.hertz = level.progresses[record].hertz
+    dataTwo.link = level.progresses[record]?.link
+    dataTwo.hertz = level.progresses[record]?.hertz
     message = `A progess of the level ${level.name} by [${player.name}](${level.progresses[record].link}) has been deleted. (Progress: ${level.progresses[record].percent}%)`
     level.progresses = level.progresses.filter(e => e.name != req.body.username.trim() || e.percent != req.body.progress)
     if(level.progresses.length == 0) {
@@ -474,8 +474,8 @@ if(submission.status != req.body.status) {
     if(record == -1) res.status(400).json({error: config["400"], message: "This record doesn't exist!"})
     var player = await leaderboardSchema.findOne({name: req.body.username.trim()})
     if(!player) return res.status(400).json({error: config["400"], message: "Please input a valid player name!"})
-    dataTwo.link = level.list[record].link
-    dataTwo.hertz = level.list[record].hertz
+    dataTwo.link = level.list[record]?.link
+    dataTwo.hertz = level.list[record]?.hertz
     message = `A completion of the level ${level.name} by [${player.name}](${level.list[record].link}) has been deleted. `
     level.list = level.list.filter(e => e.name != req.body.username.trim())
     if(level.list.length == 0) {
