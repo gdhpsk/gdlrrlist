@@ -227,7 +227,7 @@ router.use(express.urlencoded({ extended: true }))
 
   router.route("/submissions/mod")
   .patch(async (req, res) => {
-
+  console.log(req.headers)
   if(!req.body.id) return res.status(400).json({error: config["400"], message: `Please input an 'id' value in your body!`})
   try {
     await submitSchema.findById(req.body.id)
