@@ -407,17 +407,18 @@ if(submission.status != req.body.status) {
     try {
       let something = await submitSchema.findById(req.body.record)
   if(something) {
-      await request("https://gdlrrlist.com/api/v1/helper/submissions/mod", {
+      let alr = await request("https://gdlrrlist.com/api/v1/helper/submissions/mod", {
         method: "PATCH",
         headers: {
           'content-type': 'application/json',
           'authorization': `Helper ${getCookie("token", req)}`
         },
         body: JSON.stringify({
-          id: something._id.toString(),
+          id: req.body.record,
           status: "accepted"
         })
       })
+    console.log(alr)
   }
     } catch(_) {
       
@@ -446,7 +447,7 @@ if(submission.status != req.body.status) {
     if(record == -1) res.status(400).json({error: config["400"], message: "This record does not exist!"})
     dataTwo.link = level.progresses[record]?.link
     dataTwo.hertz = level.progresses[record]?.hertz
-    message = `A progess of the level ${level.name} by [${player.name}](${level.progresses[record].link}) has been deleted. (Progress: ${level.progresses[record].percent}%)`
+    message = `A progess on the level ${level?.name} by [${player?.name}](${level?.progresses?.[record]?.link}) has been deleted. (Progress: ${level?.progresses?.[record]?.percent}%)`
     level.progresses = level.progresses.filter(e => e.name != req.body.username.trim() || e.percent != req.body.progress)
     if(level.progresses.length == 0) {
       level.progresses = ["none"]
@@ -468,7 +469,7 @@ if(submission.status != req.body.status) {
     if(!player) return res.status(400).json({error: config["400"], message: "Please input a valid player name!"})
     dataTwo.link = level.list[record]?.link
     dataTwo.hertz = level.list[record]?.hertz
-    message = `A completion of the level ${level.name} by [${player.name}](${level.list[record].link}) has been deleted. `
+    message = `A completion of the level ${level?.name} by [${player?.name}](${level?.list?.[record]?.link}) has been deleted. `
     level.list = level.list.filter(e => e.name != req.body.username.trim())
     if(level.list.length == 0) {
       level.list = ["none"]
