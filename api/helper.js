@@ -408,11 +408,11 @@ if(submission.status != req.body.status) {
       let something = await submitSchema.findById(req.body.record)
   if(something) {
     let alr = await request("https://gdlrrlist.com/api/helper/submissions/mod", {
-        method: "PATCH",
         headers: {
-          'content-type': 'application/json',
-          'authorization': `Helper ${getCookie("token", req)}`
+          authorization: `Helper ${getCookie("token", req)}`,
+          'content-type': 'application/json'
         },
+       method: "PATCH",
         body: JSON.stringify({
           id: req.body.record,
           status: "accepted"
