@@ -407,7 +407,7 @@ if(submission.status != req.body.status) {
     try {
       let something = await submitSchema.findById(req.body.record)
   if(something) {
-      let alr = await request("https://gdlrrlist.com/api/v1/helper/submissions/mod", {
+      await request("https://gdlrrlist.com/api/helper/submissions/mod", {
         method: "PATCH",
         headers: {
           'content-type': 'application/json',
@@ -418,7 +418,6 @@ if(submission.status != req.body.status) {
           status: "accepted"
         })
       })
-    console.log(alr)
   }
     } catch(_) {
       

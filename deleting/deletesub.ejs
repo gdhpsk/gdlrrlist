@@ -33,7 +33,6 @@
         <label>Username</label>
         <br>
         <input type="text" id="text" placeholder="Username" name="username" required></input>
-        <div id="show-suggestions" style="height: 150px; overflow:auto; display: none;"><br></div>
         <br></br>
         <label>Demon</label>
         <br>
@@ -57,19 +56,6 @@
       document.getElementById("wesure").className = ""
     }
   })();
-
-  function logger() {
-    let {value} = this
-    if(value != "") {
-    document.getElementById("show-suggestions").style.display = "block"
-    } else {
-      document.getElementById("show-suggestions").style.display = "none"   
-    }
-    for(let i = 0; i < 9; i++) {
-    document.getElementById("show-suggestions").innerHTML += `<button style="padding: 12px 18px;" type="button">Test</button><br>`
-    }
-  }
-        document.getElementById("text").addEventListener("input", logger, false)  
     </script>
     <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js"></script>
   </body>
