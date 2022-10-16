@@ -55,6 +55,7 @@ app.route("/add")
   return res.render("../adding/addsub.ejs", {loggedIn, editing, editable})
 })
 .post(async (req, res) => {
+  req.body.record = req.query.record
   let response = await request("https://gdlrrlist.com/api/helper/records", {
     method: "PUT",
     headers: {

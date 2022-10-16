@@ -189,7 +189,7 @@ if(req.body.video) {
 
     let submission = await submitSchema.findById(req.body.id)
     for(const key in req.body) {
-      if(req.body[key]) {
+      if(req.body[key] && key != "_id") {
         submission[key] = req.body[key]
       }
     }

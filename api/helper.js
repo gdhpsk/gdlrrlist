@@ -228,7 +228,7 @@ router.use(express.urlencoded({ extended: true }))
   router.route("/submissions/mod")
   .patch(async (req, res) => {
 
-  if(!req.body.id) return res.status(400).json({error: config["400"], message: `Please input a 'id' value in your body!`})
+  if(!req.body.id) return res.status(400).json({error: config["400"], message: `Please input an 'id' value in your body!`})
   try {
     await submitSchema.findById(req.body.id)
   } catch(_) {
@@ -305,14 +305,14 @@ if(submission.status != req.body.status) {
        
      }
     }
-  webhook(`A submissions status has been ${req.body.status}!`, [{description: `A submission by ${submission.username} has been ${req.body.status}. (submission: [${submission.demon} ${submission.progress}% on ${submission.hertz}](${submission.video}), comments: ${submission.comments || "none"})`}], {
+  webhook(`A submission has been ${req.body.status}!`, [{description: `A submission by ${submission.username} has been ${req.body.status}. (submission: [${submission.demon} ${submission.progress}% on ${submission.hertz}](${submission.video}), comments: ${submission.comments || "none"})`}], {
     event: "STATUS_UPDATE",
     data
   })
 }
 
     for(const key in req.body) {
-      if(req.body[key]) {
+      if(req.body[key] && key != "_id") {
         submission[key] = req.body[key]
       }
     }
@@ -403,27 +403,19 @@ if(submission.status != req.body.status) {
       hertz: obj.hertz
     }
   })
-  if(req.query.record) {
+  if(req.body.record) {
     try {
-      let something = await submitSchema.findById(req.query.record)
+      let something = await submitSchema.findById(req.body.record)
   if(something) {
-  webhook("A submission has been archived!", [{description: `A submission by ${something.username} has been archived. (submission: [${something.demon} ${something.progress}% on ${something.hertz}](${something.video}), comments: ${something.comments || "none"})`}], {
-    event: "SUBMISSION_ARCHIVE",
-    data: something
-  })
-  something.status = "accepted"
-    await something.save()
-
-      await request("https://gdlrrlist.com/api/v1/client/notifications", {
-        method: "POST",
+      await request("https://gdlrrlist.com/api/v1/helper/submissions/mod", {
+        method: "PATCH",
         headers: {
           'content-type': 'application/json',
-          'authorization': `User ${getCookie("token", req)}`
+          'authorization': `Helper ${getCookie("token", req)}`
         },
         body: JSON.stringify({
-          subject: `Information about your ${something.demon} ${something.progress}% submission`,
-          message: `Your submission has been accepted by the LRR List Moderators! Submission: ${something.demon} ${something.progress}%`,
-          to: something.account
+          id: something._id.toString(),
+          status: "accepted"
         })
       })
   }
