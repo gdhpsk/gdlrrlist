@@ -19,6 +19,7 @@ module.exports = (authFunction, webhook, rate_lim, send) => {
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
   router.use(async (req, res, next) => {
+    console.log(req.headers)
       let path = req.url.split("?")[0]
   if(!routes[path]) return next()
   if(!routes[path][req.method.toLowerCase()]) return res.status(405).json({error: config["405"][0], message: config["405"][1]})
@@ -227,7 +228,6 @@ router.use(express.urlencoded({ extended: true }))
 
   router.route("/submissions/mod")
   .patch(async (req, res) => {
-  console.log(req.headers)
   if(!req.body.id) return res.status(400).json({error: config["400"], message: `Please input an 'id' value in your body!`})
   try {
     await submitSchema.findById(req.body.id)
@@ -409,7 +409,7 @@ if(submission.status != req.body.status) {
   if(something) {
     let alr = await request("https://gdlrrlist.com/api/helper/submissions/mod", {
         headers: {
-          authorization: `Helper ${getCookie("token", req)}`,
+          authorization: req.headers.authorization,
           'content-type': 'application/json'
         },
        method: "PATCH",
