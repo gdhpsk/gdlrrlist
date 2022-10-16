@@ -69,8 +69,8 @@
          <tr>
            <td><%= everything._id %></td>
            <td><%= everything.index %></td>
-           <td><%= ok %></td>
-           <td><%= ok2 %></td>
+           <td><%= Math.round(ok) %></td>
+           <td><%= Math.round(ok2) %></td>
            <td><button type="button" onclick='putREQ("<%= everything._id %>")'>+</button></td>
        <td><button type="button" onclick='deleteREQ("<%= everything._id %>")'>Delete sheet</button></td>
            <td><button type="button" onclick="window.location.href = 'https://gdlrrlist.com/sheets'">Go Back</button></td>
