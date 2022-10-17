@@ -44,7 +44,7 @@
             <div style="display: grid; place-items: center;">
               <form action="https://gdlrrlist.com/submissions/status" method="post">
                 <label style="font-size: 30px;">Status (DOES NOT ADD THE RECORD OR DELETE)</label>
-                <br></br>
+                <div style="display: grid; place-items: center; margin-top: 10px;">
                 <select name="status">
                   
                   <option <% if(locals.status == "accepted") { %> selected <% } %> >accepted</option>
@@ -52,8 +52,8 @@
                   <option <% if(locals.status == "pending" || !locals.status) { %> selected <% } %>>pending</option>
                 </select>
                 <input type="hidden" name="id" value="<%= locals._id %>">
-                    <br></br>
-              <button type="submit" style="font-size: 30px;">Update</button>
+              <button type="submit" style="font-size: 20px; margin-top: 20px;">Update</button>
+                  </div>
             </form>
                <br></br>
               <button type="button" style="font-size: 30px;" onclick="window.location.href = 'https://gdlrrlist.com/notifications/compose?record=<%= locals._id %>'">Email User</button>
