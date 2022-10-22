@@ -38,6 +38,18 @@ async function findToken(req) {
   if(getCookie("token", req)) {
     try {
        let token = jwt.verify(getCookie("token", req),  process.env.WEB_TOKEN)
+      if(token.type == "discord") {
+        const userResult = await request('https://discord.com/api/users/@me', {
+	headers: {
+		authorization: `Bearer ${token.password}`,
+	},
+});
+const json = await userResult.body.json()
+  let person = await loginSchema.findOne({discord: json.id})
+  if(!person) return {exists: false}
+  
+  return {exists: true, name: token.username}
+}
   let people = await loginSchema.findOne({name: token.username})
   if(!people) return {exists: false}
   let isSame = await bcrypt.compare(token.password, people.password)
@@ -60,6 +72,47 @@ app.get("/", async (req, res) => {
     if(getCookie("editing", req) == "true") {
     editing = true
   }
+  }
+  const {client_id, client_secret} = process.env
+  const {code} = req.query
+  if (code) {
+		try {
+			const oauthResult = await fetch('https://discord.com/api/oauth2/token', {
+				method: 'POST',
+				body: new URLSearchParams({
+					client_id,
+					client_secret,
+					code,
+					grant_type: 'authorization_code',
+					redirect_uri: `https://gdlrrlist.com`,
+					scope: 'identify', 
+				}),
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+			});
+
+			const oauthData = await oauthResult.json();
+     
+const userResult = await request('https://discord.com/api/users/@me', {
+	headers: {
+		authorization: `${oauthData.token_type} ${oauthData.access_token}`,
+	},
+});
+const json = await userResult.body.json()
+      let userExists = await loginSchema.findOne({discord: json.id})
+      if(userExists) {
+        let token = jwt.sign({username: userExists.name, password: oauthData.access_token, type: "discord"}, process.env.WEB_TOKEN, {expiresIn: "7d"})
+        res.cookie("token", token, {maxAge: 604800000 })
+      }
+      return res.redirect("/")
+		} catch (err) {
+      console.error(err)
+     // console.error(err)
+			// NOTE: An unauthorized token will not throw an error;
+			// it will return a 401 Unauthorized response in the try block above
+			//console.error(error);
+		}
   }
   res.render("homepage.ejs", {editable, editing, loggedIn: loggedIn.exists, profile: loggedIn.name})
 })

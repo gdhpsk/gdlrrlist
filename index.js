@@ -13,7 +13,6 @@ const {Routes} = require("discord-api-types/v10")
 const rest = new REST({version: '10'}).setToken(discord_token);
 const fetchUser = async id => rest.get(Routes.user(id));
 const {WebSocketServer} = require("ws");
-
 const {request} = require("undici")
 
 const http_server = require("http").createServer(app);
@@ -73,6 +72,22 @@ server.on("connection", (socket) => {
         }
     try {
        let token = jwt.verify(json_msg.token, process.env.WEB_TOKEN)
+      if(token.type == "discord") {
+        const userResult = await request('https://discord.com/api/users/@me', {
+	headers: {
+		authorization: `Bearer ${token.password}`,
+	},
+});
+const json = await userResult.body.json()
+  let person = await loginSchema.findOne({discord: json.id})
+  if(!person) return socket.send(JSON.stringify({
+    error: "404 NOT FOUND",
+    message: "Could not find the token provided!"
+  }))
+  socket.isAlive = true
+  socket.user = token.username
+  return
+}
   let people = await loginSchema.findOne({name: token?.username})
       
   if(!people) return socket.send(JSON.stringify({
@@ -219,6 +234,17 @@ async function findToken(req, useHeaders) {
   if(tok) {
     try {
        let token = jwt.verify(tok, process.env.WEB_TOKEN)
+      if(token.type == "discord") {
+        const userResult = await request('https://discord.com/api/users/@me', {
+	headers: {
+		authorization: `Bearer ${token.password}`,
+	},
+});
+const json = await userResult.body.json()
+  let person = await loginSchema.findOne({discord: json.id})
+  if(!person) return false
+  return true
+}
   let people = await loginSchema.findOne({name: token.username})
   if(!people) return false
   let isSame = await bcrypt.compare(token.password, people.password)

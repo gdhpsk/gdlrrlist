@@ -15,7 +15,6 @@ const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
 router.use(async (req, res, next) => {
     let path = req.url.split("/")?.[1]
-    
  if(["mods", "leader", "helper", "spectator", "v1"].includes(path)) return next()
   let correct_auth = await authFunction(req, res)
   if(!correct_auth) {
