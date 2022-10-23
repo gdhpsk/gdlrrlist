@@ -101,6 +101,13 @@ const userResult = await request('https://discord.com/api/users/@me', {
 });
 const json = await userResult.body.json()
       let userExists = await loginSchema.findOne({discord: json.id})
+      if(!userExists) {
+        if(loggedIn.exists) {
+          userExists = await loginSchema.findOne({name: loggedIn.name})
+          userExists.id = json.id
+          await userExists.save()
+        }
+      }
       if(userExists) {
         let token = jwt.sign({username: userExists.name, password: oauthData.access_token, type: "discord"}, process.env.WEB_TOKEN, {expiresIn: "7d"})
         res.cookie("token", token, {maxAge: 604800000 })
