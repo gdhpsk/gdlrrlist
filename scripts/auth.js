@@ -7,8 +7,20 @@ app.use(express.urlencoded({ extended: true }))
 module.exports = (obj) => {
   let { loginSchema, hasCorrectAuth: authFunction } = obj
 
+  app.get("/add_socials", async (req, res) => {
+  let correct_auth = await authFunction(req, res)
+  if(!correct_auth) {
+    return res.status(401).render("404.ejs")
+  }
+      return res.render("../misc/add_user_social.ejs")
+})
+
   app.route("/login")
 .get(async (req, res) => {
+  let correct_auth = await authFunction(req, res)
+  if(correct_auth) {
+    return res.status(401).render("404.ejs")
+  }
       return res.render("../misc/login.ejs")
 })
 .post(async (req, res) => {
