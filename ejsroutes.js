@@ -104,7 +104,7 @@ const json = await userResult.body.json()
       if(!userExists) {
         if(loggedIn.exists) {
           userExists = await loginSchema.findOne({name: loggedIn.name})
-          userExists.id = json.id
+          userExists.discord = json.id
           await userExists.save()
         }
       }
