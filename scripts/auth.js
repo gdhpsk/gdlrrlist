@@ -9,10 +9,6 @@ module.exports = (obj) => {
 
   app.route("/login")
 .get(async (req, res) => {
-  let correct_auth = await authFunction(req, res)
-  if(correct_auth) {
-    return res.status(401).render("404.ejs")
-  }
       return res.render("../misc/login.ejs")
 })
 .post(async (req, res) => {
