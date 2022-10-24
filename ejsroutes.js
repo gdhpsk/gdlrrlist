@@ -18,6 +18,8 @@ const {REST} = require("@discordjs/rest")
 const {Routes} = require("discord-api-types/v10")
 const dayjs = require("dayjs")
 
+const {google} = require('googleapis');
+
 const rest = new REST({version: '10'}).setToken(discord_token);
 
 app.use(express.urlencoded({ extended: true }))
@@ -50,6 +52,26 @@ const json = await userResult.body.json()
   
   return {exists: true, name: token.username}
 }
+      if(token.type == "google") {
+        try {
+        const oauth2Client = new google.auth.OAuth2(
+  process.env.google_id,
+  process.env.google_secret,
+  "https://gdlrrlist.com/google_signin"
+);
+    
+      oauth2Client.setCredentials(token.password);
+      let info = google.oauth2("v2")
+let {data} = await info.userinfo.get({
+  auth: oauth2Client
+})
+          let userExists = await loginSchema.findOne({google: {$eq: data.id, $ne: undefined}, name: token.username})
+  if(!userExists) return {exists: false}
+    return {exists: true, name: token.username}
+        } catch(_) {
+          return {exists: false}
+        }
+      }
   let people = await loginSchema.findOne({name: token.username})
   if(!people) return {exists: false}
   let isSame = await bcrypt.compare(token.password, people.password)
@@ -61,6 +83,55 @@ const json = await userResult.body.json()
   }
    return {exists: false}
 }
+
+app.get("/google_signin", async (req, res) => {
+  const {code} = req.query 
+
+  const oauth2Client = new google.auth.OAuth2(
+  process.env.google_id,
+  process.env.google_secret,
+  "https://gdlrrlist.com/google_signin"
+);
+const scopes = [
+  'openid'
+];
+const authorizationUrl = oauth2Client.generateAuthUrl({
+  access_type: 'online',
+  scope: scopes,
+  include_granted_scopes: true
+});
+   let loggedIn = await findToken(req)
+  if(code) {
+    try {
+      
+      let { tokens } = await oauth2Client.getToken(code);
+      oauth2Client.setCredentials(tokens);
+      let info = google.oauth2("v2")
+info.userinfo.get({
+  auth: oauth2Client
+}, async (err, response) => {
+  if(err) return res.redirect("/")
+  let userExists = await loginSchema.findOne({google: {$eq: response.data.id, $ne: undefined}})
+      if(!userExists) {
+        if(loggedIn.exists) {
+          userExists = await loginSchema.findOne({name: loggedIn.name})
+          userExists.google = response.data.id
+          await userExists.save()
+        }
+      }
+      if(userExists) {
+        let token = jwt.sign({username: userExists.name, password: tokens, type: "google"}, process.env.WEB_TOKEN, {expiresIn: "7d"})
+        res.cookie("token", token, {maxAge: 604800000 })
+      }
+      return res.redirect("/")
+})
+    } catch(_) {
+      
+    }
+  } else {
+    res.redirect(authorizationUrl)
+  }
+})
 
 app.get("/", async (req, res) => {
   let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
@@ -100,7 +171,7 @@ const userResult = await request('https://discord.com/api/users/@me', {
 	},
 });
 const json = await userResult.body.json()
-      let userExists = await loginSchema.findOne({discord: json.id})
+      let userExists = await loginSchema.findOne({discord: {$eq: json.id, $ne: undefined}})
       if(!userExists) {
         if(loggedIn.exists) {
           userExists = await loginSchema.findOne({name: loggedIn.name})

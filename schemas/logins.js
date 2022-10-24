@@ -4,6 +4,7 @@ var login = new mongoose.Schema({
     name: String,
     password: String,
     discord: String,
+    google: String,
     message: String 
 })
 

@@ -42,6 +42,7 @@ const sixtyoneSchema = require("./schemas/61hertz.js")
 const rolePacksSchema = require("./schemas/role_packs.js")
 const leaderboardSchema = require("./schemas/leaderboard.js")
 const mailSchema = require("./schemas/mail.js") 
+const {google} = require("googleapis")
 
 server.on("connection", (socket) => {
   socket.on("message", async message => {
@@ -72,6 +73,34 @@ server.on("connection", (socket) => {
         }
     try {
        let token = jwt.verify(json_msg.token, process.env.WEB_TOKEN)
+      if(token.type == "google") {
+        try {
+        const oauth2Client = new google.auth.OAuth2(
+  process.env.google_id,
+  process.env.google_secret,
+  "https://gdlrrlist.com/google_signin"
+);
+    
+      oauth2Client.setCredentials(token.password);
+      let info = google.oauth2("v2")
+let {data} = await info.userinfo.get({
+  auth: oauth2Client
+})
+          let userExists = await loginSchema.findOne({google: {$eq: data.id, $ne: undefined}, name: token.username})
+  if(!userExists) return socket.send(JSON.stringify({
+    error: "401 UNAUTHORIZED",
+    message: "You are not allowed to authorize in this fasion."
+  }))
+    socket.isAlive = true
+      socket.user = token.username
+        return
+        } catch(_) {
+          return socket.send(JSON.stringify({
+    error: "401 UNAUTHORIZED",
+    message: "You are not allowed to authorize in this fasion."
+  }))
+        }
+      }
       if(token.type == "discord") {
         const userResult = await request('https://discord.com/api/users/@me', {
 	headers: {
@@ -245,6 +274,25 @@ const json = await userResult.body.json()
   if(!person) return false
   return true
 }
+      if(token.type == "google") {
+        try {
+        const oauth2Client = new google.auth.OAuth2(
+  process.env.google_id,
+  process.env.google_secret,
+  "https://gdlrrlist.com"
+);
+      oauth2Client.setCredentials(token.password);
+      let info = google.oauth2("v2")
+let {data} = await info.userinfo.get({
+  auth: oauth2Client
+})
+          let userExists = await loginSchema.findOne({google: {$eq: data.id, $ne: undefined}, name: token.username})
+  if(!userExists) return false
+    return true
+        } catch(_) {
+          return false
+        }
+      }
   let people = await loginSchema.findOne({name: token.username})
   if(!people) return false
   let isSame = await bcrypt.compare(token.password, people.password)
