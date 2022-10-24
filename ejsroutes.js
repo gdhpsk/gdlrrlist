@@ -84,6 +84,17 @@ let {data} = await info.userinfo.get({
    return {exists: false}
 }
 
+// user settings
+
+app.get("/user_settings", async (req, res) => {
+  let loggedIn = await findToken(req)
+  if(!loggedIn.exists) {
+    return res.status(401).render("404.ejs")
+  }
+  let user = await loginSchema.findOne({name: loggedIn.name})
+      return res.render("../misc/user_settings.ejs", {user})
+})
+
 app.get("/google_signin", async (req, res) => {
   const {code} = req.query 
 

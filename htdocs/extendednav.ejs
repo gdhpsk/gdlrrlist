@@ -6,7 +6,7 @@
     <a class="nav-buttons <%= locals.active == 'notifications' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/notifications"><i class="fa fa-bell"></i>&nbsp;&nbsp;Notifications</a>
       <% } %>
            <% if(locals.editable) { %>
-          <a class="nav-buttons <%= locals.active == 'settings' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/settings"><i class="fa fa-gear"></i>&nbsp;&nbsp;Settings</a>
+          <a class="nav-buttons <%= locals.active == 'settings' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/settings"><i class="fa fa-gear"></i>&nbsp;&nbsp;Mod Settings</a>
             <a class="nav-buttons <%= locals.active == 'search' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/alllevels"><i class="fa fa-search"></i>&nbsp;&nbsp;Search</a>
              <% if(["61plus", "lrr-levels"].includes(locals.active)) { %>
             <a onclick="addCook()"><i class='fas fa-edit'></i>&nbsp;&nbsp;Edit Info</a>
@@ -19,7 +19,7 @@
               <% if(!locals.loggedIn) {%>
     <a onclick="openSwal()"><i class="fa fa-sign-in"></i>&nbsp;&nbsp;Log In</a>
     <% } else { %>
-      <a class="nav-buttons" href="https://gdlrrlist.com/add_socials"><i class="fas fa-user-friends"></i>&nbsp;&nbsp;Add Socials</a>
+      <a class="nav-buttons" href="https://gdlrrlist.com/add_socials"><i class="fas fa-user-cog"></i>&nbsp;&nbsp;Settings</a>
       <a onclick="logout()"><i class='fas fa-sign-out'></i>&nbsp;&nbsp;Log Out</a>
       <% } %>
         <a class="nav-buttons" href="https://gdmobilewrlist.gq"><i class="fas fa-fire"></i>&nbsp;&nbsp;Mobile WR List</a>
