@@ -270,7 +270,7 @@ async function findToken(req, useHeaders) {
 	},
 });
 const json = await userResult.body.json()
-  let person = await loginSchema.findOne({discord: json.id})
+  let person = await loginSchema.findOne({discord: {$eq: json.id, $ne: undefined}, name: token.username})
   if(!person) return false
   return true
 }
