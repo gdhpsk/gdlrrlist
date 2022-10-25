@@ -87,12 +87,21 @@ let {data} = await info.userinfo.get({
 // user settings
 
 app.get("/user_settings", async (req, res) => {
+  let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
   if(!loggedIn.exists) {
     return res.status(401).render("404.ejs")
   }
   let user = await loginSchema.findOne({name: loggedIn.name})
-      return res.render("../misc/user_settings.ejs", {user})
+      return res.render("../misc/user_settings.ejs", {user, loggedIn: loggedIn.exists, editing, editable})
 })
 
 app.get("/google_signin", async (req, res) => {
