@@ -29,9 +29,9 @@
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
       
 <div style="display: grid; place-items: center;">
-  <h1>Account settings for user <%= user.name %>:</h1>
-  <h3 style="margin-top: -15px;">Discord ID: <%= locals.user.discord ? locals.user.discord : "none" %></h3>
-  <h3 style="margin-top: -20px;">Google ID: <%= locals.user.google ? locals.user.google : "none" %></h3>
+  <h1 style="text-align: center;">Account settings for user <%= user.name %>:</h1>
+  <h3 style="margin-top: -15px; text-align: center;">Discord ID: <%= locals.user.discord ? locals.user.discord : "none" %></h3>
+  <h3 style="margin-top: -20px; text-align: center;">Google ID: <%= locals.user.google ? locals.user.google : "none" %></h3>
   <hr style="width: 95%; background-color: white"/>
   <h4 style="text-align: center;">Add / Change Socials</h4>
 <button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="window.location.href = 'https://discord.com/api/oauth2/authorize?client_id=1033274582855065704&redirect_uri=https%3A%2F%2Fgdlrrlist.com&response_type=code&scope=identify'"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Discord</p></button>
