@@ -121,7 +121,7 @@ app.get("/google_signin", async (req, res) => {
   const oauth2Client = new google.auth.OAuth2(
   process.env.google_id,
   process.env.google_secret,
-  "https://gdlrrlistcom.gdhpsk.repl.co/google_signin"
+  "https://gdlrrlist.com/google_signin"
 );
 const scopes = [
   'openid',
@@ -153,7 +153,7 @@ info.userinfo.get({
         }
       }
       if(userExists) {
-        let youtube = google.youtube("v2")
+        let youtube = google.youtube("v3")
         let {data} = await youtube.channels.list({
           auth: oauth2Client,
           mine: true,
