@@ -153,6 +153,15 @@ info.userinfo.get({
         }
       }
       if(userExists) {
+        let youtube = google.youtube("v2")
+        let {data} = await youtube.channels.list({
+          auth: oauth2Client,
+          mine: true,
+          part: "id",
+          maxResults: 50
+        })
+        userExists.youtube_channels = data.items.map(e => e = e.id)
+        await userExists.save()
         let token = jwt.sign({username: userExists.name, password: tokens, type: "google"}, process.env.WEB_TOKEN, {expiresIn: "7d"})
         res.cookie("token", token, {maxAge: 604800000 })
       }
