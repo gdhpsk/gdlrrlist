@@ -67,7 +67,7 @@ let {data} = await info.userinfo.get({
 })
           let userExists = await loginSchema.findOne({google: {$eq: data.id, $ne: undefined}, name: token.username})
   if(!userExists) return {exists: false}
-    return {exists: true, name: token.username}
+    return {exists: true, name: token.username, type: "google"}
         } catch(_) {
           return {exists: false}
         }
@@ -101,6 +101,17 @@ app.get("/user_settings", async (req, res) => {
     return res.status(401).render("404.ejs")
   }
   let user = await loginSchema.findOne({name: loggedIn.name})
+  let youtube = google.youtube("v3")
+  if(user.discord) { 
+    try {
+      let leaderboardProfile = await leaderboardSchema.findOne({"socials.discordid": {$eq: user.discord, $ne: undefined}})
+      if(leaderboardProfile) {
+        return res.render("../misc/user_settings.ejs", {user, loggedIn: loggedIn.exists, editing, editable, name: leaderboardProfile.name})
+      }
+    } catch(_) {
+      
+    }
+  }
       return res.render("../misc/user_settings.ejs", {user, loggedIn: loggedIn.exists, editing, editable})
 })
 
@@ -110,13 +121,14 @@ app.get("/google_signin", async (req, res) => {
   const oauth2Client = new google.auth.OAuth2(
   process.env.google_id,
   process.env.google_secret,
-  "https://gdlrrlist.com/google_signin"
+  "https://gdlrrlistcom.gdhpsk.repl.co/google_signin"
 );
 const scopes = [
-  'openid'
+  'openid',
+  "https://www.googleapis.com/auth/youtube.readonly"
 ];
 const authorizationUrl = oauth2Client.generateAuthUrl({
-  access_type: 'online',
+  access_type: 'offline',
   scope: scopes,
   include_granted_scopes: true
 });
@@ -131,6 +143,7 @@ info.userinfo.get({
   auth: oauth2Client
 }, async (err, response) => {
   if(err) return res.redirect("/")
+  
   let userExists = await loginSchema.findOne({google: {$eq: response.data.id, $ne: undefined}})
       if(!userExists) {
         if(loggedIn.exists) {
