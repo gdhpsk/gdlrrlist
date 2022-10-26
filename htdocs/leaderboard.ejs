@@ -46,6 +46,33 @@
       <br><br>
       <select id="typething"></select>
       <br></br>
+      <% if(locals.user) { %>
+        <h3>Your leaderboard profile:</h3>
+        <table>
+         <thead>
+          <tr>
+            <th id="flag_column"></th>
+            <th class="rank_number center">#</th>
+            <th style="min-width: 100px;">Name</th>
+            <th class = "center">Points</th>
+          </tr>
+        </thead>
+        <tbody>
+               <tr>
+          <td><% if (!user.nationality) { %>
+                <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr>
+            <% } else { %>
+               <abbr title="<%= user.nationreal %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= user.nationality %>.svg"></img></abbr>
+          <%  } %>
+            </td>
+          <td class="rank_number"><b>#<%= user.pos %></b></td>
+          <td class="trigger_popup_fricc" onclick = 'window.location.href = "/leaderboard/<%= encodeURIComponent(user.name) %>"'><%= user.name %></td> 
+          <td><%= user.points %></td>
+          </tr>
+        </tbody>
+            </table>
+            <hr style="width: 95%"/>
+        <% } %>
   </div>
     <div id="leaderboard" style = "display: grid; place-items:center; text-align: center;"> 
       <table id="rank_table">

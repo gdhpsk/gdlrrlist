@@ -101,7 +101,6 @@ app.get("/user_settings", async (req, res) => {
     return res.status(401).render("404.ejs")
   }
   let user = await loginSchema.findOne({name: loggedIn.name})
-  let youtube = google.youtube("v3")
   if(user.discord) { 
     try {
       let leaderboardProfile = await leaderboardSchema.findOne({"socials.discordid": {$eq: user.discord, $ne: undefined}})
@@ -112,6 +111,19 @@ app.get("/user_settings", async (req, res) => {
       
     }
   }
+  if(user.youtube_channels?.length) { 
+    try {
+      for(const item of user.youtube_channels) {
+      let leaderboardProfile = await leaderboardSchema.findOne({"socials.youtube": {$regex: item}})
+      if(leaderboardProfile) {
+        return res.render("../misc/user_settings.ejs", {user, loggedIn: loggedIn.exists, editing, editable, name: leaderboardProfile.name})
+      }
+      }
+    } catch(_) {
+      
+    }
+  }
+  
       return res.render("../misc/user_settings.ejs", {user, loggedIn: loggedIn.exists, editing, editable})
 })
 
@@ -439,6 +451,35 @@ app.get("/leaderboard.html", async (req, res) => {
     editing = true
   }
   }
+
+  if(loggedIn.exists) {
+    let user = await loginSchema.findOne({name: loggedIn.name})
+  if(user.discord) { 
+    try {
+      let leaderboardProfile = await leaderboardSchema.findOne({"socials.discordid": {$eq: user.discord, $ne: undefined}})
+      if(leaderboardProfile) {
+        leaderboardProfile = array.find(e => e.name == leaderboardProfile.name)
+         return res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr, user: leaderboardProfile})
+      }
+    } catch(_) {
+      
+    }
+  }
+  if(user.youtube_channels?.length) { 
+    try {
+      for(const item of user.youtube_channels) {
+      let leaderboardProfile = await leaderboardSchema.findOne({"socials.youtube": {$regex: item}})
+      if(leaderboardProfile) {
+        leaderboardProfile = array.find(e => e.name == leaderboardProfile.name)
+        return res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr, user: leaderboardProfile})
+      }
+      }
+    } catch(_) {
+      
+    }
+  }
+  }
+  
   res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr})
 })
 
