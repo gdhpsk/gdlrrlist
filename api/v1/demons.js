@@ -194,6 +194,7 @@ router.get("/MLL", async (req, res) => {
   let array = await list.body.json()
   let obj = {}
   for(let item of array) {
+      let x = array.findIndex(e => e == item)+1
     for(let record of item.records) {
       if(!obj[record.name]) {
         obj[record.name] = {
@@ -205,6 +206,7 @@ router.get("/MLL", async (req, res) => {
             }
           ]
         }
+        obj[record.name].points = 0
       } else {
         obj[record.name].levels.push({
               name: item.name,
@@ -212,6 +214,7 @@ router.get("/MLL", async (req, res) => {
               link: record.link
             })
       }
+      obj[record.name].points += [2250/(0.37 * x + 9)] - 40
     }
   }
   res.json(obj)

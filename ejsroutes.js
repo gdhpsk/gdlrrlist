@@ -142,7 +142,7 @@ const scopes = [
 const authorizationUrl = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: scopes,
-  include_granted_scopes: true
+  include_granted_scopes: true,
 });
    let loggedIn = await findToken(req)
   if(code) {
