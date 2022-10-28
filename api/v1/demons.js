@@ -38,6 +38,7 @@ let arr_of_yt_ids = []
 
   let all_pointer_demons = []
     let count = 0
+  if(!req.query.simplify) {
 while(true) {
   let level_i = await request(`https://pointercrate.com/api/v2/demons/listed?limit=100&after=${count*100}`)  
   let levels = await level_i.body.json()
@@ -45,6 +46,7 @@ while(true) {
   if(levels.length != 100) break
   count++
 }
+  }
   
   for(let j = 2; j < dom.window.document.getElementsByClassName("oKdM2c Kzv0Me").length; j++) {
     let txt = ""
@@ -56,10 +58,12 @@ while(true) {
  txt = JSDOM.fragment(txt).textContent.split("(~")[0]
 let g = {}
 g.name = txt.split(`"`)[1].trim()
-    
+
+if (!req.query.simplify) {
 let level_id = all_pointer_demons.find(e => e.name == g.name)
 if(level_id) {
   g.pointercrateID = level_id.id
+}
 }
 g.creators =  {
   host: txt.split("(")[0].split("by")[1].trim()
@@ -75,7 +79,9 @@ for(let x = 0; x < records.length; x++) {
     name,
     link: parts.find(e => e.toLowerCase().includes("youtu") || e.toLowerCase().startsWith("https://"))
   })
-  arr_of_yt_ids.push(reg.exec(recordarr[x].link)[1])
+  if(!req.query.simplify) {
+    arr_of_yt_ids.push(reg.exec(recordarr[x].link)[1])
+  }
   if(!recordarr[x].link.startsWith("https://")) {
     recordarr[x].link = `https://${recordarr[x].link}`
   }
@@ -90,6 +96,7 @@ obj.push(g)
 }
 
   let count2 = 0
+  if(!req.query.simplify) {
   let arr_of_yt_results = []
   while(true) {
     let daafast = await request(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${arr_of_yt_ids.slice(count2, count2+50)}&key=${process.env.ytkey}`)
@@ -113,6 +120,7 @@ obj.push(g)
       }
     })
   })
+  }
 
   res.json(obj)
 })
@@ -190,7 +198,7 @@ router.get("/random", async (req, res) => {
 })
 
 router.get("/MLL", async (req, res) => {
-  let list = await request("https://gdlrrlist.com/api/v1/demons/ML")
+  let list = await request(`https://gdlrrlist.com/api/v1/demons/ML?simplify=true`)
   let array = await list.body.json()
   let obj = {}
   for(let item of array) {
@@ -214,7 +222,7 @@ router.get("/MLL", async (req, res) => {
               link: record.link
             })
       }
-      obj[record.name].points += [2250/(0.37 * x + 9)] - 40
+      obj[record.name].points += [2250/((0.37 * x) + 9)] - 40
     }
   }
   res.json(obj)
