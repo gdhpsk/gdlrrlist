@@ -204,6 +204,10 @@ router.get("/MLL", async (req, res) => {
   for(let item of array) {
       let x = array.findIndex(e => e == item)+1
     for(let record of item.records) {
+      let index = Object.keys(obj).findIndex(e => e.toLowerCase() == record.name.toLowerCase())
+      if(index != -1) {
+        record.name = Object.keys(obj)[index]
+      }
       if(!obj[record.name]) {
         obj[record.name] = {
           levels: [
