@@ -686,7 +686,7 @@ app.get("/leaderboard/:name", async (req, res) => {
   if(user) { 
     obj["loginName"] = user.name
   } else {
-    user = await loginSchema.findOne({youtube_channels: {$exists: true, $in: [profile.socials?.youtube?.split("/channel/")?.[0]]}})
+    user = await loginSchema.findOne({youtube_channels: {$exists: true, $in: [profile.socials?.youtube?.split("/channel/")?.[1]]}})
     if(user) { 
       obj["loginName"] = user.name
     }
