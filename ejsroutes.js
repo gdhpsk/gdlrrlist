@@ -680,6 +680,18 @@ app.get("/leaderboard/:name", async (req, res) => {
     editing = true
   }
   }
+
+
+  let user = await loginSchema.findOne({discord: {$exists: true, $eq: profile.socials?.discordid}})
+  if(user) { 
+    obj["loginName"] = user.name
+  } else {
+    user = await loginSchema.findOne({youtube_channels: {$exists: true, $in: [profile.socials?.youtube?.split("/channel/")?.[0]]}})
+    if(user) { 
+      obj["loginName"] = user.name
+    }
+  }
+  
   obj["loggedIn"] = loggedIn
   obj["editing"] = editing
   obj["editable"] = editable
