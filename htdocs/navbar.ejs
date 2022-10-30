@@ -223,8 +223,10 @@ function requestAndShowPermission() {
     if(firstTime) {
       if(theme == "dark") {
         document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun-o"></i>&nbsp;&nbsp;Day`
+        document.getElementById("wesure").className = "dark-theme"
       } else {
         document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-moon-o"></i>&nbsp;&nbsp;Night`
+        document.getElementById("wesure").className = ""
       }
     } else {
       if(theme != "dark") {

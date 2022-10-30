@@ -41,15 +41,6 @@
       <hr style="width: 95%; background-color: white"/>
       <p style="text-align: center;">Leaderboard account: <a href="https://gdlrrlist.com/leaderboard/<%= locals.name %>"><%= locals.name ?? "none" %></a></p>
     <!-- scripts to include -->
-     <script>
-      (() => {
-    if(localStorage.getItem("theme") == "dark") {
-      document.getElementById("wesure").className = "dark-theme"
-    } else {
-      document.getElementById("wesure").className = ""
-    }
-  })()
-    </script>
     <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=04-27-22"></script>
   </body>
 </html>
