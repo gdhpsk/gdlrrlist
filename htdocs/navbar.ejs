@@ -3,7 +3,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script defer>
-  
   function getCookie(cname) {
   var cookies = ` ${document.cookie}`.split(";");
   var val = "";
@@ -217,3 +216,23 @@ function requestAndShowPermission() {
         </div>
     </li>
 </ul>
+
+<script>
+  function changeTXT(firstTime) {
+    let theme = localStorage.getItem("theme")
+    if(firstTime) {
+      if(theme == "dark") {
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun-o"></i>&nbsp;&nbsp;Day`
+      } else {
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-moon-o"></i>&nbsp;&nbsp;Night`
+      }
+    } else {
+      if(theme != "dark") {
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun-o"></i>&nbsp;&nbsp;Day`
+      } else {
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-moon-o"></i>&nbsp;&nbsp;Night`
+      }
+    }
+  }
+  changeTXT(true)
+</script>

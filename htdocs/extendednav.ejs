@@ -1,6 +1,6 @@
 
   <div id="myExtendedNav" class="dropdown-extendedNav">
-          <a onclick="" class="btn-toggle2 nav-buttons"><i class="fa-solid fa-circle-half-stroke"></i>&nbsp;&nbsp;Day/Night</a>
+          <a onclick="changeTXT()" class="btn-toggle2 nav-buttons dark-button"><i class="fa-solid fa-circle-half-stroke"></i>&nbsp;&nbsp;</a>
            <a class="nav-buttons <%= locals.active == 'submit' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/submit"><i class="fa fa-file-o"></i>&nbsp;&nbsp;Submit</a>
     <% if(locals.loggedIn) {%>
     <a class="nav-buttons <%= locals.active == 'notifications' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/notifications"><i class="fa fa-bell"></i>&nbsp;&nbsp;Notifications</a>
