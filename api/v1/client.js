@@ -84,7 +84,8 @@ router.route("/login")
 router.post("/discord_auth", authenticator, async (req, res) => {
   if(req.body.secret != process.env.secret) return res.status(401).json({error: config["401"][0], message: config["401"][1]})
   let auth = req.headers.authorization.split(" ")
-  let {username} = jwt.verify(auth[1], process.env.WEB_TOKEN)
+  let {id} = jwt.verify(auth[1], process.env.WEB_TOKEN)
+  let {username} = await loginSchema.findById(id)
   await loginSchema.findOneAndUpdate({name: username}, {
     $set: {
       discord: req.body.id,
@@ -114,7 +115,8 @@ router.route("/submissions")
 .get(authenticator, async (req, res) => {
   let auth = req.headers.authorization.split(" ")
   if(auth[0] == "User") {
-    let {username} = jwt.verify(auth[1], process.env.WEB_TOKEN)
+    let {id} = jwt.verify(auth[1], process.env.WEB_TOKEN)
+    let {username} = await loginSchema.findById(id)
     let everything = await submitSchema.find({account: username})
     if(req.query.num) {
       if(!everything[req.query.num-1]) return res.status(400).send({error: config["400"], message: "Submission number out of range."})
@@ -150,7 +152,9 @@ router.route("/submissions")
     return res.status(400).json({error: config["400"], message: "Please input a valid video URL!"})
   }
   req.body.status = "pending"
-  req.body.account = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN).username
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let current_user = await loginSchema.findById(id)
+  req.body.account = current_user.name
   req.body.date = dayjs(Date.now()).format("MMMM D, YYYY h:mm:ss A")
   let dupe = await submitSchema.findOne({video: req.body.video.trim()})
   if(dupe) return res.status(400).json({error: config["400"], message: "The link you inputted is already in this database, so can you PLEASE be patient? Thanks :)"})
@@ -166,8 +170,9 @@ router.route("/submissions")
   try {
     let checkSub = await submitSchema.findById(req.body.id)
     let auth = req.headers.authorization.split(" ")
-  let correct_user = jwt.verify(auth[1], process.env.WEB_TOKEN)
-    if(checkSub.account != correct_user.username) return res.status(400).json({error: config["400"], message: `You may only be able to edit your own submissions!`})
+  let {id} = jwt.verify(auth[1], process.env.WEB_TOKEN)
+    let correct_user = await loginSchema.findById(id)
+    if(checkSub.account != correct_user.name) return res.status(400).json({error: config["400"], message: `You may only be able to edit your own submissions!`})
   } catch(_) {
      return res.status(400).json({error: config["400"], message: "Please input a valid submission ID!"})
   }
@@ -203,8 +208,9 @@ if(req.body.video) {
   
   try {
     let checkSub = await submitSchema.findById(req.body.id)
-  let correct_user = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-    if(checkSub.account != correct_user.username) return res.status(400).json({error: config["400"], message: `You may only be able to delete your own submissions!`})
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+    let correct_account = await loginSchema.findById(id)
+    if(checkSub.account != correct_user.name) return res.status(400).json({error: config["400"], message: `You may only be able to delete your own submissions!`})
   } catch(_) {
      return res.status(400).json({error: config["400"], message: "Please input a valid submission ID!"})
   }
@@ -217,7 +223,8 @@ router.route("/notifications")
 .post(authenticator, rate_lim(60000, 1), async (req, res) => {
   if(!req.body.to || !req.body.subject || !req.body.message) return res.status(400).json({error: config["400"], message: "Please input ALL of the following inputs: to, subject, and message."})
   if(req.body.message.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
-  let {username} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let {username} = await loginSchema.findById(id)
   req.body.from = username
   req.body.date = new Date(Date.now()).toISOString()
   await mailSchema.create(req.body)
@@ -228,7 +235,8 @@ router.route("/notifications")
   res.status(201).json(req.body)
 })
 .get(authenticator, async (req, res) => {
-  let {username} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {username} = await loginSchema.findById(id)
   let userMail = []
   let fromUser = await mailSchema.find({from: username})
   let toUser = await mailSchema.find({to: username})
@@ -270,7 +278,8 @@ if(gettoUser) {
   }
   if(req.body?.message?.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
   if(req.body.hide) {
-    let {username} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+    let {username} = await loginSchema.findById(id)
     let mail = await mailSchema.findById(req.body.id)
     if(mail.to == username) {
       mail.hide = true
@@ -291,7 +300,8 @@ if(gettoUser) {
     return res.status(400).json({error: config["400"], message: "Please input a valid Object ID!"})
   }
 
-    let {username} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let {username} = await loginSchema.findById(id)
     let mail = await mailSchema.findById(req.body.id)
     if(mail.from == username) {
       await mailSchema.findByIdAndDelete(req.body.id)

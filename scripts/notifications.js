@@ -19,7 +19,8 @@ module.exports = (obj) => {
   if(mail.statusCode != 200) {
     return res.render("404.ejs", body)
   }
-  let {username} = jwt.verify(getCookie("token", req), process.env.WEB_TOKEN)
+  let {id} = jwt.verify(getCookie("token", req), process.env.WEB_TOKEN)
+  let {name: username} = await loginSchema.findById(id)
  let everything = await mailSchema.find({to: username, read: {$exists: false}})
   for(const item of everything) {
     item.read = true
