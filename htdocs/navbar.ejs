@@ -146,7 +146,7 @@ function requestAndShowPermission() {
                if(message) {
                  document.getElementById(error_message_p).innerText = message
                } else {
-                  document.cookie = `token=${JSON.parse(data).authCode}; path=/; Max-Age=604800`
+                  document.cookie = `token=${JSON.parse(data).authCode}; path=/;`
                  window.location.href = "/"
                }
             }, 'text')
