@@ -141,7 +141,7 @@ info.userinfo.get({
           userExists.youtube_channels = data.items.map(e => e = e.id)
           await userExists.save()
         }
-        let token = jwt.sign({id: userExists._id.toString()}, process.env.WEB_TOKEN)
+        let token = jwt.sign({id: userExists._id.toString()}, process.env.WEB_TOKEN, {noTimestamp: true})
         res.cookie("token", token)
       }
       return res.redirect("/")
@@ -201,7 +201,7 @@ const json = await userResult.body.json()
         }
       }
       if(userExists) {
-        let token = jwt.sign({id: userExists._id.toString()}, process.env.WEB_TOKEN)
+        let token = jwt.sign({id: userExists._id.toString()}, process.env.WEB_TOKEN, {noTimestamp: true})
         res.cookie("token", token)
       }
       return res.redirect("/")

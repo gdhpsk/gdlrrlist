@@ -41,7 +41,7 @@ router.route("/login")
     if(!isSame) {
       res.status(400).json({error: config["400"], message: "It seems like you did not input the correct password for this account! If you are the account holder, please contact us so that we can reset your password!"})
     } else {
-      let token = jwt.sign({id: user._id.toString()}, process.env.WEB_TOKEN)
+      let token = jwt.sign({id: user._id.toString()}, process.env.WEB_TOKEN, {noTimestamp: true})
       return res.json({authCode: token})
     }
   } else {
@@ -59,7 +59,7 @@ router.route("/login")
   let {name, password} = await loginSchema.findById(token.id)
   let compare = await bcrypt.compare(req.body.password, password)
   if(compare) return res.status(400).json({error: config["400"], message: "Please actually include a new password silly!"}) 
-    token = jwt.sign({id: token.id}, process.env.WEB_TOKEN)
+    token = jwt.sign({id: token.id}, process.env.WEB_TOKEN, {noTimestamp: true})
   let hashedPass = await bcrypt.hash(req.body.password, 10)
   let user = await loginSchema.findById(token.id)
   user.password = hashedPass
@@ -100,7 +100,7 @@ router.post("/signup", async (req, res) => {
   } else {
       const hashedPassword = await bcrypt.hash(req.body.password, 10)
 user = await loginSchema.create({name: req.body.name, password: hashedPassword})
-     let token = jwt.sign({id: user._id.toString()}, process.env.WEB_TOKEN)
+     let token = jwt.sign({id: user._id.toString()}, process.env.WEB_TOKEN, {noTimestamp: true})
 return res.status(201).json({authCode: token})
   }
 })
