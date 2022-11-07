@@ -3,6 +3,7 @@ const config = require("./config.json")
 const { default: mongoose } = require("mongoose")
 const allowedPeople = require("../schemas/allowedPeople.js")
 const jwt = require("jsonwebtoken")
+const loginSchema = require("../schemas/logins")
 const rateLimit = require("express-rate-limit")
 const rateLimitSchema = require("../schemas/rate_limit")
 const bcrypt = require("bcrypt")
@@ -53,6 +54,19 @@ const rate_limit_func = (ms, max_requests) => rateLimit({
 	message: {error: config["429"][0], message: config["429"][1]},
   keyGenerator: (request, response) => request.headers.authorization?.split(" ")?.[1] ?? ip(request),
   handler: async (request, response, next, options) => {
+    try {
+      let {id} = jwt.verify(request.headers?.authorization?.split(" ")[1], process.env.WEB_TOKEN)
+      let {name} = await loginSchema.findById(id)
+      let authLevel = {
+        "user": 0,
+        "spectator": 1,
+        "helper": 2,
+        "moderator": 3,
+        "leader": 4
+      }
+      let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == name && authLevel[e.tag] > 1)
+      if(allowed) return
+    } catch(_) {
     let hashedToken = await bcrypt.hash(request.headers?.authorization?.split(" ")[1] ?? ip(request), 10)
     await rateLimitSchema.create({
       path: request.url.split("?")[0],
@@ -60,6 +74,7 @@ const rate_limit_func = (ms, max_requests) => rateLimit({
       expire: response.getHeader("x-ratelimit-reset")*1000
     })
 		return response.status(429).send(options.message)
+    }
   },
 	standardHeaders: true,
 	legacyHeaders: true,

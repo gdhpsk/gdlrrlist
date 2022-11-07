@@ -33,12 +33,12 @@
   <p style="text-align: center;">JUST AN FYI, YOU CANNOT LOG IN WITH DISCORD / GOOGLE UNLESS YOU ADD IT AS A SOCIAL TO YOUR LRR ACCOUNT</p>
   <p style="text-align: center;">Login: </p>
         <label>Username</label>
-        <input type="text" placeholder="username" id="name-login"></input>
+        <input type="text" placeholder="username" id="name-login" class="login-class"></input>
         <br>
         <label>Password</label>
-        <input type="password" placeholder="password" id="password-login"></input>
+        <input type="password" placeholder="password" id="password-login" class="login-class"></input>
         <br>
-        <button type="button" onclick="dosmt('login')" style="border-radius: 25px; border: 2px solid #08c; background-color: #08c; color: white;"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Log In</p></button>
+        <button type="button" onclick="dosmt('login')" style="border-radius: 25px; border: 2px solid #08c; background-color: #08c; color: white;" id="login-click"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Log In</p></button>
       </div>
 </form>
       <div style="display: grid; place-items: center;">
@@ -53,19 +53,29 @@
 <form>
       <div style="display: grid; place-items: center;">
         <label>Username</label>
-        <input type="text" placeholder="username" id="name-signup"></input>
+        <input type="text" placeholder="username" id="name-signup" class="signup-class"></input>
         <br>
         <label>Password</label>
-        <input type="password" placeholder="password" id="password-signup"></input>
+        <input type="password" placeholder="password" id="password-signup" class="signup-class"></input>
         <br>
         <label>Repeat password</label>
-        <input type="password" placeholder="password" id="password2-signup"></input>
+        <input type="password" placeholder="password" id="password2-signup" class="signup-class"></input>
         <br>
-        <button type="button" onclick="dosmt('signup')" style="border-radius: 25px; border: 2px solid #08c; background-color: #08c; color: white;"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Sign Up</p></button>
+        <button type="button" onclick="dosmt('signup')" style="border-radius: 25px; border: 2px solid #08c; background-color: #08c; color: white;" id="signup-click"><p><img style="height: 25px; margin: -4px;" src="https://yt3.ggpht.com/ytc/AKedOLRUYvNQjc6nI7lD39a-UAXo6EwiMqRJLsG0F2wy=s900-c-k-c0x00ffffff-no-rj"></img>&nbsp;&nbsp;Sign Up</p></button>
       </div>
 </form>
 <p id="deeping" style="text-align: center"></p>
     <!-- scripts to include -->
     <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=04-27-22"></script>
+      <script defer>
+  document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && e.srcElement?.className == "login-class") {
+      document.getElementById("login-click").click()
+    }
+    if (e.key === 'Enter' && e.srcElement?.className == "signup-class") {
+      document.getElementById("signup-click").click()
+    }
+});
+</script>
   </body>
 </html>

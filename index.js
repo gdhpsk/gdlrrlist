@@ -141,7 +141,7 @@ async function hasCorrectAuth(req, res, authMethods) {
         }
        return true
       }catch(e) {
-        console.log(e)
+       // console.log(e)
         return false
     }
   }
@@ -239,7 +239,7 @@ async function hasAccess(spectator, req, res, helpersIncluded, leadersOnly) {
        if(!allowed) return false
        return true
       }catch(e) {
-        console.log(e)
+        //console.log(e)
         return false
       }
     } else {
@@ -255,7 +255,7 @@ async function hasAccess(spectator, req, res, helpersIncluded, leadersOnly) {
        if(!allowed) return false
        return true
       } catch(e) {
-        console.log(e)
+        // console.log(e)
         return false
       }
     }
