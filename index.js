@@ -73,65 +73,16 @@ server.on("connection", (socket) => {
         }
     try {
        let token = jwt.verify(json_msg.token, process.env.WEB_TOKEN)
-      if(token.type == "google") {
-        try {
-        const oauth2Client = new google.auth.OAuth2(
-  process.env.google_id,
-  process.env.google_secret,
-  "https://gdlrrlist.com/google_signin"
-);
-    
-      oauth2Client.setCredentials(token.password);
-      let info = google.oauth2("v2")
-let {data} = await info.userinfo.get({
-  auth: oauth2Client
-})
-          let userExists = await loginSchema.findOne({google: {$eq: data.id, $ne: undefined}, name: token.username})
-  if(!userExists) return socket.send(JSON.stringify({
-    error: "401 UNAUTHORIZED",
-    message: "You are not allowed to authorize in this fasion."
-  }))
-    socket.isAlive = true
-      socket.user = token.username
-        return
-        } catch(_) {
-          return socket.send(JSON.stringify({
-    error: "401 UNAUTHORIZED",
-    message: "You are not allowed to authorize in this fasion."
-  }))
-        }
-      }
-      if(token.type == "discord") {
-        const userResult = await request('https://discord.com/api/users/@me', {
-	headers: {
-		authorization: `Bearer ${token.password}`,
-	},
-});
-const json = await userResult.body.json()
-  let person = await loginSchema.findOne({discord: json.id})
-  if(!person) return socket.send(JSON.stringify({
-    error: "404 NOT FOUND",
-    message: "Could not find the token provided!"
-  }))
-  socket.isAlive = true
-  socket.user = token.username
-  return
-}
-  let people = await loginSchema.findOne({name: token?.username})
+  let people = await loginSchema.findById(token)
       
   if(!people) return socket.send(JSON.stringify({
     error: "404 NOT FOUND",
     message: "Could not find the token provided!"
   }))
       
-  let isSame = await bcrypt.compare(token.password, people.password)
-      
-  if(!isSame) return socket.send(JSON.stringify({
-    error: "404 NOT FOUND",
-    message: "Could not find the token provided!"
-  }))
+ 
       socket.isAlive = true
-      socket.user = token.username
+      socket.user = people.name
     }catch(e) {
       return socket.send(JSON.stringify({
     error: "404 NOT FOUND",
@@ -182,8 +133,10 @@ async function hasCorrectAuth(req, res, authMethods) {
       if(!token) return false
         let exists = await findToken(req, true)
       if(!exists) return false
+
+    let person = await loginSchema.findById(token.id)
         if(authMethods.length != acceptable_tokens.length || jwt_token[0] != "User") {
-    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == token.username && authMethods.includes(e.tag) && authLevel[jwt_token[0].toLowerCase()] <= authLevel[e.tag])
+    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == person.name && authMethods.includes(e.tag) && authLevel[jwt_token[0].toLowerCase()] <= authLevel[e.tag])
        if(!allowed) return false
         }
        return true
@@ -263,40 +216,8 @@ async function findToken(req, useHeaders) {
   if(tok) {
     try {
        let token = jwt.verify(tok, process.env.WEB_TOKEN)
-      if(token.type == "discord") {
-        const userResult = await request('https://discord.com/api/users/@me', {
-	headers: {
-		authorization: `Bearer ${token.password}`,
-	},
-});
-const json = await userResult.body.json()
-  let person = await loginSchema.findOne({discord: {$eq: json.id, $ne: undefined}, name: token.username})
-  if(!person) return false
-  return true
-}
-      if(token.type == "google") {
-        try {
-        const oauth2Client = new google.auth.OAuth2(
-  process.env.google_id,
-  process.env.google_secret,
-  "https://gdlrrlist.com"
-);
-      oauth2Client.setCredentials(token.password);
-      let info = google.oauth2("v2")
-let {data} = await info.userinfo.get({
-  auth: oauth2Client
-})
-          let userExists = await loginSchema.findOne({google: {$eq: data.id, $ne: undefined}, name: token.username})
-  if(!userExists) return false
-    return true
-        } catch(_) {
-          return false
-        }
-      }
-  let people = await loginSchema.findOne({name: token.username})
+  let people = await loginSchema.findById(token.id)
   if(!people) return false
-  let isSame = await bcrypt.compare(token.password, people.password)
-  if(!isSame) return false
   return true
     }catch(e) {
       return false
@@ -304,6 +225,7 @@ let {data} = await info.userinfo.get({
   }
   return false
 }
+
 async function hasAccess(spectator, req, res, helpersIncluded, leadersOnly) {
   if(getCookie("token", req)) {
     if(spectator) {
@@ -312,7 +234,8 @@ async function hasAccess(spectator, req, res, helpersIncluded, leadersOnly) {
       if(!token) return false
         let exists = await findToken(req)
       if(!exists) return false
-    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == token.username)
+        let person = await loginSchema.findById(token.id)
+    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == person.name)
        if(!allowed) return false
        return true
       }catch(e) {
@@ -325,9 +248,10 @@ async function hasAccess(spectator, req, res, helpersIncluded, leadersOnly) {
       if(!token) return false
          let exists = await findToken(req)
       if(!exists) return false
+        let person = await loginSchema.findById(token.id)
         let query2 = (e) => leadersOnly ? e.tag == "leader" : true
         let query = (e) => helpersIncluded ? ["helper", "moderator", "leader"].includes(e.tag) : ["moderator", "leader"].includes(e.tag)
-    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == token.username && query(e) && query2(e))
+    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == person.name && query(e) && query2(e))
        if(!allowed) return false
        return true
       } catch(e) {

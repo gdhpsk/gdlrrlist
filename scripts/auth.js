@@ -26,7 +26,7 @@ module.exports = (obj) => {
     if(!isSame) {
       res.json({status: 404, message: "It seems like you did not input the correct password for this account! If you are the account holder, please contact us so that we can reset your password!"})
     } else {
-      let token = jwt.sign({username: req.body.name, password: req.body.password}, process.env.WEB_TOKEN, {
+      let token = jwt.sign({id: user._id.toString()}, process.env.WEB_TOKEN, {
         expiresIn: "7d"
       })
       return res.json({status: 200, authCode: token})
@@ -48,8 +48,8 @@ app.route("/signup")
      res.json({status: 404, message: "This account already exists! Please log in instead."})
   } else {
       const hashedPassword = await bcrypt.hash(req.body.password, 10)
-await loginSchema.create({name: req.body.name, password: hashedPassword})
-     let token = jwt.sign({username: req.body.name, password: req.body.password}, process.env.WEB_TOKEN, {expiresIn: "7d"})
+user = await loginSchema.create({name: req.body.name, password: hashedPassword})
+     let token = jwt.sign({id: user._id.toString()}, process.env.WEB_TOKEN, {expiresIn: "7d"})
 return res.json({status: 200, authCode: token})
   }
 })

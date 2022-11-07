@@ -40,43 +40,8 @@ async function findToken(req) {
   if(getCookie("token", req)) {
     try {
        let token = jwt.verify(getCookie("token", req),  process.env.WEB_TOKEN)
-      if(token.type == "discord") {
-        const userResult = await request('https://discord.com/api/users/@me', {
-	headers: {
-		authorization: `Bearer ${token.password}`,
-	},
-});
-const json = await userResult.body.json()
-  let person = await loginSchema.findOne({discord: json.id})
-  if(!person) return {exists: false}
-  
-  return {exists: true, name: token.username}
-}
-      if(token.type == "google") {
-        try {
-        const oauth2Client = new google.auth.OAuth2(
-  process.env.google_id,
-  process.env.google_secret,
-  "https://gdlrrlist.com/google_signin"
-);
-    
-      oauth2Client.setCredentials(token.password);
-      let info = google.oauth2("v2")
-let {data} = await info.userinfo.get({
-  auth: oauth2Client
-})
-          let userExists = await loginSchema.findOne({google: {$eq: data.id, $ne: undefined}, name: token.username})
-  if(!userExists) return {exists: false}
-    return {exists: true, name: token.username, type: "google"}
-        } catch(_) {
-          return {exists: false}
-        }
-      }
-  let people = await loginSchema.findOne({name: token.username})
-  if(!people) return {exists: false}
-  let isSame = await bcrypt.compare(token.password, people.password)
-  if(!isSame) return {exists: false};
-  return {exists: true, name: token.username}
+  let people = await loginSchema.findById(token.id)
+  return {exists: true, name: people.name}
     }catch(e) {
       return {exists: false}
     }
@@ -176,7 +141,7 @@ info.userinfo.get({
           userExists.youtube_channels = data.items.map(e => e = e.id)
           await userExists.save()
         }
-        let token = jwt.sign({username: userExists.name, password: tokens, type: "google"}, process.env.WEB_TOKEN, {expiresIn: "7d"})
+        let token = jwt.sign({id: userExists._id.toString()}, process.env.WEB_TOKEN, {expiresIn: "7d"})
         res.cookie("token", token, {maxAge: 604800000 })
       }
       return res.redirect("/")
@@ -236,7 +201,7 @@ const json = await userResult.body.json()
         }
       }
       if(userExists) {
-        let token = jwt.sign({username: userExists.name, password: oauthData.access_token, type: "discord"}, process.env.WEB_TOKEN, {expiresIn: "7d"})
+        let token = jwt.sign({id: userExists._id.toString()}, process.env.WEB_TOKEN, {expiresIn: "7d"})
         res.cookie("token", token, {maxAge: 604800000 })
       }
       return res.redirect("/")

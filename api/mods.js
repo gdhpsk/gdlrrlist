@@ -22,6 +22,7 @@ const config = require("./config.json")
 const { default: mongoose } = require("mongoose")
 const allowedPeople = require("../schemas/allowedPeople.js")
 const levelsSchema = require("../schemas/levels.js")
+const loginSchema = require("../schemas/logins")
 const leaderboardSchema = require("../schemas/leaderboard.js")
 const jwt = require("jsonwebtoken")
 const cron = require("node-cron")
@@ -127,7 +128,8 @@ router.route("/bans")
       let { name, tag } = req.body
       if (!name || !tag) return res.status(400).json({ error: config["400"], message: `Please input both a "name" field and a "tag" field in your request!` })
       let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-      let user = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == token.username)
+      let userinfo = await loginSchema.findById(token.id)
+      let user = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == userinfo.name)
       if (user.tag == "moderator") {
         if (tag != "spectator") return res.status(401).json({ error: config["401"][0], message: config["401"[1]] })
       }
@@ -151,8 +153,10 @@ router.route("/bans")
       let person = everything.allowed.findIndex(e => e.name == req.body.name && e.tag == req.body.tag)
       if (person == -1) return res.status(400).json({ error: config["400"], message: "Please input a valid name / Discord ID!" })
 
+      
       let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-      let user = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == token.username)
+      let userinfo = await loginSchema.findById(token.id)
+      let user = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == userinfo.name)
 
       if (user.tag == "moderator") {
         if (everything.allowed[person].tag != "spectator") return res.status(401).json({ error: config["401"][0], message: config["401"][1] })
