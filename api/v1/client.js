@@ -85,7 +85,7 @@ router.post("/discord_auth", authenticator, async (req, res) => {
   if(req.body.secret != process.env.secret) return res.status(401).json({error: config["401"][0], message: config["401"][1]})
   let auth = req.headers.authorization.split(" ")
   let {id} = jwt.verify(auth[1], process.env.WEB_TOKEN)
-  let {username} = await loginSchema.findById(id)
+  let {name} = await loginSchema.findById(id)
   await loginSchema.findOneAndUpdate({name: username}, {
     $set: {
       discord: req.body.id,
@@ -116,7 +116,7 @@ router.route("/submissions")
   let auth = req.headers.authorization.split(" ")
   if(auth[0] == "User") {
     let {id} = jwt.verify(auth[1], process.env.WEB_TOKEN)
-    let {username} = await loginSchema.findById(id)
+    let {name} = await loginSchema.findById(id)
     let everything = await submitSchema.find({account: username})
     if(req.query.num) {
       if(!everything[req.query.num-1]) return res.status(400).send({error: config["400"], message: "Submission number out of range."})
@@ -224,7 +224,7 @@ router.route("/notifications")
   if(!req.body.to || !req.body.subject || !req.body.message) return res.status(400).json({error: config["400"], message: "Please input ALL of the following inputs: to, subject, and message."})
   if(req.body.message.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-  let {username} = await loginSchema.findById(id)
+  let {name} = await loginSchema.findById(id)
   req.body.from = username
   req.body.date = new Date(Date.now()).toISOString()
   await mailSchema.create(req.body)
@@ -236,7 +236,7 @@ router.route("/notifications")
 })
 .get(authenticator, async (req, res) => {
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
-  let {username} = await loginSchema.findById(id)
+  let {name} = await loginSchema.findById(id)
   let userMail = []
   let fromUser = await mailSchema.find({from: username})
   let toUser = await mailSchema.find({to: username})
@@ -279,7 +279,7 @@ if(gettoUser) {
   if(req.body?.message?.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
   if(req.body.hide) {
     let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-    let {username} = await loginSchema.findById(id)
+    let {name} = await loginSchema.findById(id)
     let mail = await mailSchema.findById(req.body.id)
     if(mail.to == username) {
       mail.hide = true
@@ -301,7 +301,7 @@ if(gettoUser) {
   }
 
     let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-  let {username} = await loginSchema.findById(id)
+  let {name} = await loginSchema.findById(id)
     let mail = await mailSchema.findById(req.body.id)
     if(mail.from == username) {
       await mailSchema.findByIdAndDelete(req.body.id)
