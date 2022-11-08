@@ -130,7 +130,7 @@ input:checked + .slider:before {
         for(let element of elements) {
           element.addEventListener('change', async function() {
             if(this.classList[1] == "record") {
-            let res = await fetch("https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/login", {
+            let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
                 authorization: `User ${getCookie("token")}`,
@@ -142,7 +142,7 @@ input:checked + .slider:before {
             })
               console.log(res)
             } else {
-             let res = await fetch("https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/login", {
+             let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
                 authorization: `User ${getCookie("token")}`,
