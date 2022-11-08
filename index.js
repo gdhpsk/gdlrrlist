@@ -32,10 +32,14 @@ let send_to_client = async (msg, options) => {
           }
         })
         await rest.post(Routes.channelMessages(id), {
-          content: `From: ${json_msg.from}`,
-          embeds: [{
-            description: json_msg.message
-          }]
+          body: {
+            content: `From: ${json_msg.from}`,
+            embeds: [
+              {
+                description: json_msg.message
+              }
+            ]
+          }
         })
       }
     }
@@ -94,7 +98,7 @@ server.on("connection", (socket) => {
         }
     try {
        let token = jwt.verify(json_msg.token, process.env.WEB_TOKEN)
-  let people = await loginSchema.findById(token)
+  let people = await loginSchema.findById(token.id)
       
   if(!people) return socket.send(JSON.stringify({
     error: "404 NOT FOUND",
