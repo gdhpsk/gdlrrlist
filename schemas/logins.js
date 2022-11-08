@@ -7,6 +7,7 @@ var login = new mongoose.Schema({
     google: String,
     youtube_channels: Array,
     mail_notifs: Boolean,
+    dm_channel: String,
     message: String 
 })
 
