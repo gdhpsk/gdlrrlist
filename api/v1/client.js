@@ -54,9 +54,21 @@ router.route("/login")
     let user = await loginSchema.findOne({discord: req.body.discord})
     if(!user) return res.status(400).json({error: config["400"], message: "I could not find a discord ID linked to this account!"})
   }
-  if(!req.body.password) return res.status(400).json({error: config["400"], message: "Please include the new password for your account in the form of a 'password' field!"})
   let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let {name, password} = await loginSchema.findById(token.id)
+  if(['true', 'false'].includes(req.body.record_notifs?.toString())) {
+    let user = await loginSchema.findById(token.id)
+    user.record_notifs = req.body.record_notifs
+    await user.save()
+    return res.sendStatus(204)
+  }
+  if(['true', 'false'].includes(req.body.mail_notifs?.toString())) {
+    let user = await loginSchema.findById(token.id)
+    user.mail_notifs = req.body.mail_notifs
+    await user.save()
+    return res.sendStatus(204)
+  }
+  if(req.body.password){
   let compare = await bcrypt.compare(req.body.password, password)
   if(compare) return res.status(400).json({error: config["400"], message: "Please actually include a new password silly!"}) 
     token = jwt.sign({id: token.id}, process.env.WEB_TOKEN, {noTimestamp: true})
@@ -64,7 +76,9 @@ router.route("/login")
   let user = await loginSchema.findById(token.id)
   user.password = hashedPass
   await user.save()
-  res.json({authCode: token})
+  return res.json({authCode: token})
+}
+       return res.status(400).json({error: config["400"], message: "Please input a property value to change for your lrr profile!"})
 })
 .get(authenticator, async (req, res) => {
   let everyone = await loginSchema.find()
@@ -226,7 +240,8 @@ router.route("/notifications")
   await mailSchema.create(req.body)
   send(JSON.stringify(req.body), {
     userResource: true,
-    target: req.body.to
+    target: req.body.to,
+    type: "mail"
   })
   res.status(201).json(req.body)
 })

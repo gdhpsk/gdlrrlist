@@ -1,6 +1,70 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <style>
+      /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+    </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <meta property="og:title" content="Geometry Dash LRR Demonlist">
@@ -37,10 +101,62 @@
 <button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="window.location.href = 'https://discord.com/api/oauth2/authorize?client_id=1033274582855065704&redirect_uri=https%3A%2F%2Fgdlrrlist.com&response_type=code&scope=identify'"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Discord</p></button>
 <p>
       <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="window.location.href = 'https://gdlrrlist.com/google_signin'"><p><img style="height: 25px; margin: -4px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png"></img>&nbsp;&nbsp;Google</p></button>
+  <% if(locals.user.discord) { %>
+  <hr style="width: 95%; background-color: white"/>
+  <div style="display: flex; justify-content: center;">
+  <label class="switch">
+  <input type="checkbox" class="checkbox mail" <%= locals.user.mail_notifs ? "checked" : '' %>>
+  <span class="slider round"></span>
+  </label>&nbsp;
+    <h3 style="margin: 5px;">Send mail notifications using LRR Bot</h3>
+  </div>
+  <div style="display: flex; justify-content: center;">
+  <label class="switch">
+  <input type="checkbox" class="checkbox record" <%= locals.user.record_notifs ? "checked" : '' %>>
+  <span class="slider round"></span>
+  </label>&nbsp;
+    <h3 style="margin: 5px;">Send record notifications using LRR Bot</h3>
+  </div>
+    <% } %>
 </div>
+      
       <hr style="width: 95%; background-color: white"/>
       <p style="text-align: center;">Leaderboard account: <a href="https://gdlrrlist.com/leaderboard/<%= locals.name %>"><%= locals.name ?? "none" %></a></p>
     <!-- scripts to include -->
     <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=04-27-22"></script>
+      <% if(locals.user.discord) { %>
+      <script defer>
+        let elements = document.getElementsByClassName("checkbox")
+        for(let element of elements) {
+          element.addEventListener('change', async function() {
+            if(this.classList[1] == "record") {
+            let res = await fetch("https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/login", {
+              method: "PATCH",
+              headers: {
+                authorization: `User ${getCookie("token")}`,
+                'content-type': "application/json"
+              },
+              body: JSON.stringify({
+                record_notifs: this.checked
+              })
+            })
+              console.log(res)
+            } else {
+             let res = await fetch("https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/login", {
+              method: "PATCH",
+              headers: {
+                authorization: `User ${getCookie("token")}`,
+                'content-type': "application/json"
+              },
+              body: JSON.stringify({
+                mail_notifs: this.checked
+              })
+            })
+              console.log(res)
+            }
+          });
+        }
+      </script>
+        <% } %>
   </body>
 </html>

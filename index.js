@@ -7,6 +7,7 @@ const cron = require("node-cron")
 const bcrypt = require("bcrypt")
 const allowedPeople = require("./schemas/allowedPeople.js")
 const point_calc = require("./point_calc")
+const loginSchema = require("./schemas/logins.js")
 const cookieParser = require("cookie-parser")
 const {REST} = require("@discordjs/rest")
 const {Routes} = require("discord-api-types/v10")
@@ -19,7 +20,28 @@ const http_server = require("http").createServer(app);
 
 let server = new WebSocketServer({server: http_server});
 
-let send_to_client = (msg, options) => {
+let send_to_client = async (msg, options) => {
+  try {
+    let json_msg = JSON.parse(msg)
+    if(options.type == "mail") {
+      let person = await loginSchema.findOne({name: json_msg.to})
+      if(person.discord) {
+        let {id} = await rest.post("/users/@me/channels", {
+          body: {
+            recipient_id: person.discord
+          }
+        })
+        await rest.post(Routes.channelMessages(id), {
+          content: `From: ${json_msg.from}`,
+          embeds: [{
+            description: json_msg.message
+          }]
+        })
+      }
+    }
+  } catch(e) {
+    console.log(e)
+  }
   for(const ws of server.clients) {
     if(!ws.isAlive) continue;
     if(!options?.userResource && !ws.isAdmin) continue;
@@ -37,7 +59,6 @@ const opinionSchema = require("./schemas/opinions.js")
 const jwt = require("jsonwebtoken")
 const submitSchema = require("./schemas/submissions.js")
 const levelsSchema = require("./schemas/levels.js")
-const loginSchema = require("./schemas/logins.js")
 const sixtyoneSchema = require("./schemas/61hertz.js")
 const rolePacksSchema = require("./schemas/role_packs.js")
 const leaderboardSchema = require("./schemas/leaderboard.js")

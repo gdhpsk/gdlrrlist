@@ -6,6 +6,8 @@ var login = new mongoose.Schema({
     discord: String,
     google: String,
     youtube_channels: Array,
+    record_notifs: Boolean,
+    mail_notifs: Boolean,
     message: String 
 })
 
