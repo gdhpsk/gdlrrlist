@@ -24,8 +24,8 @@ let send_to_client = async (msg, options) => {
   try {
     let json_msg = JSON.parse(msg)
     if(options.type == "mail") {
-      let person = await loginSchema.findOne({name: json_msg.to})
-      if(person.discord) {
+      let person = await loginSchema.findOne({name: json_msg.to, discord: {$exists: true}, record_notifs: true})
+      if(person) {
         let {id} = await rest.post("/users/@me/channels", {
           body: {
             recipient_id: person.discord
@@ -36,7 +36,7 @@ let send_to_client = async (msg, options) => {
             content: `From: ${json_msg.from}`,
             embeds: [
               {
-                description: json_msg.message
+                description: `**${json_msg.subject}**\n\n${json_msg.message}`
               }
             ]
           }
@@ -44,7 +44,7 @@ let send_to_client = async (msg, options) => {
       }
     }
   } catch(e) {
-    console.log(e)
+    //console.log(e)
   }
   for(const ws of server.clients) {
     if(!ws.isAlive) continue;
@@ -99,7 +99,6 @@ server.on("connection", (socket) => {
     try {
        let token = jwt.verify(json_msg.token, process.env.WEB_TOKEN)
   let people = await loginSchema.findById(token.id)
-      
   if(!people) return socket.send(JSON.stringify({
     error: "404 NOT FOUND",
     message: "Could not find the token provided!"
