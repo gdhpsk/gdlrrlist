@@ -105,7 +105,7 @@ input:checked + .slider:before {
   <hr style="width: 95%; background-color: white"/>
   <div style="display: flex; justify-content: center;">
   <label class="switch">
-  <input type="checkbox" class="checkbox mail" <%= locals.user.mail_notifs ? "checked" : '' %>>
+  <input type="checkbox" id="mail" class="checkbox" <%= locals.user.mail_notifs ? "checked" : '' %>>
   <span class="slider round"></span>
   </label>&nbsp;
     <h3 style="margin: 5px;">Send mail notifications using LRR Bot</h3>
@@ -118,11 +118,9 @@ input:checked + .slider:before {
     <!-- scripts to include -->
     <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=04-27-22"></script>
       <% if(locals.user.discord) { %>
-      <script defer>
-        let elements = document.getElementsByClassName("checkbox")
-        for(let element of elements) {
-          element.addEventListener('change', async function() {
-            if(this.classList[1] == "mail") {
+      <script>
+        let element = document.getElementById("mail")
+          element.onchange = async function() {
              let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
@@ -134,9 +132,7 @@ input:checked + .slider:before {
               })
             })
               console.log(res)
-            }
-          });
-        }
+          }
       </script>
         <% } %>
   </body>
