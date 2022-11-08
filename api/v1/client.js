@@ -12,7 +12,7 @@ const bcrypt = require("bcrypt")
 let routes = {}
 const {REST} = require("@discordjs/rest")
 const {Routes} = require("discord-api-types/v10")
-const rest = new REST({version: '10'}).setToken(discord_token);
+const rest = new REST({version: '10'}).setToken(process.env.discord_token);
 
 module.exports = (authFunction, webhook, rate_lim, send) => {
   let authenticator = async (req, res, next) => {
