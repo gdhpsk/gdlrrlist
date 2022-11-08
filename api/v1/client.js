@@ -58,9 +58,28 @@ router.route("/login")
   let {name, password} = await loginSchema.findById(token.id)
   if(['true', 'false'].includes(req.body.mail_notifs?.toString())) {
     let user = await loginSchema.findById(token.id)
+try {
+  if(user.mail_notifs != undefined) {
+    let {id} = await rest.post("/users/@me/channels", {
+          body: {
+            recipient_id: user.discord
+          }
+        })
+       let response_rest = await rest.post(Routes.channelMessages(id), {
+          body: {
+            content: `Test`
+          }
+        })
+    if(!response_rest.errors) {
+      user.dm_channel = id
+    }
+  }
     user.mail_notifs = req.body.mail_notifs
     await user.save()
     return res.sendStatus(204)
+} catch(_) {
+  return res.status(400).json({error: config["400"], message: "I cannot send a message to your discord account!"})
+}
   }
   if(req.body.password){
   let compare = await bcrypt.compare(req.body.password, password)

@@ -24,14 +24,9 @@ let send_to_client = async (msg, options) => {
   try {
     let json_msg = JSON.parse(msg)
     if(options.type == "mail") {
-      let person = await loginSchema.findOne({name: json_msg.to, discord: {$exists: true}, record_notifs: true})
+      let person = await loginSchema.findOne({name: json_msg.to, discord: {$exists: true}, dm_channel: {$exists: true}})
       if(person) {
-        let {id} = await rest.post("/users/@me/channels", {
-          body: {
-            recipient_id: person.discord
-          }
-        })
-        await rest.post(Routes.channelMessages(id), {
+        await rest.post(Routes.channelMessages(person.dm_channel), {
           body: {
             content: `From: ${json_msg.from}`,
             embeds: [
