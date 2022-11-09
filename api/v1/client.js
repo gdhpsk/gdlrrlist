@@ -62,7 +62,7 @@ router.route("/login")
   if(['true', 'false'].includes(req.body.mail_notifs?.toString())) {
     let user = await loginSchema.findById(token.id)
 try {
-  if(user.mail_notifs == undefined) {
+  if(user.dm_channel == undefined) {
     let {id} = await rest.post("/users/@me/channels", {
           body: {
             recipient_id: user.discord
