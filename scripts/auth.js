@@ -41,9 +41,9 @@ app.route("/signup")
     return res.status(401).json({status: 401, message: "You do not have permission to do this action."})
   }
   if(req.body.password != req.body.password2) return res.json({status: 404, message: "Your passwords do not match!"})
-  const user = await loginSchema.findOne({name: req.body.name})
+  let user = await loginSchema.findOne({name: req.body.name})
   if(user) {
-     res.json({status: 404, message: "This account already exists! Please log in instead."})
+     return res.json({status: 404, message: "This account already exists! Please log in instead."})
   } else {
       const hashedPassword = await bcrypt.hash(req.body.password, 10)
 user = await loginSchema.create({name: req.body.name, password: hashedPassword})
