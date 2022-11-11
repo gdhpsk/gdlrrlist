@@ -220,6 +220,19 @@ function requestAndShowPermission() {
 <script>
   function changeTXT(firstTime) {
     let theme = localStorage.getItem("theme")
+    let darkMode = firstTime ? theme == "dark" : theme != "dark"
+    console.log(darkMode)
+    if(darkMode) {
+        document.documentElement.style.setProperty("--header-color", "#27292D")
+        document.documentElement.style.setProperty("--tr-color", "#ddd")
+        document.documentElement.style.setProperty("--tr-alternate", "#bbb")
+        document.documentElement.style.setProperty("--txt-color", "#bdbbbb")
+      } else {
+        document.documentElement.style.setProperty("--header-color", "#08c")
+         document.documentElement.style.setProperty("--tr-color", "#fff")
+        document.documentElement.style.setProperty("--tr-alternate", "#d4ddfa")
+        document.documentElement.style.setProperty("--txt-color", "white")
+      }
     if(firstTime) {
       if(theme == "dark") {
         document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun-o"></i>&nbsp;&nbsp;Day`
