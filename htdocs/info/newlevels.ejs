@@ -124,9 +124,9 @@
             <p></p>
             
             <div style="border-bottom: 1px solid; margin-bottom: -15px; width: 100%">
-            <h2 style="text-align: center; line-height: 0px;">Records</h2>
+            <h2 style="text-align: center; padding-bottom: 15px; line-height: 0px;">Records</h2>
               <% if(position < 151) { %>
-        <h4 style="text-align: center; padding-top: 15px;"><%= position < 76 ? `${locals.minimumPercent}% or better` : "100%" %> required to qualify.</h5>
+        <h4 style="text-align: center;"><%= position < 76 ? `${locals.minimumPercent}% or better` : "100%" %> required to qualify.</h5>
           <% } %>
             <h6 style="text-align:center; margin-top: -17px; margin-bottom: 20px"><%= total_records %> record<% if(total_records != 1) { %>s<% } %> registered<% if(position < 76){ %>, out of which <%= locals.list.length %> <%= locals.list.length == 1 ? "is" : "are"%> 100%<% if(locals.progresses[0] != "none") { %>, and <% if(locals.progresses.length != 1) { %><%= locals.progresses.length %> are progresses<% } else { %>1 is progress<% }}%>.<% } else { %>.<% } %></h6>
         </div>
