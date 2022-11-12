@@ -36,16 +36,6 @@
          <p>Want to add a completion/progress? Go here: <a href="https://gdlrrlist.com/add">https://gdlrrlist.com/add</a>. To delete, go here: <a href="https://gdlrrlist.com/deletesub">https://gdlrrlist.com/deletesub</a></p>
          <% } %>
     <% let fe_pos = Object.keys(everything).findIndex(e => e == "Final Epilogue")+1
-      let score = 0 
-       if(position < 76) {
-          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.001 * position)) * Math.log((1 / (0.008 * position)))))/100
-      } else if(position > 75 && position < 101) {
-          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((210 / Math.pow(position, 1.001)))))/100
-      } else if(position > 100 && position < 151) {
-          score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((3.3 / Math.pow(position, .1)))))/100
-      } else {
-         score = 0// Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((3.3 / (Math.pow(position, .1))))))/100;
-      }
           %>
         <% let total_records = locals.list.length
           if(position < 76 && locals.progresses?.[0] != "none" && locals.progresses.length) {
