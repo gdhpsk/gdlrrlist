@@ -35,7 +35,8 @@
        <% if(locals.editing) { %> 
          <p>Want to add a completion/progress? Go here: <a href="https://gdlrrlist.com/add">https://gdlrrlist.com/add</a>. To delete, go here: <a href="https://gdlrrlist.com/deletesub">https://gdlrrlist.com/deletesub</a></p>
          <% } %>
-    <% let score = 0 
+    <% let fe_pos = Object.keys(everything).findIndex(e => e == "Final Epilogue")+1
+      let score = 0 
        if(position < 76) {
           score = Math.round(100*(50.0 / (Math.pow(Math.E, 0.001 * position)) * Math.log((1 / (0.008 * position)))))/100
       } else if(position > 75 && position < 101) {
@@ -53,7 +54,7 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <h1 id = "levelName">#<%= position %>. <%= name %></h1>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <% if(position != everything.length-1) { %>
+        <% if(position != Object.keys(everything).length) { %>
         <i class="fas fa-angle-right" style="font-size: 40px; margin:0.67em 0;" onclick="window.location.href = '/level/<%= position + 1 %>'"></i>
           <% } %>
     </div>
@@ -106,6 +107,9 @@
           }
         </style>
       <div style="display: grid; align-items: center;">
+        <% if(position > fe_pos) { %>
+            <h3 style="text-align: center;">Removed <%= locals.list[0].link %></h3>
+          <% } else { %>
         <table>
           <tr id="determine_color_header">
             <th>Score (100%): <br><span style="font-weight: initial !important;"><%= locals.comp_points %></span></br></th>
@@ -113,10 +117,13 @@
           </tr>
         </table>
             <p></p>
+            
             <div style="border-bottom: 1px solid; margin-bottom: -15px; width: 100%">
             <h2 style="text-align: center; line-height: 0px;">Records</h3>
+              <% if(position < 151) { %>
         <h4 style="text-align: center; padding-top: 15px;"><%= position < 76 ? `${locals.minimumPercent}% or better` : "100%" %> required to qualify.</h5>
-          </div>
+          <% } %>
+        </div>
       <table>
         <tr id="determine_color_header">
           <th>Flag</th>
@@ -144,6 +151,7 @@
          <td><a href="<%= locals.progresses[i].link %>" target="_blank"><i style="color: blue;" class="fas fa-external-link-alt"></i></a></td>
      </tr>
       <% }
+        }
         }%>
         <br>
         </table>
