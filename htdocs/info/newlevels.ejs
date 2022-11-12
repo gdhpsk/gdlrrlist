@@ -48,7 +48,7 @@
       }
           %>
         <% let total_records = locals.list.length
-          if(position < 76 && locals.progresses.length) {
+          if(position < 76 && locals.progresses?.[0] != "none" && locals.progresses.length) {
             total_records += locals.progresses.length
           }
             %>
