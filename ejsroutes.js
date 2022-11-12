@@ -530,6 +530,11 @@ app.get("/level/:id", async (req, res) => {
   for(const key in level) {
     obj[key] = level[key]
   }
+  let everything = await levelsSchema.find().sort({position: 1})
+  everything = everything.reduce(function(acc, cur, i) {
+            acc[everything[i].name] = cur;
+            return acc;
+          }, {});
   for(let i = 0; i < obj["list"].length; i++) {
      let user = await leaderboardSchema.findOne({name: obj.list[i].name})
     if(!user?.ban) {
@@ -544,6 +549,9 @@ app.get("/level/:id", async (req, res) => {
     } else {
       obj.list = obj.list.filter(e => e.name != obj.list[i].name)
     }
+  }
+  if(obj.position < 76) {
+     obj.prog_points = levels_progs_calc(level.name, level.minimumPercent, everything)
   }
   if(obj["progresses"] && obj.position < 76) {
  //   if(!editing) {
@@ -568,7 +576,9 @@ app.get("/level/:id", async (req, res) => {
   obj["editing"] = editing
   obj["editable"] = editable
   obj["loggedIn"] = loggedIn.exists
+  obj.comp_points = levels_point_calc(level.name, everything)
   obj.active = "lrr-levels"
+  obj.everything = everything
   res.render("info/newlevels.ejs", obj)
 })
 
