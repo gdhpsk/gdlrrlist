@@ -47,6 +47,11 @@
          score = 0// Math.round(100*(50.0 / (Math.pow(Math.E, 0.01 * position)) * Math.log((3.3 / (Math.pow(position, .1))))))/100;
       }
           %>
+        <% let total_records = locals.list.length
+          if(position < 76 && locals.progresses.length) {
+            total_records += locals.progresses.length
+          }
+            %>
     <div style="display: flex; overflow: hidden;">
       <% if(position != 1) { %>
       <i class="fas fa-angle-left" style="font-size: 40px; margin:0.67em 0;" onclick="window.location.href = '/level/<%= position - 1 %>'"></i>
@@ -123,6 +128,7 @@
               <% if(position < 151) { %>
         <h4 style="text-align: center; padding-top: 15px;"><%= position < 76 ? `${locals.minimumPercent}% or better` : "100%" %> required to qualify.</h5>
           <% } %>
+            <h5 style="text-align:center"><%= total_records %> record<% if(total_records != 1) { %>s<% } %> registered<% if(position < 76){ %>, out of which <%= locals.list.length %> <%= locals.list.length == 1 ? "is" : "are"%> 100%<% if(locals.progresses[0] != "none") { %>, and <% if(locals.progresses.length != 1) { %><%= locals.progresses.length %> are progresses<% } else { %>1 is progress<% }}%>.<% } else { %>.<% } %></h5>
         </div>
       <table>
         <tr id="determine_color_header">
