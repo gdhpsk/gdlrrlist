@@ -1,0 +1,40 @@
+        :root {
+            --padding-size: 0px 20px 0px 20px;;
+          }
+          table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+            border: 1px solid #08c;
+          }
+          @media screen and (max-width: 800px) {
+            table {
+              width: 100%;
+            }
+          }
+          @media screen and (max-width: 600px) {
+            :root {
+              --padding-size: 0px 7px 0px 7px;;
+            }
+          }
+    th {
+  border: 1px solid var(--header-color);
+      background: var(--header-color);
+      color: var(--txt-color) !important;
+      height: 4em;
+  text-align: center;
+  padding: var(--padding-size);
+}
+          tr {
+  border: 1px solid var(--tr-color);
+      background: var(--tr-color);
+      height: 2.3em;
+  text-align: center;
+  padding: 6px;
+}
+          td {
+            color: black !important;
+            padding: var(--padding-size);
+          }
+          tr:nth-child(even) {
+            background-color: var(--tr-alternate) !important;
+          }

@@ -11,6 +11,7 @@
     <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
     <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
     <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+     <link href="/CSS/table.css?v=2022-11-12" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -37,18 +38,35 @@
             <% } else { %>
                <abbr title="<%= locals.realnation %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.nationality %>.svg"></img></abbr>
           <%  } %> # <%= placement %> - <%= name %> (<%= points %> points)</h1>
+            <table style="border: 2px solid black !important;">
         <% if(locals.socials) { %>
           <% for(const key in locals.socials) { %>
             <% if(socials[key] && key != "name" && key != "discordid") { %>
-            <p><%= key %>: <% if(key == "discord") { %><%= socials[key] %><% } else { %><a href="<%= socials[key] %>" target="_blank"><%= socials[key] %></a><% } %></p>
+              <tr>
+              
+              <td><% if(key == "discord") { %>Discord Tag: <%= socials[key] %><% } else { %><a href="<%= socials[key] %>" target="_blank" style="color: black;"><%= key %></a><% } %></td>
+                </tr>
               <% } %>
             <% } %>
          <% } %>
         <% if(locals.loginName) { %>
-          <p><i class="fas fa-comment-alt"></i>&nbsp;LRR Email: <a href="https://gdlrrlist.com/notifications/compose?to=<%= locals.loginName %>"><%= loginName %></a></p>
+          <tr>
+          <td>LRR Email: <a href="https://gdlrrlist.com/notifications/compose?to=<%= locals.loginName %>" style="color: black;"><%= loginName %></a></td>
         <% } %>
+          </tr>
+          </table>
 
+          <% 
+let comp_num = progs.filter(e => e.percent == 100 && e.points != 0).length
+            let mainlist_num = progs.filter(e => e.percent == 100 && e.points != 0 && e.placement < 76).length
+              let legacy_num = progs.filter(e => e.percent == 100 && e.points == 0).length
+
+              let prog_num = progs.filter(e => e.percent != 100 && e.placement < 76).length
+                let total_registered = prog_num + comp_num + legacy_num
+            %>
+<h1>Registered Records: <%= total_registered %></h1>
       <h2>Completions</h2>
+       <h6 style="line-height: 0px; margin-top: 0px;"><%= comp_num %> list completion<%= comp_num == 1 ? "" : "s" %>, <%= mainlist_num %> mainlist<%= mainlist_num != 1 ? "s" : "" %>, <%= comp_num - mainlist_num %> extended list<%= comp_num - mainlist_num != 1 ? "s" : "" %></h6>
       <table>
         <tr>
           <th class="rank_number center">#</th>
@@ -60,12 +78,12 @@
       
           <% if(progs[i].points == 0) break; 
              if(progs[i].percent != 100) continue; %>
-        <tr>
+        <tr <% if(progs[i].placement < 76) { %> style="font-weight: bold !important;" <% } %>>
           <td>
             # <%= progs[i].placement %>
           </td>
           <td>
-            <a href="https://gdlrrlist.com/level/<%= progs[i].placement%>"><%= progs[i].name %></a>
+            <a href="https://gdlrrlist.com/level/<%= progs[i].placement%>" style="color: black;"><%= progs[i].name %></a>
           </td>
           <td>
             <%= progs[i].points %> points
@@ -78,6 +96,7 @@
       
 
     <h2>Legacy</h2>
+        <h6 style="line-height: 0px; margin-top: 0px;"><%= legacy_num %> legacy list completion<%= legacy_num == 1 ? "" : "s" %></h6>
         <table>
         <tr>
           <th class="rank_number center">#</th>
@@ -90,10 +109,10 @@
             if(progs[i].percent != 100) continue; %>
         <tr>
           <td>
-            <i># <%= progs[i].placement %></i>
+            <i style="color: black;"># <%= progs[i].placement %></i>
           </td>
           <td>
-            <i><a href="https://gdlrrlist.com/level/<%= progs[i].placement%>"><%= progs[i].name %></a></i>
+            <i><a href="https://gdlrrlist.com/level/<%= progs[i].placement%>" style="color: black;"><%= progs[i].name %></a></i>
           </td>
         </tr>
       <% } 
@@ -101,6 +120,7 @@
       </table> 
 
         <h2>Progresses</h2>
+        <h6 style="line-height: 0px; margin-top: 0px;"><%= prog_num %> progress<%= prog_num == 1 ? "" : "es" %></h6>
         <table>
         <tr>
           <th class="rank_number center">#</th>
@@ -118,7 +138,7 @@
             # <%= progs[i].placement %>
           </td>
           <td>
-            <a href="https://gdlrrlist.com/level/<%= progs[i].placement%>"><%= progs[i].name %></a>
+            <a href="https://gdlrrlist.com/level/<%= progs[i].placement%>" style="color: black;"><%= progs[i].name %></a>
           </td>
           <td>
             <%= progs[i].percent %>%

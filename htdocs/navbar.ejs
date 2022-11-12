@@ -221,7 +221,6 @@ function requestAndShowPermission() {
   function changeTXT(firstTime) {
     let theme = localStorage.getItem("theme")
     let darkMode = firstTime ? theme == "dark" : theme != "dark"
-    console.log(darkMode)
     if(darkMode) {
         document.documentElement.style.setProperty("--header-color", "#27292D")
         document.documentElement.style.setProperty("--tr-color", "#ddd")

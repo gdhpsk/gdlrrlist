@@ -59,48 +59,7 @@
     <iframe src="<%= videoLink %>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       <p></p>
       <% if(!locals.editing) { %>
-        <style>
-          :root {
-            --padding-size: 0px 20px 0px 20px;;
-          }
-          table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-            border: 1px solid #08c;
-          }
-          @media screen and (max-width: 800px) {
-            table {
-              width: 100%;
-            }
-          }
-          @media screen and (max-width: 600px) {
-            :root {
-              --padding-size: 0px 7px 0px 7px;;
-            }
-          }
-    th {
-  border: 1px solid var(--header-color);
-      background: var(--header-color);
-      color: var(--txt-color) !important;
-      height: 4em;
-  text-align: center;
-  padding: var(--padding-size);
-}
-          tr {
-  border: 1px solid var(--tr-color);
-      background: var(--tr-color);
-      height: 2.3em;
-  text-align: center;
-  padding: 6px;
-}
-          td {
-            color: black !important;
-            padding: var(--padding-size);
-          }
-          tr:nth-child(even) {
-            background-color: var(--tr-alternate) !important;
-          }
-        </style>
+       <link href="/CSS/table.css?v=2022-11-12" rel="stylesheet" type="text/css" />
       <div style="display: grid; align-items: center;">
         <% if(position > fe_pos) { %>
             <h3 style="text-align: center;">Removed <%= locals.list[0].link %></h3>
@@ -131,7 +90,7 @@
     <% for(let i = 0; i < locals.list.length; i++) {%>
      <tr style="font-weight: bold;">
        <td><% if(locals.list[i].nationality) { %> <abbr title="<%= locals.list[i].realnation.replace(/_/g, ' ') %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.list[i].nationality %>.svg" style="margin: -3px;"></abbr></img><% } else {%> <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr> <% } %></td>
-         <td><%= locals.list[i].name %></td>
+         <td><a href="https://gdlrrlist.com/leaderboard/<%= locals.list[i].name %>" style="color: black;"><%= locals.list[i].name %></a></td>
          <td>100</td>
          <td><%= locals.list[i].hertz %></td>
          <td><a href="<%= locals.list[i].link %>" target="_blank"><i style="color: blue;" class="fas fa-external-link-alt"></i></a></td>
@@ -141,7 +100,7 @@
         <%  for(let i = 0; i < locals.progresses.length; i++) {%>
            <tr>
        <td><% if(locals.progresses[i].nationality) { %> <abbr title="<%= locals.progresses[i].realnation.replace(/_/g, ' ') %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.progresses[i].nationality %>.svg" style="margin: -3px;"></abbr></img><% } else {%> <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr> <% } %></td>
-         <td><%= locals.progresses[i].name %></td>
+         <td><a href="https://gdlrrlist.com/leaderboard/<%= locals.progresses[i].name %>" style="color: black;"><%= locals.progresses[i].name %></a></td>
          <td><%= locals.progresses[i].percent %></td>
          <td><%= locals.progresses[i].hertz %></td>
          <td><a href="<%= locals.progresses[i].link %>" target="_blank"><i style="color: blue;" class="fas fa-external-link-alt"></i></a></td>
