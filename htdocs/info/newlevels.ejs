@@ -54,7 +54,7 @@
             %>
     <div style="display: flex; overflow: hidden;">
       <% if(position != 1) { %>
-      <i class="fas fa-angle-left" style="font-size: 40px; margin:0.67em 0;" onclick="window.location.href = '/level/<%= position - 1 %>'"></i>
+      <i class="fas fa-angle-left" style="font-size: 40px; margin:0.67em 0; " onclick="window.location.href = '/level/<%= position - 1 %>'"></i>
          <%} %>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <h1 id = "levelName">#<%= position %>. <%= name %></h1>
@@ -80,7 +80,7 @@
           }
           @media screen and (max-width: 800px) {
             table {
-              width: 90%;
+              width: 100%;
             }
           }
           @media screen and (max-width: 600px) {
@@ -115,12 +115,12 @@
         <% if(position > fe_pos) { %>
             <h3 style="text-align: center;">Removed <%= locals.list[0].link %></h3>
           <% } else { %>
-        <table>
+        <table style="margin-left:auto;margin-right:auto;">
           <tr id="determine_color_header">
             <th>Score (100%): <br><span style="font-weight: initial !important;"><%= locals.comp_points %></span></br></th>
           <% if(position < 76) { %> <th>Score (<%= locals.minimumPercent %>%): <br><span style="font-weight: initial !important"><%= locals.prog_points %></span></br></th> <% } %>
           </tr>
-        </table>
+          </table>
             <p></p>
             
             <div style="border-bottom: 1px solid; margin-bottom: -15px; width: 100%">
