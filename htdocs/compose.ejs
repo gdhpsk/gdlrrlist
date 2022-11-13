@@ -70,11 +70,11 @@ document.getElementById(smt).style.height = "20px"
         <br></br>
         <label>Subject</label>
         <br>
-        <input type="text" placeholder="subject" value="<%= locals.record?.demon ? `Info reguarding your submission for ${locals.record.demon} ${locals.record.progress}%` : '' %>" name="subject" style="width: 600px;" required></input>
+        <input type="text" placeholder="subject" value="<%= locals.record?.demon ? `Info regarding your submission for ${locals.record.demon} ${locals.record.progress}%` : '' %>" name="subject" style="width: 600px;" required></input>
         <br></br>
         <label>Message</label>
       <br>
-      <textarea name="message" style="width: 1000px; height: 1000px;" required><%= locals.record?.demon ? `Reguarding your ${locals.record.demon} ${locals.record.progress}% record, ` : '' %></textarea>
+      <textarea name="message" style="width: 1000px; height: 1000px;" required><%= locals.record?.demon ? `Regarding your ${locals.record.demon} ${locals.record.progress}% record, ` : '' %></textarea>
         <br></br>
         <button type="submit" style="border-radius: 15px; font-size: 40px;">Submit</button>
         <br></br>
