@@ -29,14 +29,18 @@
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
      <h1 style = "text-align:center">LRR Demon List Submissions</h1>
       <p style="text-align: center;">Currently, there are <%= locals.amount %> submissions. <%= locals.amount != 0 ? "View submissions by clicking on one of them" : "You are all caught up!" %></p>
-        <div id="submissions" style="display: grid; place-items: center;"></div>
+        <div id="submissions" style="display: grid; place-items: center;">
+          <% for(let i = 0; i < text.length; i++) {%>
+            <a href="<%= locals.active == 'submissions' ? `/submissions/${i+1}` : `/submissions/archive/${i+1}` %>"><button style="border-radius: 5px;">- Submission <%= i+1 %>  by <%= text[i] %></button></a><br>
+            <% } %>
+        </div>
     <!-- scripts to include -->
      <script>
-       var div = document.getElementById("submissions")
-       for(let i = 0; i < <%= locals.amount %>; i++) {
-         let gg = "<%= locals.text %>".split(",")[i]
-         div.innerHTML += `<a href="<%= locals.active == "submissions" ? "/submissions/${i+1}" : "/submissions/archive/${i+1}" %>"><button style="border-radius: 5px;">- Submission ${i+1} by ${gg}</button></a><br>`
-       }
+       // var div = document.getElementById("submissions")
+       // for(let i = 0; i < <%= locals.amount %>; i++) {
+       //   let gg = <%- locals.text %>[i]
+       //   div.innerHTML += `<a href="<%= locals.active == "submissions" ? "/submissions/${i+1}" : "/submissions/archive/${i+1}" %>"><button style="border-radius: 5px;">- Submission ${i+1} by ${gg}</button></a><br>`
+       // }
 </script>
     <script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js"></script>
   </body>
