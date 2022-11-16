@@ -1,5 +1,6 @@
 const config = require("../config.json")
 const { default: mongoose } = require("mongoose")
+const {validFields} = require("../functions")
 const allowedPeople = require("../../schemas/allowedPeople.js")
 const jwt = require("jsonwebtoken")
 const opinionSchema = require("../../schemas/opinions.js")
@@ -35,9 +36,9 @@ const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
 
 router.route("/login")
-.post(rate_lim(600000, 1), async (req, res) => {
+.post(rate_lim(600000, 1), validFields({name: "password", type: String}, {name: "name", type: String}), async (req, res) => {
   if(req.headers.authorization) return res.status(400).json({error: config["400"], message: "Please input an empty authorization header!"})
-  if(!req.body.password || !req.body.name) return res.status(400).json({error: config["400"], message: "Please input a 'name' and 'password' field for your request!"})
+  // if(!req.body.password || !req.body.name) return res.status(400).json({error: config["400"], message: "Please input a 'name' and 'password' field for your request!"})
   const user = await loginSchema.findOne({name: req.body.name})
   if(user) {
     let isSame = await bcrypt.compare(req.body.password, user.password)
@@ -121,10 +122,9 @@ router.post("/discord_auth", authenticator, async (req, res) => {
   res.sendStatus(204)
 })
 
-router.post("/signup", async (req, res) => {
-  if(!req.body.password) return res.status(400).json({error: config["400"], message: "Please input a 'password' field!"})
-  if(req.body.password != req.body.password2) return res.status(400).json({error: config["400"], message: "Your passwords do not match! Please include a 'password2' variable if you haven't already!"})
-  const user = await loginSchema.findOne({name: req.body.name})
+router.post("/signup", validFields({name: "password", type: String}, {name: "password2", type: String}, {name: "name", type: String}), async (req, res) => {
+  if(req.body.password != req.body.password2) return res.status(400).json({error: config["400"], message: "Your passwords do not match!"})
+  const user = await loginSchema.findOne({name: {$eq: req.body.name, $ne: ""}})
   if(user) {
      res.status(400).json({status: config["400"], message: "This account already exists! Please log in instead."})
   } else {
@@ -165,18 +165,7 @@ router.route("/submissions")
     return res.json(everything)
   }
 })
-.post(authenticator, rate_lim(60000, 1), async (req, res) => {
-  if(!req.body.demon || !req.body.username || !req.body.video || !req.body.hertz || !req.body.progress) return res.status(400).json({error: config["400"], message: `Please input all the following required values: a demon, username, video, hertz, and progress. Here is your current body: ${JSON.stringify(req.body)}`})
-  delete req.body.edited
-  for(const key in req.body) {
-    req.body[key] = req.body[key].toString()
-  }
-
-  try {
-    new URL(req.body.video)
-  } catch(_) {
-    return res.status(400).json({error: config["400"], message: "Please input a valid video URL!"})
-  }
+.post(authenticator, rate_lim(60000, 1), validFields({name: "demon", type: String}, {name: "username", type: String}, {name: "video", type: "URL"}, {name: "comments", type: String, optional: true}, {name: "hertz", type: String}, {name: "progress", type: Number}, {name: "raw", type: "URL", optional: true}), async (req, res) => {
   req.body.status = "pending"
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let current_user = await loginSchema.findById(id)
@@ -189,9 +178,7 @@ router.route("/submissions")
   let new_submission = await submitSchema.create(req.body)
   return res.status(201).json(new_submission)
 })
-.patch(authenticator, rate_lim(60000, 1), async (req, res) => {
-
-  if(!req.body.id) return res.status(400).json({error: config["400"], message: `Please input a 'id' value in your body!`})
+.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String}, {name: "demon", type: String, optional: true}, {name: "username", type: String, optional: true}, {name: "video", type: "URL", optional: true}, {name: "comments", type: String, optional: true}, {name: "hertz", type: String, optional: true}, {name: "progress", type: Number, optional: true}, {name: "raw", type: "URL", optional: true}) ,async (req, res) => {
 
   try {
     let checkSub = await submitSchema.findById(req.body.id)
@@ -229,14 +216,13 @@ if(req.body.video) {
     await submission.save()
     return res.json(submission)
 })
-.delete(authenticator, rate_lim(60000, 1), async (req, res) => {
-  if(!req.body.id) return res.status(400).json({error: config["400"], message: `Please input a 'id' value in your body!`})
+.delete(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String}), async (req, res) => {
   
   try {
     let checkSub = await submitSchema.findById(req.body.id)
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
     let correct_account = await loginSchema.findById(id)
-    if(checkSub.account != correct_user.name) return res.status(400).json({error: config["400"], message: `You may only be able to delete your own submissions!`})
+    if(checkSub.account != correct_account.name) return res.status(400).json({error: config["400"], message: `You may only be able to delete your own submissions!`})
   } catch(_) {
      return res.status(400).json({error: config["400"], message: "Please input a valid submission ID!"})
   }
@@ -246,8 +232,7 @@ if(req.body.video) {
 })
 
 router.route("/notifications")
-.post(authenticator, rate_lim(60000, 1), async (req, res) => {
-  if(!req.body.to || !req.body.subject || !req.body.message) return res.status(400).json({error: config["400"], message: "Please input ALL of the following inputs: to, subject, and message."})
+.post(authenticator, rate_lim(60000, 1), validFields({name: "to", type: String}, {name: "subject", type: String}, {name: "message", type: String}), async (req, res) => {
   if(req.body.message.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let {name: username} = await loginSchema.findById(id)
@@ -296,8 +281,7 @@ if(gettoUser) {
   
   return res.json({username, mail: userMail})
 })
-.patch(authenticator, rate_lim(60000, 1), async (req, res) => {
-  if(!req.body.id) return res.status(400).json({error: config["400"], message: "Please input ALL of the following inputs: id."})
+.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String}, {name: "to", type: String, optional: true}, {name: "subject", type: String, optional: true}, {name: "message", type: String, optional: true}),async (req, res) => {
   try {
     await mailSchema.findById(req.body.id)
   } catch(_) {
@@ -319,8 +303,7 @@ if(gettoUser) {
   delete req.body.date
   return res.json(req.body)
 })
-.delete(authenticator, async (req, res) => {
-  if(!req.body.id) return res.status(400).json({error: config["400"], message: "Please input ALL of the following inputs: id."})
+.delete(authenticator, validFields({name: "id", type: String}), async (req, res) => {
   try {
     await mailSchema.findById(req.body.id)
   } catch(_) {
