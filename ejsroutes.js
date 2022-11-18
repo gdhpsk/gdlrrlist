@@ -594,9 +594,15 @@ app.get("/level/:id", async (req, res) => {
   if(levels.length != 100) break
   count++
 }
-  obj.pc_info = all_pointer_demons.find(e => e.name == level.name) ?? {position: "Not found"}
+  obj.pc_info = all_pointer_demons.find(e => e.name == level.name) ?? {}
+
+    if(obj.pc_info?.name) {
+      let creators = await request(`https://pointercrate.com/api/v2/demons/${obj.pc_info.id}`)
+      creators = await creators.body.json()
+      obj.pc_info.creators = creators.data.creators
+    }
   } catch(_) {
-    obj.pc_info = {position: "Not found"}
+    obj.pc_info = {}
   }
   }
   res.render("info/newlevels.ejs", obj)
