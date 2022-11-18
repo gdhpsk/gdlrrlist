@@ -60,6 +60,12 @@ router.route("/login")
   }
   let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let {name, password} = await loginSchema.findById(token.id)
+  if(['true', 'false'].includes(req.body.pc_info?.toString())) {
+    let user = await loginSchema.findById(token.id)
+    user.pc_info = req.body.pc_info
+    await user.save()
+    return res.sendStatus(204)
+  }
   if(['true', 'false'].includes(req.body.mail_notifs?.toString())) {
     let user = await loginSchema.findById(token.id)
 try {

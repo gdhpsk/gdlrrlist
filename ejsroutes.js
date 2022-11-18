@@ -41,7 +41,7 @@ async function findToken(req) {
     try {
        let token = jwt.verify(getCookie("token", req),  process.env.WEB_TOKEN)
   let people = await loginSchema.findById(token.id)
-  return {exists: true, name: people.name}
+  return {exists: true, name: people.name, pc_info: !!people.pc_info}
     }catch(e) {
       return {exists: false}
     }
@@ -583,6 +583,7 @@ app.get("/level/:id", async (req, res) => {
   obj.comp_points = levels_point_calc(level.name, everything)
   obj.active = "lrr-levels"
   obj.everything = everything
+  if(loggedIn.pc_info) {
   try {
    let all_pointer_demons = []
   let count = 0
@@ -593,9 +594,10 @@ app.get("/level/:id", async (req, res) => {
   if(levels.length != 100) break
   count++
 }
-  obj.pointer_placement = all_pointer_demons.find(e => e.name == level.name) ?? {position: "Not found"}
+  obj.pc_info = all_pointer_demons.find(e => e.name == level.name) ?? {position: "Not found"}
   } catch(_) {
-     obj.pointer_placement = {position: "Not found"}
+    obj.pc_info = {position: "Not found"}
+  }
   }
   res.render("info/newlevels.ejs", obj)
 })

@@ -110,6 +110,13 @@ input:checked + .slider:before {
   </label>&nbsp;
     <h3 style="margin: 5px;">Send mail notifications using LRR Bot</h3>
   </div>
+    <div style="display: flex; justify-content: center;">
+  <label class="switch">
+  <input type="checkbox" id="pc_info" class="checkbox" <%= locals.user.pc_info ? "checked" : '' %>>
+  <span class="slider round"></span>
+  </label>&nbsp;
+    <h3 style="margin: 5px;">Include pointercrate information on level page</h3>
+  </div>
     <% } %>
 </div>
       
@@ -129,6 +136,21 @@ input:checked + .slider:before {
               },
               body: JSON.stringify({
                 mail_notifs: this.checked
+              })
+            })
+              console.log(res)
+          }
+
+        let element2 = document.getElementById("pc_info")
+          element2.onchange = async function() {
+             let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
+              method: "PATCH",
+              headers: {
+                authorization: `User ${getCookie("token")}`,
+                'content-type': "application/json"
+              },
+              body: JSON.stringify({
+                pc_info: this.checked
               })
             })
               console.log(res)
