@@ -92,6 +92,10 @@ app.get("/user_settings", async (req, res) => {
       return res.render("../misc/user_settings.ejs", {user, loggedIn: loggedIn.exists, editing, editable})
 })
 
+app.get("/test", (req, res) => {
+  res.render("docs.ejs")
+})
+
 app.get("/google_signin", async (req, res) => {
   const {code} = req.query 
 
@@ -579,6 +583,20 @@ app.get("/level/:id", async (req, res) => {
   obj.comp_points = levels_point_calc(level.name, everything)
   obj.active = "lrr-levels"
   obj.everything = everything
+  try {
+   let all_pointer_demons = []
+  let count = 0
+  while(true) {
+  let level_i = await request(`https://pointercrate.com/api/v2/demons/?limit=100&after=${count*100}`)  
+  let levels = await level_i.body.json()
+  all_pointer_demons.push(...levels)
+  if(levels.length != 100) break
+  count++
+}
+  obj.pointer_placement = all_pointer_demons.find(e => e.name == level.name) ?? {position: "Not found"}
+  } catch(_) {
+     obj.pointer_placement = {position: "Not found"}
+  }
   res.render("info/newlevels.ejs", obj)
 })
 

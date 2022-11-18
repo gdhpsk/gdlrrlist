@@ -1,6 +1,6 @@
 const config = require("../config.json")
 const { default: mongoose } = require("mongoose")
-const {validFields} = require("../functions")
+const {validFields, docMaker} = require("../functions")
 const allowedPeople = require("../../schemas/allowedPeople.js")
 const jwt = require("jsonwebtoken")
 const opinionSchema = require("../../schemas/opinions.js")
@@ -36,7 +36,7 @@ const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
 
 router.route("/login")
-.post(rate_lim(600000, 1), validFields({name: "password", type: String}, {name: "name", type: String}), async (req, res) => {
+.post(rate_lim(600000, 1), validFields({name: "password", type: String, description: ""}, {name: "name", type: String, description: ""}), async (req, res) => {
   if(req.headers.authorization) return res.status(400).json({error: config["400"], message: "Please input an empty authorization header!"})
   // if(!req.body.password || !req.body.name) return res.status(400).json({error: config["400"], message: "Please input a 'name' and 'password' field for your request!"})
   const user = await loginSchema.findOne({name: req.body.name})
@@ -122,7 +122,7 @@ router.post("/discord_auth", authenticator, async (req, res) => {
   res.sendStatus(204)
 })
 
-router.post("/signup", validFields({name: "password", type: String}, {name: "password2", type: String}, {name: "name", type: String}), async (req, res) => {
+router.post("/signup", validFields({name: "password", type: String, description: ""}, {name: "password2", type: String, description: ""}, {name: "name", type: String, description: ""}), async (req, res) => {
   if(req.body.password != req.body.password2) return res.status(400).json({error: config["400"], message: "Your passwords do not match!"})
   const user = await loginSchema.findOne({name: {$eq: req.body.name, $ne: ""}})
   if(user) {
@@ -165,7 +165,7 @@ router.route("/submissions")
     return res.json(everything)
   }
 })
-.post(authenticator, rate_lim(60000, 1), validFields({name: "demon", type: String}, {name: "username", type: String}, {name: "video", type: "URL"}, {name: "comments", type: String, optional: true}, {name: "hertz", type: String}, {name: "progress", type: Number}, {name: "raw", type: "URL", optional: true}), async (req, res) => {
+.post(authenticator, rate_lim(60000, 1), validFields({name: "demon", type: String, description: ""}, {name: "username", type: String, description: ""}, {name: "video", type: "URL", description: ""}, {name: "comments", type: String, description: "", optional: true}, {name: "hertz", type: String, description: ""}, {name: "progress", type: Number, description: ""}, {name: "raw", type: "URL", description: "", optional: true}), async (req, res) => {
   req.body.status = "pending"
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let current_user = await loginSchema.findById(id)
@@ -178,7 +178,7 @@ router.route("/submissions")
   let new_submission = await submitSchema.create(req.body)
   return res.status(201).json(new_submission)
 })
-.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String}, {name: "demon", type: String, optional: true}, {name: "username", type: String, optional: true}, {name: "video", type: "URL", optional: true}, {name: "comments", type: String, optional: true}, {name: "hertz", type: String, optional: true}, {name: "progress", type: Number, optional: true}, {name: "raw", type: "URL", optional: true}) ,async (req, res) => {
+.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String, description: ""}, {name: "demon", type: String, description: "", optional: true}, {name: "username", type: String, description: "", optional: true}, {name: "video", type: "URL", description: "", optional: true}, {name: "comments", type: String, description: "", optional: true}, {name: "hertz", type: String, description: "", optional: true}, {name: "progress", type: Number, description: "", optional: true}, {name: "raw", type: "URL", description: "", optional: true}) ,async (req, res) => {
 
   try {
     let checkSub = await submitSchema.findById(req.body.id)
@@ -216,7 +216,7 @@ if(req.body.video) {
     await submission.save()
     return res.json(submission)
 })
-.delete(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String}), async (req, res) => {
+.delete(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String, description: ""}), async (req, res) => {
   
   try {
     let checkSub = await submitSchema.findById(req.body.id)
@@ -232,7 +232,7 @@ if(req.body.video) {
 })
 
 router.route("/notifications")
-.post(authenticator, rate_lim(60000, 1), validFields({name: "to", type: String}, {name: "subject", type: String}, {name: "message", type: String}), async (req, res) => {
+.post(authenticator, rate_lim(60000, 1), validFields({name: "to", type: String, description: ""}, {name: "subject", type: String, description: ""}, {name: "message", type: String, description: ""}), async (req, res) => {
   if(req.body.message.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let {name: username} = await loginSchema.findById(id)
@@ -281,7 +281,7 @@ if(gettoUser) {
   
   return res.json({username, mail: userMail})
 })
-.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String}, {name: "to", type: String, optional: true}, {name: "subject", type: String, optional: true}, {name: "message", type: String, optional: true}),async (req, res) => {
+.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String, description: ""}, {name: "to", type: String, description: "", optional: true}, {name: "subject", type: String, description: "", optional: true}, {name: "message", type: String, description: "", optional: true}),async (req, res) => {
   try {
     await mailSchema.findById(req.body.id)
   } catch(_) {
@@ -303,7 +303,7 @@ if(gettoUser) {
   delete req.body.date
   return res.json(req.body)
 })
-.delete(authenticator, validFields({name: "id", type: String}), async (req, res) => {
+.delete(authenticator, validFields({name: "id", type: String, description: ""}), async (req, res) => {
   try {
     await mailSchema.findById(req.body.id)
   } catch(_) {
@@ -319,14 +319,17 @@ if(gettoUser) {
     }
   return res.status(400).send({error: config["400"], message: "You may only delete your own emails!"})
 })
-
-
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
+    stack?.stack.forEach(layers => {
+      if(layers.handle.name == validFields({}).name) {
+          config.documentation.v1.client[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
+        
+      }
+    })
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }
   }
-  
   return router
 }

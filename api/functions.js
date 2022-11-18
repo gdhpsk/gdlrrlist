@@ -1,6 +1,8 @@
+const config = require("./config")
+
 exports.validFields = (...args) => {
     let type = (arg) => arg == "URL" ? "URL" : typeof arg
-    return function(req, res, next) {
+    function validator(req, res, next) {
        let obj = req.method == "GET" ? req.query : req.body
     let errors = []
     obj = Object.entries(obj).filter(e => !args.find(e => e.name == e[0]))
@@ -41,4 +43,10 @@ exports.validFields = (...args) => {
       if(errors.length != 0) return res.status(400).send({error: "400 BAD REQUEST", message: errors.join(" ")})
     return next()
     }
+  try {
+    validator.functionArgs = args.map(item => item = [item.name, {name: item.name, type: typeof item.type == "string" ? "URL" : item.type() == "URL" ? "URL" : (typeof item.type()).toUpperCase(), description: item.description, optional: !!item.optional}])
+  } catch(_) {
+    
+  }
+    return validator
 }

@@ -14,6 +14,7 @@
 //     status: "200 OK"
 //   })
 // })
+const {validFields} = require("./functions")
 const {REST} = require("@discordjs/rest")
 const {Routes} = require("discord-api-types/v10")
 const rest = new REST({version: '10'}).setToken(process.env.discord_token);
@@ -59,7 +60,7 @@ router.route("/bans")
   let everything = await leaderboardSchema.find({ban: true})
   res.json(everything)
 })
-.post(async (req, res) => {
+.post(validFields({name: "username", type: String, description: ""}), async (req, res) => {
   let ban_times = {
     "1": 7776000000,
     "2": 15552000000,
@@ -372,6 +373,12 @@ router.route("/bans")
     })
   for (let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
+    stack?.stack.forEach(layers => {
+      if(layers.handle.name == validFields({}).name) {
+          config.documentation.mod[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
+        
+      }
+    })
     if (stack?.path) {
       routes[stack.path] = stack.methods
     }

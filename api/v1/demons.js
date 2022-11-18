@@ -7,6 +7,7 @@ const { JSDOM } = require("jsdom");
 const opinionSchema = require("../../schemas/opinions.js")
 const levelsSchema = require("../../schemas/levels.js")
 const dayjs = require("dayjs")
+const {validFields} = require("../functions")
 let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/
 
 let routes = {}
@@ -257,6 +258,12 @@ router.get("/:id", authenticator, async (req, res) => {
 
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
+     stack?.stack.forEach(layers => {
+      if(layers.handle.name == validFields({}).name) {
+          config.documentation.v1.demons[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
+        
+      }
+    })
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }

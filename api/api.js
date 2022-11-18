@@ -93,10 +93,44 @@ const rate_limit_func = (ms, max_requests) => rateLimit({
       router.use(`/${key}/${key2}`, file(authFunction, webhook, rate_limit_func, send))
     }
   }
-
   router.all("*", (req, res) => {
     return res.status(404).json({error: config["404"][0], message: config["404"][1]})
   })
+async function upsertFile(name, data, appendNewTable) {
+  try {
+    await fs.promises.readFile(name)
+    if(appendNewTable) {
+      fs.appendFile(name, data, (err, data) => {
+        if(err) return console.log(err)
+      })
+      return
+    }
+  } catch (error) {
+    await fs.promises.writeFile(name, data, (err, data) => {
+      if(err) return console.log(err)
+    })
+  }
+}
+let tableMaker = (json) => {
+  let txt = "<table>"
+txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>`
+  Object.values(json).forEach(e => txt += `<tr><td>${e.name}</td><td>${e.type}</td><td>${e.description}</td><td>${!!e.optional}</td></tr>`)
+  txt += "</table>"
+  return txt
+}
+  for(const key in config.documentation) {
+    for(const item in config.documentation[key]) {
+      if(key == "v1") {
+         for(const v1items in config.documentation[key][item]) {
+          let txt = tableMaker(config.documentation[key][item][v1items])
+          upsertFile(`./documentation/${key}/${item}/${v1items.replace(" /", "-")}.ejs`, txt, process.env.makeTable)
+         }
+      } else {
+        let txt = tableMaker(config.documentation[key][item])
+        upsertFile(`./documentation/${key}/${item.replace(" /", "-")}.ejs`, txt, process.env.makeTable)
+      }
+    }
+  }
   
   return router
 }

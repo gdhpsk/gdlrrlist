@@ -9,6 +9,7 @@ let routes = {}
 const dayjs = require("dayjs")
 const submitSchema = require("../schemas/submissions.js")
 const {request} = require("undici")
+const {validFields} = require("./functions")
 
 function getCookie(cname, req) {
   return req.cookies[cname] ? req.cookies[cname] : "";
@@ -321,8 +322,7 @@ if(submission.status != req.body.status) {
 })
 
   router.route("/records")
-  .put(async (req, res) => {
-    if(!req.body.demon || !req.body.username || !req.body.hertz || !req.body.progress || !req.body.video) return res.status(400).json({error: config["400"], message: "Please input ALL the following arguments: 'demon', 'username', 'hertz', 'progress', and 'video'."})
+  .put(validFields({name: "demon", type: String, description: ""}, {name: "username", type: String, description: ""}, {name: "hertz", type: String, description: ""}, {name: "progress", type: Number, description: ""}, {name: "video", type: "URL", description: ""}), async (req, res) => {
   var level = await levelsSchema.findOne({name: req.body.demon})
   var user = await leaderboardSchema.findOne({name: req.body.username.trim()})
     if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
@@ -488,6 +488,12 @@ if(submission.status != req.body.status) {
   
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
+    stack?.stack.forEach(layers => {
+      if(layers.handle.name == validFields({}).name) {
+          config.documentation.helper[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
+        
+      }
+    })
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }

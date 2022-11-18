@@ -2,6 +2,7 @@ const config = require("./config.json")
 const { default: mongoose } = require("mongoose")
 const allowedPeople = require("../schemas/allowedPeople.js")
 const jwt = require("jsonwebtoken")
+const {validFields} = require("./functions")
 let routes = {}
 
 module.exports = (authFunction, webhook, rate_lim) => {
@@ -27,6 +28,12 @@ router.use(express.urlencoded({ extended: true }))
   
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
+    stack?.stack.forEach(layers => {
+      if(layers.handle.name == validFields({}).name) {
+          config.documentation.spectator[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
+        
+      }
+    })
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }
