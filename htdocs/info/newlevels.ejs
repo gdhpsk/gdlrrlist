@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>GD LRR Demon List</title>
@@ -10,6 +11,7 @@
     <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
     <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
     <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/panel.css?v=2022-12-01" rel="stylesheet" type="text/css" />
     <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
@@ -53,15 +55,15 @@
         <i class="fas fa-angle-right" style="font-size: 40px; margin:0.67em 0;" onclick="window.location.href = '/level/<%= position + 1 %>'"></i>
           <% } %>
     </div>
-    <p><i>published by <%= publisher %><% if(locals.pc_info) { %>
+    <span><i><% if(locals.pc_info.creators) { %>
+        created by <% if(locals.pc_info.creators.length > 1) { %><%= locals.pc_info.creators[0].name %> & <div class="tooltip">more<div class="tooltiptext fade" style="color: var(--txt-color)"><%- locals.pc_info.creators.map(e => e = e.name).join(', ') %></div></div><% } else { %><%= locals.pc_info.creators[0].name %><% } %>,
+      <% } %>published by <%= publisher %><% if(locals.pc_info) { %>
       <% if(locals.pc_info.verifier) { %>
         , verified by <%= locals.pc_info.verifier.name %>
       <% } %>
-        <% if(locals.pc_info.creators) { %>
-        , created by <% if(locals.pc_info.creators.length > 1) { %><%= locals.pc_info.creators[0].name %> & <abbr title="<%= locals.pc_info.creators.map(e => e = e.name).join(', ') %>">more</abbr> <% } else { %><%= locals.pc_info.creators[0].name %> <% } %>
-      <% } %>
-    <% } %></i></p>
-
+    <% } %></i>
+    </span>
+<p></p>
     <% let videoLink = "https://www.youtube.com/embed/" + ytcode %> 
     <iframe src="<%= videoLink %>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       <p></p>
@@ -75,9 +77,9 @@
           <tr id="determine_color_header">
             <th>Score (100%): <br><span style="font-weight: initial !important;"><%= locals.comp_points %></span></br></th>
           <% if(position < 76) { %> <th>Score (<%= locals.minimumPercent %>%): <br><span style="font-weight: initial !important"><%= locals.prog_points %></span></br></th> <% } %>
-            <% if(locals.pc_info) { %>
-            <th><abbr title="Pointercrate" style='color: inherit;'>PC</abbr> #: <br><span style="font-weight: initial !important;"><%= locals.pc_info.position ?? "Could not fetch" %></span></br></th>
-               <th><abbr title="Pointercrate" style='color: inherit;'>PC</abbr> %: <br><span style="font-weight: initial !important;"><%= locals.pc_info.requirement ?? "Could not fetch" %></span></br></th>
+            <% if(Object.keys(locals.pc_info).length != 0) { %>
+            <th><abbr title="Pointercrate" style='color: inherit;'>PC</abbr> #: <br><span style="font-weight: initial !important;">#<%= locals.pc_info.position ?? "Could not fetch" %></span></br></th>
+               <th><abbr title="Pointercrate List" style='color: inherit;'>PC L</abbr>%: <br><span style="font-weight: initial !important;"><%= locals.pc_info.requirement ?? "Could not fetch" %>%</span></br></th>
               <% } %>
           </tr>
           </table>

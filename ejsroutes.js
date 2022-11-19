@@ -583,6 +583,7 @@ app.get("/level/:id", async (req, res) => {
   obj.comp_points = levels_point_calc(level.name, everything)
   obj.active = "lrr-levels"
   obj.everything = everything
+  obj.pc_info = {}
   if(loggedIn.pc_info) {
   try {
    let all_pointer_demons = []
