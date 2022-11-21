@@ -246,10 +246,10 @@ router.route("/notifications")
   let toUser = await mailSchema.find({to: username})
   let getFromUser = true
   let gettoUser = true
-  if(req.query.fromUser != "true") {
+  if(req.query.fromUser != "true" && req.query.fromUser) {
     getFromUser = false
   }
-  if(req.query.toUser != "true") {
+  if(req.query.toUser != "true" && req.query.fromUser) {
     gettoUser = false
   }
 if(getFromUser) {
