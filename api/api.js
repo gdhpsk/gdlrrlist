@@ -127,10 +127,10 @@ txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>
 <p>Requires at least a "User" token to use.</p>`
              delete config.documentation[key][item][v1items].require_perm
            }
-  upsertFile(`./documentation/api/${key}/${item}/${v1items.replace(" /", "-").replace(/[/]/g, "-")}.ejs`, txt, process.env.makeTable)
+  upsertFile(`./documentation/api/${key}/${item}/${v1items.replace(" /", "-").replace(/[/]/g, "-").replace(/[:]/g, "=")}.ejs`, txt, process.env.makeTable)
          }
       } else {
-        upsertFile(`./documentation/api/${key}/${item.replace(" /", "-").replace(/[/]/g, "-")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
+        upsertFile(`./documentation/api/${key}/${item.replace(" /", "-").replace(/[/]/g, "-").replace(/[:]/g, "=")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
       }
     }
   }
