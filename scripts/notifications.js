@@ -118,7 +118,7 @@ app.route("/hide")
 })
 
 app.get("/from/:id", async (req, res) => {
-  let mail = await request(`https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/notifications?fromUser=true&toUser=false&number=${req.params.id}`, {
+  let mail = await request(`https://gdlrrlist.com/api/v1/client/notifications?fromUser=true&toUser=false&number=${req.params.id}`, {
     method: 'GET',
     headers: {
       'content-type': "application/json",
