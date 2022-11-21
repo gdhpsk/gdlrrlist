@@ -62,22 +62,52 @@ txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Body Type</th><th>
 }
 
 // docs
-app.get("/documentation/", (req, res, next) => {
- res.render("../documentation/homepage.ejs")
+app.get("/documentation/", async (req, res, next) => {
+  let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
+ res.render("../documentation/homepage.ejs", {loggedIn, editing, editable})
 })
 
-app.get("/documentation/api", (req, res, next) => {
- res.render("../documentation/api/homepage.ejs", {documentation})
+app.get("/documentation/api", async (req, res, next) => {
+  let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
+ res.render("../documentation/api/homepage.ejs", {documentation, loggedIn, editing, editable})
 })
 
 app.get("/documentation/api/:type", (req, res, next) => {
   try {
-    fs.readdir(`./documentation/api/${req.params.type}`, {}, (err, data) => {
+    fs.readdir(`./documentation/api/${req.params.type}`, {}, async (err, data) => {
       if(err) return next()
+      let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
       if(req.params.type == "v1") {
-        return res.render(`../documentation/api/v1/homepage.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type})
+        return res.render(`../documentation/api/v1/homepage.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type, loggedIn, editing, editable})
       }
-      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type, dir: "./"})
+      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type, dir: "./", loggedIn, editing, editable})
     })
   } catch(_) {
     next()
@@ -86,9 +116,19 @@ app.get("/documentation/api/:type", (req, res, next) => {
 
 app.get("/documentation/api/:version/:type", (req, res, next) => {
   try {
-    fs.readdir(`./documentation/api/${req.params.version}/${req.params.type}`, {}, (err, data) => {
+    fs.readdir(`./documentation/api/${req.params.version}/${req.params.type}`, {}, async (err, data) => {
       if(err) return next()
-      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.version][req.params.type], tableMaker, type: req.params.type, dir: "./v1/"})
+      let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
+      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.version][req.params.type], tableMaker, type: req.params.type, dir: "./v1/", editing, editable, loggedIn})
     })
   } catch(_) {
     next()
