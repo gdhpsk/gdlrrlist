@@ -26,7 +26,7 @@
     localStorage.setItem("notif-1", "seen")
   }
 
-  fetch("https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/notifications?fromUser=false&toUser=true", {
+  fetch("https://gdlrrlist.com/api/v1/client/notifications?fromUser=false&toUser=true", {
     method: "GET",
     headers: {
       authorization: `User ${getCookie("token")}`
