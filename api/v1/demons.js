@@ -126,77 +126,77 @@ obj.push(g)
   res.json(obj)
 })
 
-router.get("/random", async (req, res) => {
-    var everything = await levelsSchema.find()
-   everything.sort((a, b) => a._id - b._id)
-  let excludedLevels = []
-  if(req.query.exclude) {
-    try {
-      let exclusions = JSON.parse(req.query.exclude)
-      excludedLevels.push(exclusions)
-    }catch(_) {
+// router.get("/random", async (req, res) => {
+//     var everything = await levelsSchema.find()
+//    everything.sort((a, b) => a._id - b._id)
+//   let excludedLevels = []
+//   if(req.query.exclude) {
+//     try {
+//       let exclusions = JSON.parse(req.query.exclude)
+//       excludedLevels.push(exclusions)
+//     }catch(_) {
 
-}
-  }
-  if(req.query.filter) {
-    try {
-      let newarr = []
-      let filters = JSON.parse(req.query.filter)
-      if(filters.includes("main")) {
-        for(let i = 0; i < 75; i++) {
-          newarr.push(everything[i])
-        }
-      }
-      if(filters.includes("extended")) {
-        for(let i = 75; i < 150; i++) {
-          newarr.push(everything[i])
-        }
-      }
-      if(filters.includes("legacy")) {
-        for(let i = 150; i < everything.findIndex(e => e.name == "Final Epilogue")+1; i++) {
-          newarr.push(everything[i])
-        }
-      }
-      newarr = newarr.filter(e => !excludedLevels[0].includes(e.name))
-      let randomNum = Math.floor(Math.random() * (newarr.length-1))
-      let randomLev = newarr[randomNum]
-  if(req.query.appendTo) {
-    try {
-      let user = await rouletteSchema.findById(req.query.appendTo)
-      let lev = user.config.levels[randomNum]
-      user.config.levels = user.config.levels.filter(e => e.name != lev.name)
-      console.log(lev)
-      randomLev._id = lev.pos
-      user.levels.push(randomLev)
-      await user.save()
-    }catch(e) {
-      //console.log(e)
-    }
-  }
-      return res.send(randomLev)
-    } catch(e) {
-      //console.log(e)
-    }
-  }
-      everything = everything.filter(e => !excludedLevels[0].includes(e.name))
-  let randomNum = Math.floor(Math.random() * (everything.length-1))
-   let randomLev = everything[randomNum]
-  if(req.query.appendTo) {
-    try {
-      let user = await rouletteSchema.findById(req.query.appendTo)
-      randomNum = Math.floor(Math.random() * (user.config.levels.length-1))
-      let lev = user.config.levels[randomNum]
-      user.config.levels = user.config.levels.filter(e => e.name != lev.name)
-      console.log(lev)
-      randomLev._id = lev.pos
-      user.levels.push(randomLev)
-      await user.save()
-    }catch(e) {
-      //console.log(e)
-    }
-  }
-    res.json(randomLev)
-})
+// }
+//   }
+//   if(req.query.filter) {
+//     try {
+//       let newarr = []
+//       let filters = JSON.parse(req.query.filter)
+//       if(filters.includes("main")) {
+//         for(let i = 0; i < 75; i++) {
+//           newarr.push(everything[i])
+//         }
+//       }
+//       if(filters.includes("extended")) {
+//         for(let i = 75; i < 150; i++) {
+//           newarr.push(everything[i])
+//         }
+//       }
+//       if(filters.includes("legacy")) {
+//         for(let i = 150; i < everything.findIndex(e => e.name == "Final Epilogue")+1; i++) {
+//           newarr.push(everything[i])
+//         }
+//       }
+//       newarr = newarr.filter(e => !excludedLevels[0].includes(e.name))
+//       let randomNum = Math.floor(Math.random() * (newarr.length-1))
+//       let randomLev = newarr[randomNum]
+//   if(req.query.appendTo) {
+//     try {
+//       let user = await rouletteSchema.findById(req.query.appendTo)
+//       let lev = user.config.levels[randomNum]
+//       user.config.levels = user.config.levels.filter(e => e.name != lev.name)
+//       console.log(lev)
+//       randomLev._id = lev.pos
+//       user.levels.push(randomLev)
+//       await user.save()
+//     }catch(e) {
+//       //console.log(e)
+//     }
+//   }
+//       return res.send(randomLev)
+//     } catch(e) {
+//       //console.log(e)
+//     }
+//   }
+//       everything = everything.filter(e => !excludedLevels[0].includes(e.name))
+//   let randomNum = Math.floor(Math.random() * (everything.length-1))
+//    let randomLev = everything[randomNum]
+//   if(req.query.appendTo) {
+//     try {
+//       let user = await rouletteSchema.findById(req.query.appendTo)
+//       randomNum = Math.floor(Math.random() * (user.config.levels.length-1))
+//       let lev = user.config.levels[randomNum]
+//       user.config.levels = user.config.levels.filter(e => e.name != lev.name)
+//       console.log(lev)
+//       randomLev._id = lev.pos
+//       user.levels.push(randomLev)
+//       await user.save()
+//     }catch(e) {
+//       //console.log(e)
+//     }
+//   }
+//     res.json(randomLev)
+// })
 
 router.get("/MLL", async (req, res) => {
   let list = await request(`https://gdlrrlist.com/api/v1/demons/ML?simplify=true`)
