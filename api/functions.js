@@ -8,6 +8,9 @@ exports.validFields = (...args) => {
     obj = Object.entries(obj).filter(e => !args.find(e => e.name == e[0]))
       obj = Object.fromEntries(obj)
     let object = Object.fromEntries(args.map(k => {
+      if(k.body_type) {
+        obj[k.name] = req[k.name]
+      }
         if(k.type == 'URL') {
           k.type = () => "URL"
           try {
@@ -44,7 +47,7 @@ exports.validFields = (...args) => {
     return next()
     }
   try {
-    validator.functionArgs = args.map(item => item = [item.name, {name: item.name, type: typeof item.type == "string" ? "URL" : item.type() == "URL" ? "URL" : (typeof item.type()).toUpperCase(), description: item.description, optional: !!item.optional}])
+    validator.functionArgs = args.map(item => item = [item.name, {name: item.name, type: typeof item.type == "string" ? "URL" : item.type() == "URL" ? "URL" : (typeof item.type()).toUpperCase(), description: item.description, optional: !!item.optional, body_type: item.body_type}])
   } catch(_) {
     
   }

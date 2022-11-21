@@ -117,11 +117,18 @@ txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>
   txt += "</table>"
   return txt
 }
+  
   for(const key in config.documentation) {
     for(const item in config.documentation[key]) {
       if(key == "v1") {
          for(const v1items in config.documentation[key][item]) {
           let txt = "<%- tableMaker %>"
+           for(const vals in config.documentation[key][item][v1items]) {
+          let exists = config.documentation[key][item][v1items][vals].body_type
+          if(!exists) {
+            config.documentation[key][item][v1items][vals].body_type = v1items.split(" ")[0] == "GET" ? "query" : "body"
+          }
+        }
            if(config.documentation[key][item][v1items].require_perm) {
              txt += `
 <p>Requires at least a "User" token to use.</p>`
@@ -130,6 +137,12 @@ txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>
   upsertFile(`./documentation/api/${key}/${item}/${v1items.replace(" /", "-").replace(/[/]/g, "-").replace(/[:]/g, "=")}.ejs`, txt, process.env.makeTable)
          }
       } else {
+        for(const vals in config.documentation[key][item]) {
+          let exists = config.documentation[key][item][vals].body_type
+          if(!exists) {
+            config.documentation[key][item][vals].body_type = item.split(" ")[0] == "GET" ? "query" : "body"
+          }
+        }
         upsertFile(`./documentation/api/${key}/${item.replace(" /", "-").replace(/[/]/g, "-").replace(/[:]/g, "=")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
       }
     }

@@ -114,20 +114,6 @@ try {
   res.json(array)
 })
 
-router.post("/discord_auth", authenticator, async (req, res) => {
-  if(req.body.secret != process.env.secret) return res.status(401).json({error: config["401"][0], message: config["401"][1]})
-  let auth = req.headers.authorization.split(" ")
-  let {id} = jwt.verify(auth[1], process.env.WEB_TOKEN)
-  let {name: username} = await loginSchema.findById(id)
-  await loginSchema.findOneAndUpdate({name: username}, {
-    $set: {
-      discord: req.body.id,
-      message: req.body.message
-    }
-  })
-  res.sendStatus(204)
-})
-
 router.post("/signup", validFields({name: "password", type: String, description: ""}, {name: "password2", type: String, description: ""}, {name: "name", type: String, description: ""}), async (req, res) => {
   if(req.body.password != req.body.password2) return res.status(400).json({error: config["400"], message: "Your passwords do not match!"})
   const user = await loginSchema.findOne({name: {$eq: req.body.name, $ne: ""}})
@@ -252,7 +238,7 @@ router.route("/notifications")
   })
   res.status(201).json(req.body)
 })
-.get(authenticator, async (req, res) => {
+.get(authenticator, validFields({name: "fromUser", type: Boolean, description: "Get emails sent by a user (in this case, you)", optional: true}, {name: "toUser", type: Boolean, description: "Get emails sent by a user to you.", optional: true}), async (req, res) => {
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
   let {name: username} = await loginSchema.findById(id)
   let userMail = []
@@ -260,10 +246,10 @@ router.route("/notifications")
   let toUser = await mailSchema.find({to: username})
   let getFromUser = true
   let gettoUser = true
-  if(req.query.fromUser != "true" && req.query.fromUser) {
+  if(req.query.fromUser != "true") {
     getFromUser = false
   }
-  if(req.query.toUser != "true" && req.query.toUser) {
+  if(req.query.toUser != "true") {
     gettoUser = false
   }
 if(getFromUser) {

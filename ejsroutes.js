@@ -54,8 +54,8 @@ let tableMaker = (json) => {
   let txt = ""
   if(Object.values(json).length != 0) {
    txt = "<table>"
-txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>` 
-  Object.values(json).forEach(e => txt += `<tr><td>${e.name}</td><td>${e.type}</td><td>${e.description}</td><td>${!!e.optional}</td></tr>`)
+txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Body Type</th><th>Optional</th></tr>` 
+  Object.values(json).forEach(e => txt += `<tr><td>${e.name}</td><td>${e.type}</td><td>${e.description}</td><td>${e.body_type}</td><td>${!!e.optional}</td></tr>`)
   txt += "</table>"
   }
   return txt
