@@ -24,7 +24,6 @@ exports.validFields = (...args) => {
         ...req.query ?? {},
         ...req.body ?? {}
       }
-      console.log(obj)
     let errors = []
     obj = Object.entries(obj).filter(e => !args.find(e => e.name == e[0]))
       obj = Object.fromEntries(obj)

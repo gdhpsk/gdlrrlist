@@ -29,7 +29,7 @@ const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
   router.use(authenticator)
 
-router.get("/ML", async (req, res) => {
+router.get("/ML", validFields({name: "simplify", type: Number, description: "Simplifies the amount of data recieved.", optional: true}), async (req, res) => {
   let ok = await request("https://sites.google.com/view/gd-mobile-lists/top-100-demons-completed")
   let html = await ok.body.text()
   const dom = new JSDOM(html);
@@ -233,11 +233,11 @@ router.get("/MLL", async (req, res) => {
   res.json(obj)
 })
 
-router.get("/", async (req, res) => {
+router.get("/", validFields({name: "start", type: Number, description: "What placement do you want to start from?", optional: true}, {name: "end", type: Number, description: "What placement do you want to end the query at?", optional: true}), async (req, res) => {
   let config = {
     position: {
-      $gt: isNaN(req.query.start) ? 0 : req.query.start-1,
-      $lt: isNaN(req.query.end) ? undefined : req.query.end
+      $gt: (req.query.start ?? 1)-1,
+      $lt: req.query.end
     }
   }
    if(config.position["$lt"] === undefined) {
