@@ -247,7 +247,7 @@ router.get("/", async (req, res) => {
   res.json(everything)
 })
 
-router.get("/:id", validFields({name: ":id", type: Number, body_type: "params", description: "The placement of the level on the list"}), async (req, res) => {
+router.get("/:id", validFields({name: "id", type: Number, body_type: "params", description: "The placement of the level on the list"}), async (req, res) => {
   if(isNaN(req.params.id)) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})
   let level = await levelsSchema.findOne({position: req.params.id})
   if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})

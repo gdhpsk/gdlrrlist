@@ -3,24 +3,32 @@ const config = require("./config")
 exports.validFields = (...args) => {
     let type = (arg) => arg == "URL" ? "URL" : typeof arg
     function validator(req, res, next) {
-       let obj = req.method == "GET" ? req.query : req.body
-      if(req.method == "GET") {
+      if(Object.keys(req.query).length != 0) {
         try {
-    
-          obj = Object.fromEntries(Object.entries(obj).map(e => ["true", "false"].includes(e[1]) ? [e[0], JSON.parse(e[1])] : !isNaN(e[1]) ? [e[0], parseInt(e[1])] : e))
-          req.query = obj
+          req.query = Object.fromEntries(Object.entries(req.query).map(e => ["true", "false"].includes(e[1]) ? [e[0], JSON.parse(e[1])] : !isNaN(e[1]) ? [e[0], parseInt(e[1])] : e))
           //console.log(obj)
         } catch(e) {
           //console.log(e)
         }
       }
+      if(Object.keys(req.params).length != 0) {
+        try {
+          req.params = Object.fromEntries(Object.entries(req.params).map(e => ["true", "false"].includes(e[1]) ? [e[0], JSON.parse(e[1])] : !isNaN(e[1]) ? [e[0], parseInt(e[1])] : e))
+          //console.log(obj)
+        } catch(e) {
+          //console.log(e)
+        }
+      }
+      let obj = {
+        ...req.params ?? {},
+        ...req.query ?? {},
+        ...req.body ?? {}
+      }
+      console.log(obj)
     let errors = []
     obj = Object.entries(obj).filter(e => !args.find(e => e.name == e[0]))
       obj = Object.fromEntries(obj)
     let object = Object.fromEntries(args.map(k => {
-      if(k.body_type) {
-        obj[k.name] = req[k.name]
-      }
         if(k.type == 'URL') {
           k.type = () => "URL"
           try {
@@ -35,6 +43,7 @@ exports.validFields = (...args) => {
           obj[k.name] = isNaN(obj[k.name]) ? obj[k.name] : parseInt(obj[k.name])
         }
         if(typeof obj[k.name] === typeof k.type()) return [k.name, obj[k.name]]
+    
         if(obj[k.name] === undefined && !k.optional) return [k.name, undefined]
         if(k.optional && obj[k.name] !== undefined) return [k.name, null]
         if(k.optional) return [k.name, ""]
