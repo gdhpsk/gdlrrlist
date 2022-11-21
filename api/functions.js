@@ -4,6 +4,15 @@ exports.validFields = (...args) => {
     let type = (arg) => arg == "URL" ? "URL" : typeof arg
     function validator(req, res, next) {
        let obj = req.method == "GET" ? req.query : req.body
+      if(obj == req.query) {
+        try {
+    
+          obj = Object.fromEntries(Object.entries(obj).map(e => ["true", "false"].includes(e[1]) ? [e[0], JSON.parse(e[1])] : e))
+          //console.log(obj)
+        } catch(e) {
+          //console.log(e)
+        }
+      }
     let errors = []
     obj = Object.entries(obj).filter(e => !args.find(e => e.name == e[0]))
       obj = Object.fromEntries(obj)
@@ -26,6 +35,7 @@ exports.validFields = (...args) => {
         }
         if(typeof obj[k.name] === typeof k.type()) return [k.name, obj[k.name]]
         if(obj[k.name] === undefined && !k.optional) return [k.name, undefined]
+        if(k.optional && obj[k.name] !== undefined) return [k.name, null]
         if(k.optional) return [k.name, ""]
           return [k.name, null]
         }))
