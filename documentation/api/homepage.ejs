@@ -4,9 +4,6 @@
     h1, h2, h3, h4, h5, h6, p {
       text-align: center;
     }
-    button {
-      background: var(--header-color) !important;
-    }
   </style>
   <head>
     <meta charset="utf-8">
@@ -14,7 +11,7 @@
     <title>GD LRR Demon List</title>
     <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
     <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.comCSS/changelog.css?v=2020-10-05" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/changelog.css?v=2020-10-05" rel="stylesheet" type="text/css" />
      <link href="https://gdlrrlist.com/CSS/table?v=2021-03-23" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
@@ -59,14 +56,14 @@ X-Ratelimit-Reset: 1668995076</div></div>
        <h1>API Routes</h1>
        <% for(const item in documentation) { %>
          <% if(Object.keys(documentation[item]) != 0) { %>
-      <button style="width: 800px; height: 300px;" onclick="window.location.href = '/documentation/api/<%= item%>'"><h1><%= item.split("")[0].toUpperCase() + item.split(item[0])[1] %> routes (/<%= item %>)</h1>
+      <button style="width: 800px; height: 300px; background: var(--header-color);" onclick="window.location.href = '/documentation/api/<%= item%>'"><h1><%= item.split("")[0].toUpperCase() + item.split(item[0])[1] %> routes (/<%= item %>)</h1>
       <h4>Requires at least the <i><%= item == "v1" ? "User (if specified)" : item == "mods" ? "Moderator" : item.split("")[0].toUpperCase() + item.split(item[0])[1] %></i>  permission to use.</h4></button>
            <br>
          <% }
            }%>
     
    </div>
-    <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+    <script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
     <script src="https://gdlrrlist.com/extrascripts/sheets.js"></script>
   </body>
 </html>
