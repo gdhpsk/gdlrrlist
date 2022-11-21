@@ -4,10 +4,11 @@ exports.validFields = (...args) => {
     let type = (arg) => arg == "URL" ? "URL" : typeof arg
     function validator(req, res, next) {
        let obj = req.method == "GET" ? req.query : req.body
-      if(obj == req.query) {
+      if(req.method == "GET") {
         try {
     
-          obj = Object.fromEntries(Object.entries(obj).map(e => ["true", "false"].includes(e[1]) ? [e[0], JSON.parse(e[1])] : e))
+          obj = Object.fromEntries(Object.entries(obj).map(e => ["true", "false"].includes(e[1]) ? [e[0], JSON.parse(e[1])] : !isNaN(e[1]) ? [e[0], parseInt(e[1])] : e))
+          req.query = obj
           //console.log(obj)
         } catch(e) {
           //console.log(e)

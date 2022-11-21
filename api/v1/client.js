@@ -238,7 +238,7 @@ router.route("/notifications")
   })
   res.status(201).json(req.body)
 })
-.get(authenticator, validFields({name: "fromUser", type: Boolean, description: "Get emails sent by a user (in this case, you)", optional: true}, {name: "toUser", type: Boolean, description: "Get emails sent by a user to you.", optional: true}), async (req, res) => {
+.get(authenticator, validFields({name: "fromUser", type: Boolean, description: "Get emails sent by a user (in this case, you)", optional: true}, {name: "toUser", type: Boolean, description: "Get emails sent by a user to you.", optional: true}, {name: "number", type: Number, description: "Get a specific mail number.", optional: true}), async (req, res) => {
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
   let {name: username} = await loginSchema.findById(id)
   let userMail = []
@@ -260,11 +260,8 @@ if(getFromUser) {
 }
   
 if(gettoUser) {
-  for(const mail of toUser) {
-    userMail.push(mail)
-  }
+  userMail.push(...toUser)
 }
-
   if(req.query.number) {
     let mail = userMail[req.query.number-1]
     if(!mail) return res.status(400).json({error: config["400"], message: "Please input a valid mail number!"})
