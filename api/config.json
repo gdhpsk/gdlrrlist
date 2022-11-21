@@ -6,7 +6,7 @@
   "400": "400 BAD REQUEST",
   "documentation": {
     "leader": {},
-    "mod": {},
+    "mods": {},
     "helper": {},
     "spectator": {},
     "v1": {

@@ -121,10 +121,16 @@ txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>
     for(const item in config.documentation[key]) {
       if(key == "v1") {
          for(const v1items in config.documentation[key][item]) {
-          upsertFile(`./documentation/api/${key}/${item}/${v1items.replace(" /", "-")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
+          let txt = "<%- tableMaker %>"
+           if(config.documentation[key][item][v1items].require_perm) {
+             txt += `
+<p>Requires at least a "User" token to use.</p>`
+             delete config.documentation[key][item][v1items].require_perm
+           }
+  upsertFile(`./documentation/api/${key}/${item}/${v1items.replace(" /", "-").replace(/[/]/g, "-")}.ejs`, txt, process.env.makeTable)
          }
       } else {
-        upsertFile(`./documentation/api/${key}/${item.replace(" /", "-")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
+        upsertFile(`./documentation/api/${key}/${item.replace(" /", "-").replace(/[/]/g, "-")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
       }
     }
   }

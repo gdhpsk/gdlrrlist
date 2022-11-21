@@ -16,7 +16,7 @@ const {Routes} = require("discord-api-types/v10")
 const rest = new REST({version: '10'}).setToken(process.env.discord_token);
 
 module.exports = (authFunction, webhook, rate_lim, send) => {
-  let authenticator = async (req, res, next) => {
+  async function authenticator(req, res, next) {
       let path = req.url.split("?")[0]
     if(Object.keys(req.params).length) {
       for(const key in req.params) {
@@ -171,7 +171,7 @@ router.route("/submissions")
     return res.json(everything)
   }
 })
-.post(authenticator, rate_lim(60000, 1), validFields({name: "demon", type: String, description: ""}, {name: "username", type: String, description: ""}, {name: "video", type: "URL", description: ""}, {name: "comments", type: String, description: "", optional: true}, {name: "hertz", type: String, description: ""}, {name: "progress", type: Number, description: ""}, {name: "raw", type: "URL", description: "", optional: true}), async (req, res) => {
+.post(authenticator, rate_lim(60000, 1), validFields({name: "demon", type: String, description: "The name of the demon you want to submit."}, {name: "username", type: String, description: "The player who wants to submit this record."}, {name: "video", type: "URL", description: "The URL of the progress / completion video"}, {name: "comments", type: String, description: "Additional comments the user can add.", optional: true}, {name: "hertz", type: String, description: "The refresh rate the person got this record on."}, {name: "progress", type: Number, description: "The progress this person got on this level."}, {name: "raw", type: "URL", description: "The raw footage of the player playing the level.", optional: true}), async (req, res) => {
   req.body.status = "pending"
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let current_user = await loginSchema.findById(id)
@@ -327,12 +327,23 @@ if(gettoUser) {
 })
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
-    stack?.stack.forEach(layers => {
-      if(layers.handle.name == validFields({}).name) {
-          config.documentation.v1.client[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
-        
-      }
-    })
+    let layers = stack?.stack.filter(layers => layers.handle.name == validFields({}).name)
+     if(stack?.stack) {
+      for(const layer of stack.stack) {
+          config.documentation.v1.client[`${layer.method.toUpperCase()} ${stack.path}`] = {}
+        }
+    }
+      if(layers?.length) {
+        for(const layer of layers) {
+          config.documentation.v1.client[`${layer.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layer.handle.functionArgs)
+        }
+      } 
+    layers = stack?.stack.filter(layers => layers.handle.name == "authenticator")
+    if(layers?.length) {
+        for(const layer of layers) {
+          config.documentation.v1.client[`${layer.method.toUpperCase()} ${stack.path}`].require_perm = true
+        }
+      } 
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }

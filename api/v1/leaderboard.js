@@ -14,7 +14,7 @@ const {validFields} = require("../functions")
 
 
 module.exports = (authFunction, webhook, rate_lim, send) => {
-  let authenticator = async (req, res, next) => {
+  async function authenticator(req, res, next) {
       let path = req.url.split("?")[0]
     if(Object.keys(req.params).length) {
       for(const key in req.params) {
@@ -83,12 +83,23 @@ router.get("/nationalities", async (req, res) => {
 
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
-    stack?.stack.forEach(layers => {
-      if(layers.handle.name == validFields({}).name) {
-          config.documentation.v1.leaderboard[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
-        
-      }
-    })
+    let layers = stack?.stack.filter(layers => layers.handle.name == validFields({}).name)
+     if(stack?.stack) {
+      for(const layer of stack.stack) {
+          config.documentation.v1.leaderboard[`${layer.method.toUpperCase()} ${stack.path}`] = {}
+        }
+    }
+      if(layers?.length) {
+        for(const layer of layers) {
+          config.documentation.v1.leaderboard[`${layer.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layer.handle.functionArgs)
+        }
+      } 
+    layers = stack?.stack.filter(layers => layers.handle.name == "authenticator")
+    if(layers?.length) {
+        for(const layer of layers) {
+          config.documentation.v1.client[`${layer.method.toUpperCase()} ${stack.path}`].require_perm = true
+        }
+      } 
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }

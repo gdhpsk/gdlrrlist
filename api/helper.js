@@ -488,12 +488,17 @@ if(submission.status != req.body.status) {
   
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
-    stack?.stack.forEach(layers => {
-      if(layers.handle.name == validFields({}).name) {
-          config.documentation.helper[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
-        
-      }
-    })
+    let layers = stack?.stack.filter(layers => layers.handle.name == validFields({}).name)
+     if(stack?.stack) {
+      for(const layer of stack.stack) {
+          config.documentation.helper[`${layer.method.toUpperCase()} ${stack.path}`] = {}
+        }
+    }
+      if(layers?.length) {
+        for(const layer of layers) {
+          config.documentation.helper[`${layer.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layer.handle.functionArgs)
+        }
+      } 
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }

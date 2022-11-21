@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+  <style>
+    h1, h2, h3, h4, h5, h6, p {
+      text-align: center;
+    }
+  </style>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
@@ -20,16 +25,23 @@
   <body class = "" id="wesure">
     <!--<body style="background-color:white;">-->
       
-   <%- include("../../htdocs/navbar.ejs") %>
+   <%- include("../../../htdocs/navbar.ejs") %>
 
     <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
-     <% for(const key in documentation) { %>
-       <div style="padding-bottom: 50px; display: grid; place-items: center;">
-         <h1><span style="color: yellow;"><%= key.split(" ")[0] %></span> <%= key.split(" ")[1] %></h1>
-         <%- include(`${dir}${type}/${key.replace(" /", "-").replaceAll("/", "-")}`, {tableMaker: tableMaker(documentation[key])}) %>  
-       </div>
-      <% } %>
+     
+
+     <div style="display: grid; place-items: center;">
+       <h1>API Routes</h1>
+       <% for(const item in documentation) { %>
+         <% if(Object.keys(documentation[item]) != 0) { %>
+      <button style="width: 800px; height: 300px;" onclick="window.location.href = '/documentation/api/v1/<%= item%>'"><h1><%= item.split("")[0].toUpperCase() + item.split(item[0])[1] %> routes</h1>
+      <h4>/<%= item %></h4></button>
+           <br>
+         <% }
+           }%>
+    
+   </div>
     <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
     <script src="https://gdlrrlist.com/extrascripts/sheets.js"></script>
   </body>

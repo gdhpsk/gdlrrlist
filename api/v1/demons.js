@@ -13,7 +13,7 @@ let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)
 let routes = {}
 
 module.exports = (authFunction, webhook, rate_lim) => {
-  let authenticator = async (req, res, next) => {
+  async function authenticator (req, res, next) {
       let path = req.url.split("?")[0]
     if(Object.keys(req.params).length) {
       for(const key in req.params) {
@@ -247,7 +247,7 @@ router.get("/", async (req, res) => {
   res.json(everything)
 })
 
-router.get("/:id", authenticator, async (req, res) => {
+router.get("/:id", async (req, res) => {
   if(isNaN(req.params.id)) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})
   let level = await levelsSchema.findOne({position: req.params.id})
   if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})
@@ -258,12 +258,23 @@ router.get("/:id", authenticator, async (req, res) => {
 
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
-     stack?.stack.forEach(layers => {
-      if(layers.handle.name == validFields({}).name) {
-          config.documentation.v1.demons[`${layers.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layers.handle.functionArgs)
-        
-      }
-    })
+    let layers = stack?.stack.filter(layers => layers.handle.name == validFields({}).name)
+     if(stack?.stack) {
+      for(const layer of stack.stack) {
+          config.documentation.v1.demons[`${layer.method.toUpperCase()} ${stack.path}`] = {}
+        }
+    }
+      if(layers?.length) {
+        for(const layer of layers) {
+          config.documentation.v1.demons[`${layer.method.toUpperCase()} ${stack.path}`] = Object.fromEntries(layer.handle.functionArgs)
+        }
+      } 
+    layers = stack?.stack.filter(layers => layers.handle.name == "authenticator")
+    if(layers?.length) {
+        for(const layer of layers) {
+          config.documentation.v1.client[`${layer.method.toUpperCase()} ${stack.path}`].require_perm = true
+        }
+      } 
     if(stack?.path) {
       routes[stack.path] = stack.methods
     }

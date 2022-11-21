@@ -51,10 +51,13 @@ async function findToken(req) {
    return {exists: false}
 }
 let tableMaker = (json) => {
-  let txt = "<table>"
-txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>`
+  let txt = ""
+  if(Object.values(json).length != 0) {
+   txt = "<table>"
+txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>` 
   Object.values(json).forEach(e => txt += `<tr><td>${e.name}</td><td>${e.type}</td><td>${e.description}</td><td>${!!e.optional}</td></tr>`)
   txt += "</table>"
+  }
   return txt
 }
 
@@ -71,10 +74,23 @@ app.get("/documentation/api/:type", (req, res, next) => {
   try {
     fs.readdir(`./documentation/api/${req.params.type}`, {}, (err, data) => {
       if(err) return next()
-      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type})
+      if(req.params.type == "v1") {
+        return res.render(`../documentation/api/v1/homepage.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type})
+      }
+      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type, dir: "./"})
     })
   } catch(_) {
-    console.log("H")
+    next()
+  }
+})
+
+app.get("/documentation/api/:version/:type", (req, res, next) => {
+  try {
+    fs.readdir(`./documentation/api/${req.params.version}/${req.params.type}`, {}, (err, data) => {
+      if(err) return next()
+      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.version][req.params.type], tableMaker, type: req.params.type, dir: "./v1/"})
+    })
+  } catch(_) {
     next()
   }
 })
