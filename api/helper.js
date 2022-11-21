@@ -322,7 +322,7 @@ if(submission.status != req.body.status) {
 })
 
   router.route("/records")
-  .put(validFields({name: "demon", type: String, description: ""}, {name: "username", type: String, description: ""}, {name: "hertz", type: String, description: ""}, {name: "progress", type: Number, description: ""}, {name: "video", type: "URL", description: ""}), async (req, res) => {
+  .put(validFields({name: "demon", type: String, description: "The name of the demon the person got progress on / beat."}, {name: "username", type: String, description: "The name of the player"}, {name: "hertz", type: String, description: "refresh rate of the player"}, {name: "progress", type: Number, description: "what % the player got on the level"}, {name: "video", type: "URL", description: "The progress / completion video."}), async (req, res) => {
   var level = await levelsSchema.findOne({name: req.body.demon})
   var user = await leaderboardSchema.findOne({name: req.body.username.trim()})
     if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
@@ -430,7 +430,7 @@ if(submission.status != req.body.status) {
       hertz: obj.hertz
     })
 })
-  .delete(async (req, res) => {
+  .delete(validFields({name: "name", type: String, description: "The name of the player who holds this record."}, {name: "level", type: String, description: "The name of the level you want to remove this record from."}, {name: "progress", type: Number, description: "The progress the player got on this level."}), async (req, res) => {
   let message;
   let level = await levelsSchema.findOne({name: req.body.demon.trim()})
   if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    h1, h2, h3, h4, h5, h6, p {
+      text-align: center;
+    }
+  </style>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>GD LRR Demon List</title>
+    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.comCSS/changelog.css?v=2020-10-05" rel="stylesheet" type="text/css" />
+     <link href="https://gdlrrlist.com/CSS/table?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+    <!--<body style="background-color:white;">-->
+      
+   <%- include("../../htdocs/navbar.ejs") %>
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+     <h1>Introduction</h1>
+     <h4>The LRR API is used for a variety of different things, including 
+fetching demons, changing the database, and YOU can use it as well. The base route of the api is <a href="https://gdlrrlist.com/api">https://gdlrrlist.com/api</a>, and here are some docs below to get you started: </h4>
+
+     <div style="display: grid; place-items: center;">
+       <h1>Tokens</h1>
+       <p>Most users, if you are logged in, have a token to prove that they are logged in. The LRR List uses JWT tokens, and you can easily find your token by going into your cookies. To use this token with any route, you have to use the appropriate prefix based on the permission level of the route. For example, for any "User" route, you have to set an authentication header of "User [token]". So for example, this route below would only require the "User" authentication level.</p>
+       <div style="background: var(--header-color); padding: 10px;"><div style="padding:25px; color: var(--txt-color);">GET https://gdlrrlist.com/api/v1/demons<br>
+Authorization: User [token]</div></div>
+       <p>However, if you were using say, a leader route, then your authentication header should look like this:</p>
+       <div style="background: var(--header-color); padding: 10px;"><div style="padding:25px; color: var(--txt-color);">PATCH https://gdlrrlist.com/leader/settings<br>
+Authorization: Leader [token]</div></div>
+       <p>If you want to know what prefix you should use, generally the title of the API routes shown below are the prefixes also.</p>
+       <h1>Rate Limits</h1>
+       <p>Some API routes, such as POST /v1/client/submissions, have API routes to prevent spamming from happening. If you have a Helper permission or above, you can completely avoid these API rate limits. Your rate limit headers should look something like this:</p>
+       <div style="background: var(--header-color); padding: 10px;"><div style="padding:25px; color: var(--txt-color);">Ratelimit-Limit: 1<br>
+Ratelimit-Remaining: 0<br>
+Ratelimit-Reset: 8<br>
+X-Ratelimit-Limit: 1<br>
+X-Ratelimit-Remaining: 0<br>
+Retry-After *: 60<br>
+X-Ratelimit-Reset: 1668995076</div></div>
+       <p>If you know a thing or 2 about rate limit headers, that is exactly how these function. You <b>must</b> have these cached, otherwise you will not receive the headers again until your rate limit is finished.</p>
+       <p>* These may not appear at first, but once you get the rate limit, they will.</p>
+       <h1>API Routes</h1>
+       <% for(const item in documentation) { %>
+         <% if(Object.keys(documentation[item]) != 0) { %>
+      <button style="width: 800px; height: 300px;" onclick="window.location.href = '/documentation/api/<%= item%>'"><h1><%= item.split("")[0].toUpperCase() + item.split(item[0])[1] %> routes</h1>
+      <h4>Requires at least the <i><%= item == "v1" ? "User" : item.split("")[0].toUpperCase() + item.split(item[0])[1] %></i>  permission to use.</h4></button>
+           <br>
+         <% }
+           }%>
+    
+   </div>
+    <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+    <script src="https://gdlrrlist.com/extrascripts/sheets.js"></script>
+  </body>
+</html>

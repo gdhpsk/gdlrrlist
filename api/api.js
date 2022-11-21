@@ -65,7 +65,12 @@ const rate_limit_func = (ms, max_requests) => rateLimit({
         "leader": 4
       }
       let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed.find(e => e.name == name && authLevel[e.tag] > 1)
-      if(allowed) return
+      
+      if(allowed) {
+        next()
+      } else {
+        throw new Error("")
+      }
     } catch(_) {
     let hashedToken = await bcrypt.hash(request.headers?.authorization?.split(" ")[1] ?? ip(request), 10)
     await rateLimitSchema.create({
@@ -99,12 +104,6 @@ const rate_limit_func = (ms, max_requests) => rateLimit({
 async function upsertFile(name, data, appendNewTable) {
   try {
     await fs.promises.readFile(name)
-    if(appendNewTable) {
-      fs.appendFile(name, data, (err, data) => {
-        if(err) return console.log(err)
-      })
-      return
-    }
   } catch (error) {
     await fs.promises.writeFile(name, data, (err, data) => {
       if(err) return console.log(err)
@@ -122,12 +121,10 @@ txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>
     for(const item in config.documentation[key]) {
       if(key == "v1") {
          for(const v1items in config.documentation[key][item]) {
-          let txt = tableMaker(config.documentation[key][item][v1items])
-          upsertFile(`./documentation/${key}/${item}/${v1items.replace(" /", "-")}.ejs`, txt, process.env.makeTable)
+          upsertFile(`./documentation/api/${key}/${item}/${v1items.replace(" /", "-")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
          }
       } else {
-        let txt = tableMaker(config.documentation[key][item])
-        upsertFile(`./documentation/${key}/${item.replace(" /", "-")}.ejs`, txt, process.env.makeTable)
+        upsertFile(`./documentation/api/${key}/${item.replace(" /", "-")}.ejs`, "<%- tableMaker %>", process.env.makeTable)
       }
     }
   }

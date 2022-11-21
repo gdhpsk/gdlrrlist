@@ -119,6 +119,16 @@ if(permission === "granted") {
    }
 }
 
+  function showRemainingNav() {
+  document.getElementById("myExtendedNav").classList.toggle("show");
+}
+
+  window.document.onclick = function(event) {
+  if (!event.target.matches('.extendedNav')) {
+    document.getElementById("myExtendedNav").classList.remove("show");
+  }
+}
+
 function requestAndShowPermission() {
    Notification.requestPermission()
 }
@@ -250,6 +260,7 @@ function requestAndShowPermission() {
   }
   changeTXT(true)
 </script>
+<script src="https://gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
 <script defer>
   document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter' && e.srcElement?.className == "login-class") {

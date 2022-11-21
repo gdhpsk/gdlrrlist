@@ -16,6 +16,8 @@ const {request} = require("undici")
 const logsSchema = require("./schemas/mod_log.js")
 const {REST} = require("@discordjs/rest")
 const {Routes} = require("discord-api-types/v10")
+const fs = require("fs")
+const {documentation} = require("./api/config.json")
 const dayjs = require("dayjs")
 
 const {google} = require('googleapis');
@@ -48,6 +50,34 @@ async function findToken(req) {
   }
    return {exists: false}
 }
+let tableMaker = (json) => {
+  let txt = "<table>"
+txt += `<tr><th>Name</th><th>Type</th><th>Description</th><th>Optional</th></tr>`
+  Object.values(json).forEach(e => txt += `<tr><td>${e.name}</td><td>${e.type}</td><td>${e.description}</td><td>${!!e.optional}</td></tr>`)
+  txt += "</table>"
+  return txt
+}
+
+// docs
+app.get("/documentation/", (req, res, next) => {
+ res.render("../documentation/homepage.ejs")
+})
+
+app.get("/documentation/api", (req, res, next) => {
+ res.render("../documentation/api/homepage.ejs", {documentation})
+})
+
+app.get("/documentation/api/:type", (req, res, next) => {
+  try {
+    fs.readdir(`./documentation/api/${req.params.type}`, {}, (err, data) => {
+      if(err) return next()
+      return res.render(`../documentation/api/summary.ejs`, {documentation: documentation[req.params.type], tableMaker, type: req.params.type})
+    })
+  } catch(_) {
+    console.log("H")
+    next()
+  }
+})
 
 // user settings
 
@@ -90,10 +120,6 @@ app.get("/user_settings", async (req, res) => {
   }
   
       return res.render("../misc/user_settings.ejs", {user, loggedIn: loggedIn.exists, editing, editable})
-})
-
-app.get("/test", (req, res) => {
-  res.render("docs.ejs")
 })
 
 app.get("/google_signin", async (req, res) => {

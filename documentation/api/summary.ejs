@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>GD LRR Demon List</title>
+    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://gdlrrlist.comCSS/changelog.css?v=2020-10-05" rel="stylesheet" type="text/css" />
+     <link href="https://gdlrrlist.com/CSS/table?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+    <!--<body style="background-color:white;">-->
+      
+   <%- include("../../htdocs/navbar.ejs") %>
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+     <% for(const key in documentation) { %>
+       <div style="padding-bottom: 50px; display: grid; place-items: center;">
+         <h1><span style="color: yellow;"><%= key.split(" ")[0] %></span> <%= key.split(" ")[1] %></h1>
+         <%- include(`./${type}/${key.replace(" /", "-")}`, {tableMaker: tableMaker(documentation[key])}) %>  
+       </div>
+      <% } %>
+    <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+    <script src="https://gdlrrlist.com/extrascripts/sheets.js"></script>
+  </body>
+</html>
