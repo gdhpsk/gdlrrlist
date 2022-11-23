@@ -329,7 +329,9 @@ app.get("/roulette", async (req, res) => {
  
   
   if(exists?.redirect) {
+    let userDiscord = exists.user
     exists = await rouletteSchema.findById(exists.redirect)
+    exists.user = userDiscord
     let user = await loginSchema.findById(exists.site_user)
     users.push(user.name)
 
