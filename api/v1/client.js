@@ -53,12 +53,19 @@ router.route("/login")
   }
 })
 .patch(authenticator, rate_lim(60000, 1), async (req, res) => {
+let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let curUser = await loginSchema.findById(token.id)
+  if(['discord', 'google'].includes(req.body.remove)) {
+    curUser[req.body.remove] = undefined
+    await curUser.save()
+    return res.sendStatus(204)
+  }
   if(req.body.discord) {
     if(req.body.secret != process.env.secret) res.status(400).json({error: config["401"][0], message: config["401"][1]})
     let user = await loginSchema.findOne({discord: req.body.discord})
     if(!user) return res.status(400).json({error: config["400"], message: "I could not find a discord ID linked to this account!"})
   }
-  let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  
   let {name, password} = await loginSchema.findById(token.id)
   if(['true', 'false'].includes(req.body.pc_info?.toString())) {
     let user = await loginSchema.findById(token.id)

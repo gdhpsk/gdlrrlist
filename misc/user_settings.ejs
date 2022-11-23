@@ -101,8 +101,22 @@ input:checked + .slider:before {
 <button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="window.location.href = 'https://discord.com/api/oauth2/authorize?client_id=1033274582855065704&redirect_uri=https%3A%2F%2Fgdlrrlist.com&response_type=code&scope=identify'"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Discord</p></button>
 <p>
       <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="window.location.href = 'https://gdlrrlist.com/google_signin'"><p><img style="height: 25px; margin: -4px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png"></img>&nbsp;&nbsp;Google</p></button>
-  <% if(locals.user.discord) { %>
+  <% if(locals.user.discord || locals.user.google) { %>
   <hr style="width: 95%; background-color: white"/>
+  <h4 style="text-align: center;">Remove Socials</h4>
+  <% if(locals.user.discord) { %>
+<button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="remove('discord')"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Discord</p></button>
+  <% } %>
+    <% if(locals.user.discord && locals.user.google) { %>
+      <p>
+      <% } %>
+    <% if(locals.user.google) { %>
+      <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="remove('google')"><p><img style="height: 25px; margin: -4px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png"></img>&nbsp;&nbsp;Google</p></button>
+      <% } %>
+  <br id="err"></br>
+    <% } %>
+  <hr style="width: 95%; background-color: white"/>
+       <% if(locals.user.discord) { %>
   <div style="display: flex; justify-content: center;">
   <label class="switch">
   <input type="checkbox" id="mail" class="checkbox" <%= locals.user.mail_notifs ? "checked" : '' %>>
@@ -110,6 +124,7 @@ input:checked + .slider:before {
   </label>&nbsp;
     <h3 style="margin: 5px;">Send mail notifications using LRR Bot</h3>
   </div>
+    <% } %>
     <div style="display: flex; justify-content: center;">
   <label class="switch">
   <input type="checkbox" id="pc_info" class="checkbox" <%= locals.user.pc_info ? "checked" : '' %>>
@@ -117,13 +132,35 @@ input:checked + .slider:before {
   </label>&nbsp;
     <h3 style="margin: 5px;">Include pointercrate information on level page</h3>
   </div>
-    <% } %>
 </div>
       
       <hr style="width: 95%; background-color: white"/>
       <p style="text-align: center;">Leaderboard account: <a href="https://gdlrrlist.com/leaderboard/<%= locals.name %>"><%= locals.name ?? "none" %></a></p>
     <!-- scripts to include -->
     <script src="JS/dropdown.js"></script><script src="JS/darkbutton.js?v=04-27-22"></script>
+      <% if(locals.user.discord || locals.user.google) { %>
+      <script>
+        async function remove(type) {
+          let content = await fetch("https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/login", {
+              method: "PATCH",
+              headers: {
+                authorization: `User ${getCookie("token")}`,
+                'content-type': "application/json"
+              },
+              body: JSON.stringify({
+                remove: type
+              })
+            })
+            try {
+              let res = await content.json()
+              document.getElementById("err").innerText = res.message
+            } catch(_) {
+              window.location.reload()
+            }
+          
+          }
+      </script>
+        <% } %>
       <% if(locals.user.discord) { %>
       <script>
         let element = document.getElementById("mail")
