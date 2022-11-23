@@ -127,7 +127,7 @@ router.post("/generate", authenticator, validFields({name: "percent", type: Numb
     return res.sendStatus(204)
   }
   let random_lev = exists.config.levels[Math.floor(Math.random()*(exists.config.levels.length-1))]
-  exists.config.levels.splice(exists.config.levels.findIndex(e => e == random_lev), 1)
+  exists.config.levels = exists.config.levels.filter(e => e != random_lev)
   random_lev = await levelsSchema.findOne({name: random_lev.name})
   let { 
         minimumPercent,
