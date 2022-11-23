@@ -21,6 +21,7 @@
     <% } else { %>
       <a class="nav-buttons" href="https://gdlrrlist.com/user_settings"><i class="fas fa-user-cog"></i>&nbsp;&nbsp;Settings</a>
       <a onclick="logout()"><i class='fas fa-sign-out'></i>&nbsp;&nbsp;Log Out</a>
+       <a class="nav-buttons <%= locals.active == 'roulette' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/documentation"><i class="far fa-life-ring"></i>&nbsp;&nbsp;LRR Roulette</a>
       <% } %>
         <a class="nav-buttons" href="https://gdlrrlist.com/documentation"><i class="fas fa-code"></i>&nbsp;&nbsp;Documentation</a>
 </div>

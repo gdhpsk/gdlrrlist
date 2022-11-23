@@ -1,7 +1,7 @@
 var mongoose = require("mongoose")
 
 let rouletteLevelSchema = new mongoose.Schema({
-    _id: Number,
+    position: Number,
     minimumPercent: Number,
     name: String,
     percent: Number,
@@ -13,6 +13,7 @@ let rouletteLevelSchema = new mongoose.Schema({
 var rouletteSchema = new mongoose.Schema({
     levels: [rouletteLevelSchema],
     user: String,
+    site_user: String,
     config: Object,
     redirect: String
 })

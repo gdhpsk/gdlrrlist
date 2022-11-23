@@ -1,5 +1,6 @@
 const express = require("express")
 const levelsSchema = require("./schemas/levels.js")
+const rouletteSchema = require("./schemas/roulette.js")
 const sixtyoneSchema = require("./schemas/61hertz")
 const loginSchema = require("./schemas/logins.js")
 const rolePacksSchema = require("./schemas/role_packs.js")
@@ -43,7 +44,7 @@ async function findToken(req) {
     try {
        let token = jwt.verify(getCookie("token", req),  process.env.WEB_TOKEN)
   let people = await loginSchema.findById(token.id)
-  return {exists: true, name: people.name, pc_info: !!people.pc_info}
+  return {exists: true, name: people.name, pc_info: !!people.pc_info, ID: token.id}
     }catch(e) {
       return {exists: false}
     }
@@ -310,8 +311,49 @@ app.get("/added.ejs", (req, res) => {
   res.render("added.ejs")
 })
 
-app.get("/roulette", (req, res) => {
-  res.render("roulette.ejs")
+app.get("/roulette", async (req, res) => {
+  let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
+  if(!loggedIn.exists) return res.render("404.ejs")
+  let exists = await rouletteSchema.findOne({site_user: loggedIn.ID})
+  let users = []
+
+ 
+  
+  if(exists?.redirect) {
+    exists = await rouletteSchema.findById(exists.redirect)
+    let user = await loginSchema.findById(exists.site_user)
+    users.push(user.name)
+
+    let all_redirects = await rouletteSchema.find({redirect: exists._id.toString()})
+  for(const item of all_redirects) {
+    let user = await loginSchema.findById(item.site_user)
+    users.push(user.name)
+  }
+    
+    return res.render("roulette.ejs", {data: exists, loggedIn, editing, editable, active: "roulette", redirect: true, users})
+  } else {
+    if(exists) {
+      let user = await loginSchema.findById(exists.site_user)
+      users.push(user.name)
+    }
+  }
+  if(exists) {
+   let all_redirects = await rouletteSchema.find({redirect: exists._id.toString()})
+  for(const item of all_redirects) {
+    let user = await loginSchema.findById(item.site_user)
+    users.push(user.name)
+  }
+  }
+  res.render("roulette.ejs", {data: exists, loggedIn, editing, editable, active: "roulette", redirect: false, users})
 })
 
 app.get("/61plus.html", async (req, res) => {

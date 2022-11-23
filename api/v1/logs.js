@@ -55,7 +55,7 @@ router.get("/", async (req, res) => {
     layers = stack?.stack.filter(layers => layers.handle.name == "authenticator")
     if(layers?.length) {
         for(const layer of layers) {
-          config.documentation.v1.client[`${layer.method.toUpperCase()} ${stack.path}`].require_perm = true
+          config.documentation.v1.logs[`${layer.method.toUpperCase()} ${stack.path}`].require_perm = true
         }
       } 
     if(stack?.path) {

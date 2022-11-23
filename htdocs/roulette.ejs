@@ -6,31 +6,245 @@
       width: 70px;
       border-radius: 50px;
     }
+    button[disabled] {
+      opacity: 50%;
+    }
   </style>
   <script>
-    function dostuff() {
+    async function leave() {
+      let session = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+        method: "PATCH",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          leave: true
+        })
+      })
+      
+      var json;
+      try {
+        json = await content.json()
+        document.getElementById("bind_err").innerText = json.message
+      } catch(_) {
+        window.location.reload()
+      }
+    }
+    async function join() {
+      let value = document.getElementById("join").value
+       let content = await fetch("https://gdlrrlist.com/api/v1/roulette/start", {
+        method: "PUT",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          redirect: value
+        })
+      })
+      if(content.status == 200) return window.location.reload()
+      try {
+        let json = await content.json()
+        document.getElementById("join_err").innerText = json.message
+      } catch(_) {
+        
+      }
+    }
+    async function bind() {
+      let div = document.getElementById("levels-container")
+      let checked = !!document.getElementById("bind_check").checked
+      let session = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+        method: "PATCH",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          bindDiscord: checked
+        })
+      })
+      
+      var json;
+      try {
+        json = await content.json()
+        document.getElementById("bind_err").innerText = json.message
+      } catch(_) {
+        document.getElementById("bind_err").innerText = `Successfully ${checked ? "" : "un"}binded.`
+        setTimeout(() => {
+          document.getElementById("bind_err").innerText = ""
+        }, 3000)
+      }
+    }
+    async function end() {
+      let div = document.getElementById("levels-container")
+      let session = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+        method: "GET",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        }
+      })
+      let user_levs = await session.json()
+      let content = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+        method: "DELETE",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        }
+      })
+      var json;
+      try {
+        json = await content.json()
+        document.getElementById("error").innerText = json.message
+      } catch(e) {
+        if(content.status == 204) {
+          let len = document.getElementsByClassName("column").length
+          document.getElementsByClassName("column")[len-1].style.display = "none"
+          let last_level = user_levs.levels[user_levs.levels.length-1]
+           div.innerHTML += `<hr/><h1 style="text-align: center;">You have ended the roulette at ${last_level.percent}% on <a href="https://gdlrrlist.com/level/${last_level.position}">${last_level.name}</a>. Thanks for playing :)</h1>`
+          return
+        }
+      }
+    }
+    async function addLevel(skip) {
       
       let div = document.getElementById("levels-container")
-    div.innerHTML = `
+      let div2 = document.getElementById("disappear")
+      let content = await fetch("https://gdlrrlist.com/api/v1/roulette/generate", {
+        method: "POST",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          percent: isNaN(document.getElementById("percent").value) ? undefined : parseInt(document.getElementById("percent").value),
+          skipped: !!skip
+        })
+      })
+      var json;
+      try {
+        json = await content.json()
+      } catch(e) {
+        if(content.status == 204) {
+          div2.innerHTML = `<div></div>`
+           div.innerHTML += `<hr/><h1 style="text-align: center;">Congratulations, you have compeleted the LRR roulette! Now quit gd smh</h1>`
+          return
+        }
+      }
+      if(content.status == 400) {
+        document.getElementById("error").innerText = json.message
+      }
+      if(content.status != 200) return
+      
+      let skippedtxt = document.getElementById("skipped_txt")
+      if(skip) {
+        skippedtxt.innerText = "(skipped)"
+      }
+      let len = document.getElementsByClassName("percent_txt").length
+        document.getElementsByClassName("percent_txt")[len-1].innerText = `You got ${json.levels[json.levels.length-1].percent-1}%`
+      skippedtxt.removeAttribute("id")
+      document.getElementById("score").innerText = `Score: ${json.levels.filter(e => !e.skipped).length-1}`
+      let level = json.levels[json.levels.length-1]
+      div2.innerHTML = `<div></div>`
+      div2.id = ""
+    div.innerHTML += `
     <div class="column">
         <div class="card">
-          <button type="button" class = "collapsible" onclick="window.location.href = '/level/1'">
+          <button type="button" class = "collapsible" onclick="window.location.href = '/level/${level.position}'">
             <section class = "LevelCard flex">
             <div class="thumb ratio-16-9 js-delay-css" 
             style="position: relative;  
-            background-image: url(&quot;https://i.ytimg.com/vi/test/mqdefault.jpg&quot;);" 
+            background-image: url(&quot;https://i.ytimg.com/vi/${level.ytcode}/mqdefault.jpg&quot;);" 
             data-property="background-image" 
-            data-property-value="url('https://i.ytimg.com/vi/test/mqdefault.jpg')" >
+            data-property-value="url('https://i.ytimg.com/vi/${level.ytcode}/mqdefault.jpg')" >
             </div>
         <div class = "title">
-        <h2>0. Sonic Wave by Your Mother</h2>
-         <h3>You have to get x percent</h3>
-        </div>
+        <h2>#${json.levels.length} - ${level.name} by ${level.publisher}</h2>
+         <h3 class="percent_txt">You have to get ${level.percent}%</h3>
+         <h6 id="skipped_txt"></h6>
+          <div id="disappear">
+            <input type="number" id="percent" placeholder="At least ${level.percent}%"></input>
+            <input type="button" width="3ch" value="Submit" onclick="addLevel()" id="new_level"></input>
+            <input type="button" width="3ch" value="Skip" onclick="addLevel(true)"></input>
+            <p id="error"></p>
+            </div>
           </section>
           </button>
           <div class="content"></div>
         </div>
           </div>`
+      let input = document.getElementsByTagName("input")
+  for(let i = 0; i < input.length; i++) {
+  input[i].addEventListener("click", function (e) {
+    e.stopPropagation();
+  }) 
+}
+    }
+    async function dostuff() {
+      let obj = {
+        main: !!document.getElementById("main").checked,
+        extended: !!document.getElementById("extended").checked,
+        legacy: !!document.getElementById("legacy").checked
+      }
+      let filters = []
+      for(const item of Object.entries(obj)) {
+        if(item[1]) {
+          filters.push(item[0])
+        }
+      }
+      let content = await fetch("https://gdlrrlist.com/api/v1/roulette/start", {
+        method: "PUT",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          filters
+        })
+      })
+      let json = await content.json()
+      if(content.status != 200) return
+      document.getElementById("roulette_id").innerText = `Roulette ID: ${json._id.toString()}`
+      let level = json.levels[0]
+      document.getElementById("start_button").setAttribute("disabled", "")
+       document.getElementById("end_button").removeAttribute("disabled")
+      document.getElementById("bind_check").removeAttribute("disabled")
+      document.getElementById("options").style.display = "none"
+       document.getElementById("join_info").style.display = "none"
+      let div = document.getElementById("levels-container")
+    div.innerHTML += `
+   <div class="column">
+        <div class="card">
+          <button type="button" class = "collapsible" onclick="window.location.href = '/level/${level.position}'">
+            <section class = "LevelCard flex">
+            <div class="thumb ratio-16-9 js-delay-css" 
+            style="position: relative;  
+            background-image: url(&quot;https://i.ytimg.com/vi/${level.ytcode}/mqdefault.jpg&quot;);" 
+            data-property="background-image" 
+            data-property-value="url('https://i.ytimg.com/vi/${level.ytcode}/mqdefault.jpg')" >
+            </div>
+        <div class = "title">
+        <h2>#${json.levels.length} - ${level.name} by ${level.publisher}</h2>
+         <h3 class="percent_txt">You have to get ${level.percent}%</h3>
+         <h6 id="skipped_txt"></h6>
+          <div id="disappear">
+            <input type="number" id="percent" placeholder="At least ${level.percent}%"></input>
+            <input type="button" width="3ch" value="Submit" onclick="addLevel()" id="new_level"></input>
+            <input type="button" width="3ch" value="Skip" onclick="addLevel(true)"></input>
+            <p id="error"></p>
+            </div>
+          </section>
+          </button>
+          <div class="content"></div>
+        </div>
+          </div>`
+      let input = document.getElementsByTagName("input")
+  for(let i = 0; i < input.length; i++) {
+  input[i].addEventListener("click", function (e) {
+    e.stopPropagation();
+  }) 
+}
     }
   </script>
   <head>
@@ -56,16 +270,81 @@
     <meta http-equiv="Expires" content="0" />
   </head>
   <body class = "" id="wesure">
+     <%- include("./navbar.ejs") %>
     <p style="text-align: center; font-size: 30px;">GD Low Refresh Rate Roulette</p>
+       <% if(locals.data) {%>
+       <p style="text-align: center; font-size: 20px;">Users: <%= locals.users.join(", ") %></p>
+         <% } %>
+       <h6 style="text-align: center; font-size: 30px;" id="score">Score: <%= locals.data?.levels?.filter(e => !e.skipped)?.length-1 || 0 %></h6>
+       <% if(!locals.data) { %>
+       <div style="display: grid; place-items: center;" id="join_info">
+       <label>Join a roulette by putting a Roulette ID here: <input placeholder="Roulette ID" id="join"></input></label>
+         <br>
+         <input type="button" onclick="join()" value="Submit">
+         <p id="join_err"></p>
+         </div>
+         <% } %>
     <div style="margin-left: 8%; margin-top: 3%;">
-    <button class="UIbutton" style="background: gray !important"><i class='fa fa-gear'></i></button>
+      <% if(!locals.data) { %>
+        <div id="options">
+   <input type="checkbox" id="main" checked>Main List</input><br><input type="checkbox" id="extended" checked>Extended List</input><br><input type="checkbox" id="legacy" checked>Legacy List</input>
+          </div>
+        <% } %>
       <p></p>
-      <button class="UIbutton" style="background: blue !important" onclick="dostuff()">Start</button>
+      <button class="UIbutton" id="start_button" style="background: blue !important" onclick="dostuff()" <% if(locals.data) { %>disabled<% } %>>Start</button>
+        <button class="UIbutton" id="end_button" style="background: red !important;" onclick="end()" <% if(!locals.data) { %>disabled<% } %>>End</button>
+          <% if(locals.redirect) { %>
+            <button class="UIbutton" id="redirect_button" style="background: green !important;" onclick="leave()">Leave</button>
+            <% } %>
+          <br><br>
+           <input type="checkbox" id="bind_check" onclick="bind()" <% if(!locals.data) { %>disabled<% } %> <% if(locals.data?.user) { %>checked<% } %>>Bind to discord</button>
+             <p id="bind_err"></p>
+             <p id="roulette_id"><% if(locals.data) { %>Roulette ID: <%= locals.data._id.toString() %><% } %></p>
       </div>
     <div id="levels-container">
-      
+      <% if(locals.data?.levels?.length) { %>
+        <% for(const item of data.levels) { %>
+          <div class="column">
+        <div class="card">
+          <button type="button" class = "collapsible" onclick="window.location.href = '/level/<%= item.position %>'">
+            <section class = "LevelCard flex">
+            <div class="thumb ratio-16-9 js-delay-css" 
+            style="position: relative;  
+            background-image: url(&quot;https://i.ytimg.com/vi/<%= item.ytcode %>/mqdefault.jpg&quot;);" 
+            data-property="background-image" 
+            data-property-value="url('https://i.ytimg.com/vi/<%= item.ytcode %>/mqdefault.jpg')" >
+            </div>
+        <div class = "title">
+        
+        <h2>#<%= data.levels.findIndex(e => e == item)+1 %> - <%= item.name %> by <%= item.publisher %></h2>
+         <h3 class="percent_txt"><% if(data.levels[data.levels.length-1] == item) { %>You have to get <%= item.percent %>%<% } else { %>You got <%= data.levels[data.levels.findIndex(e => e == item)+1].percent-1 %>%<% } %></h3>
+          <h6 <% if(data.levels[data.levels.length-1] == item) { %>id="skipped_txt"<% } %>><% if(item.skipped) { %>(skipped)<% } %></h6>
+          <% if(data.levels[data.levels.length-1] == item) { %>
+          <div id="disappear">
+            <input type="number" id="percent" placeholder="At least <%= item.percent %>%"></input>
+            <input type="button" width="3ch" value="Submit" onclick="addLevel()" id="new_level"></input>
+            <input type="button" width="3ch" value="Skip" onclick="addLevel(true)"></input>
+            <p id="error"></p>
+          </div>
+            <% } %>
+          </section>
+          </button>
+          <div class="content"></div>
+        </div>
+          </div>
+        <% }
+        } %>
     </div>
+          <br><br>
     <!-- scripts to include -->
+          <script>
+            let input = document.getElementsByTagName("input")
+  for(let i = 0; i < input.length; i++) {
+  input[i].addEventListener("click", function (e) {
+    e.stopPropagation();
+  }) 
+}
+          </script>
     <script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js"></script>
   </body>
 </html>

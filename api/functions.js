@@ -28,6 +28,14 @@ exports.validFields = (...args) => {
     obj = Object.entries(obj).filter(e => !args.find(e => e.name == e[0]))
       obj = Object.fromEntries(obj)
     let object = Object.fromEntries(args.map(k => {
+      if(k.type == Array) {
+          if(!Array.isArray(obj[k.name])) return [k.name, obj[k.name] === undefined && k.optional ? "" : obj[k.name] == undefined ? undefined : null]
+        if(k.args) {
+          obj[k.name] = obj[k.name].filter(e => k.args.includes(e))
+          req.body[k.name] = obj[k.name]
+        }
+          return [k.name, obj[k.name]]
+        }
         if(k.type == 'URL') {
           k.type = () => "URL"
           try {
