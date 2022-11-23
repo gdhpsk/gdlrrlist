@@ -141,7 +141,7 @@ input:checked + .slider:before {
       <% if(locals.user.discord || locals.user.google) { %>
       <script>
         async function remove(type) {
-          let content = await fetch("https://gdlrrlistcom.gdhpsk.repl.co/api/v1/client/login", {
+          let content = await fetch("https://gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
                 authorization: `User ${getCookie("token")}`,
