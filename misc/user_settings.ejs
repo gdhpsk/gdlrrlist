@@ -161,8 +161,8 @@ input:checked + .slider:before {
           }
       </script>
         <% } %>
-      <% if(locals.user.discord) { %>
       <script>
+        <% if(locals.user.discord) { %>
         let element = document.getElementById("mail")
           element.onchange = async function() {
              let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
@@ -177,7 +177,7 @@ input:checked + .slider:before {
             })
               console.log(res)
           }
-
+<% } %>
         let element2 = document.getElementById("pc_info")
           element2.onchange = async function() {
              let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
@@ -193,6 +193,5 @@ input:checked + .slider:before {
               console.log(res)
           }
       </script>
-        <% } %>
   </body>
 </html>
