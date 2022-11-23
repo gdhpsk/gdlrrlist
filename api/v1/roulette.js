@@ -172,8 +172,8 @@ router.route("/session")
     if(req.body.bindDiscord) {
     let user = await loginSchema.findById(id)
     if(!user.discord) return res.status(400).json({error: config["400"], message: "You must have a discord account linked to your LRR Login!"})
-      let exists = await rouletteSchema.findOne({user: user.discord})
-      if(!exists) return message.reply("This user must not have a already running discord bot roulette!")
+      let existsTwo = await rouletteSchema.findOne({user: user.discord})
+      if(!existsTwo) return res.status(400).json({error: config["400"], message: "This user already has another roulette session!"})
     exists.user = user.discord
     await exists.save()
     return res.sendStatus(204)
