@@ -113,6 +113,14 @@ router.post("/generate", authenticator, validFields({name: "percent", type: Numb
     }
   }
   if(req.body.percent == 100 || exists.config.levels.length == 0) {
+     let redirects = await rouletteSchema.find({redirect: exists._id.toString()})
+  for(const redirect of redirects) {
+    try {
+      await rouletteSchema.findOneAndDelete({site_user: redirect.site_user})
+    } catch(_) {
+      
+    }
+  }
     let doc = await rouletteSchema.findOneAndDelete({site_user: id})
     return res.sendStatus(204)
   }
@@ -157,6 +165,14 @@ router.route("/session")
   if(!exists) return res.status(400).json({error: config["400"], message: "Please start a roulette session first!"})
   if(exists?.redirect) {
     exists = await rouletteSchema.findById(exists.redirect)
+  }
+  let redirects = await rouletteSchema.find({redirect: exists._id.toString()})
+  for(const redirect of redirects) {
+    try {
+      await rouletteSchema.findOneAndDelete({site_user: redirect.site_user})
+    } catch(_) {
+      
+    }
   }
   await rouletteSchema.findOneAndDelete({site_user: id})
   res.sendStatus(204)
