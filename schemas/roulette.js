@@ -15,7 +15,8 @@ var rouletteSchema = new mongoose.Schema({
     user: String,
     site_user: String,
     config: Object,
-    redirect: String
+    redirect: String,
+  username: String
 })
 
 module.exports = mongoose.model("roulette", rouletteSchema)

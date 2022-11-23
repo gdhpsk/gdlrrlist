@@ -212,6 +212,11 @@
       document.getElementById("bind_check").removeAttribute("disabled")
       document.getElementById("options").style.display = "none"
        document.getElementById("join_info").style.display = "none"
+      let infoDiv = document.getElementById("show_info_on_start")
+      infoDiv.innerHTML = `<div id="show_info_on_start">
+       <p style="text-align: center; font-size: 20px;">Users: ${json.username}</p>
+          <p style="text-align: center; font-size: 20px;">Levels: ${json.config.options.levels.join(", ")}</p>
+        </div>`
       let div = document.getElementById("levels-container")
     div.innerHTML += `
    <div class="column">
@@ -272,10 +277,12 @@
   <body class = "" id="wesure">
      <%- include("./navbar.ejs") %>
     <p style="text-align: center; font-size: 30px;">GD Low Refresh Rate Roulette</p>
-       <% if(locals.data) {%>
+       <div id="show_info_on_start">
+       <% if(locals.data) { %>
        <p style="text-align: center; font-size: 20px;">Users: <%= locals.users.join(", ") %></p>
           <p style="text-align: center; font-size: 20px;">Levels: <%= locals.data?.config?.options?.levels?.join(", ") %></p>
          <% } %>
+        </div>
        <h6 style="text-align: center; font-size: 30px;" id="score">Score: <%= locals.data?.levels?.filter(e => !e.skipped)?.length-1 || 0 %></h6>
        <% if(!locals.data) { %>
        <div style="display: grid; place-items: center;" id="join_info">

@@ -94,6 +94,8 @@ router.put("/start", authenticator, validFields({name: "filters", type: Array, a
     ]
   }
   doc = await rouletteSchema.create(doc)
+  let username = await loginSchema.findById(id)
+  doc.username = username.name
   res.json(doc)
 })
 
