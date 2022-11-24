@@ -312,6 +312,20 @@ app.get("/added.ejs", (req, res) => {
   res.render("added.ejs")
 })
 
+app.get("/MLroulette", async (req, res) => {
+  let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
+  res.render("MLroulette.ejs", {loggedIn, editing, editable})
+})
+
 app.get("/roulette", async (req, res) => {
   let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)

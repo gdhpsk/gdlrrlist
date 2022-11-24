@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    .UIButton {
+      border-radius: 20px;
+      font-size: 30px;
+    }
+  </style>
+  <script>
+    let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/
+    function end() {
+      try {
+        let json = JSON.parse(localStorage.getItem("roulette"))
+      let column = document.getElementsByClassName("column")
+      column[column.length-1].style.display = "none"
+        let level = json.progs[json.progs.length-1]
+      document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">You have ended the roulette at ${level.percent}% on ${level.name} by ${level.publisher}. Thanks for playing :)</h1>`
+        localStorage.removeItem("roulette")
+      } catch(_) {
+        
+      }
+    }
+    async function start() {
+      if(localStorage.getItem("roulette")) return;
+      localStorage.setItem("roulette", {})
+      let content = await fetch("https://gdlrrlist.com/api/v1/demons/ML?simplify=true")
+      let json = await content.json()
+      let array = []
+      let settings = []
+      let checked = {
+        main: !!document.getElementById("main").checked,
+        extended: !!document.getElementById("extended").checked
+      }
+      let levels = {
+        main: json.filter(e => parseInt(Object.entries(json).find(x => x[1] == e)[0]) < 50),
+        extended: json.filter(e => parseInt(Object.entries(json).find(x => x[1] == e)[0]) > 49)
+      }
+      for(const key in checked) {
+        if(checked[key]) {
+          settings.push(key)
+          array.push(...levels[key])
+        }
+      }
+      if(array.length != 0) {
+        json = array
+      } else {
+        settings = ["main", "extended"]
+      }
+      json = json.map(e => e = {
+        name: e.name,
+        ytcode: reg.exec(e.records[0].link)[1],
+        publisher: e.creators.host,
+        position: parseInt(Object.entries(json).find(x => x[1] == e)[0])+1
+      })
+      let random_pos = Math.floor(Math.random() * (json.length-1))
+      let random_lev = json[random_pos]
+      random_lev.percent = 1
+      json.splice(random_pos, 1)
+      let obj = {
+        levels: json,
+        settings,
+        progs: [
+          random_lev
+        ]
+      }
+      document.getElementById("disappear").style.display = "none"
+      document.getElementById("appear").style.display = "block"
+      document.getElementById("settings").innerText = `Levels: ${settings.join(", ")}`
+      document.getElementById("score").innerText = `Score: 0`
+      document.getElementById("levels-container").innerHTML += `<div class="column">
+          <div class="card">
+        <button type="button" class="collapsible active">
+        <section class="LevelCard flex">
+        <div class="thumb ratio-16-9 js-delay-css" style="position: relative; background-image: url(&quot;https://i.ytimg.com/vi/${random_lev.ytcode}/mqdefault.jpg&quot;); height: 163.35px;" data-property="background-image" data-property-value="url('https://i.ytimg.com/vi/${random_lev.ytcode}/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=${random_lev.ytcode}','_blank')" title="Clicking on the image will take you to the verification video.">
+        </div>
+        <div class="title">
+        <h2 class="">${random_lev.position}. ${random_lev.name} by ${random_lev.publisher}</h2>
+        <h4 class="p_text">You have to get ${random_lev.percent}%</h4>
+        <div class="special">
+        <input type="number" id="percent" placeholder="At least ${random_lev.percent}%">
+        <input type="button" value="Submit" onclick="progress()"><p id="err"></p></div>
+        </div>
+        </section>
+        </button>
+          <div class="content"></div>
+         </div>
+      </div>`
+      localStorage.setItem("roulette", JSON.stringify(obj))
+    }
+    function progress() {
+      try {
+        let json = JSON.parse(localStorage.getItem("roulette"))
+        let random_pos = Math.floor(Math.random() * (json.levels.length-1))
+        let random_lev = json.levels[random_pos]
+        let percent = parseInt(document.getElementById("percent").value) || json.progs[json.progs.length-1].percent
+        if(percent < json.progs[json.progs.length-1].percent || percent > 100) {
+          document.getElementById("err").innerText = `Please input a percentage between ${json.progs[json.progs.length-1].percent}% and 100%!`
+          setTimeout(() => {
+            document.getElementById("err").innerText = ``
+          }, 3000)
+          return
+        }
+        if(percent == 100 || json.levels.length == 1) {
+          document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">Congratulations, you have completed the Mobile List Roulette!</h1>`
+          localStorage.removeItem("roulette")
+          return
+        }
+        random_lev.percent = percent+1
+        
+        json.levels.splice(random_pos, 1)
+        json.progs.push(random_lev)
+        let obj = {
+          settings: json.settings,
+          levels: json.levels,
+          progs: json.progs
+        }
+        document.getElementById("score").innerText = `Score: ${obj.progs.length-1}`
+        localStorage.setItem("roulette", JSON.stringify(obj))
+        let special = document.getElementsByClassName("special")
+        let txt = document.getElementsByClassName("p_text")
+        txt[txt.length-1].innerText = `You got ${percent}%`
+        special[special.length-1].innerHTML = `<div></div>`
+        document.getElementById("levels-container").innerHTML += `<div class="column">
+          <div class="card">
+        <button type="button" class="collapsible active">
+        <section class="LevelCard flex">
+        <div class="thumb ratio-16-9 js-delay-css" style="position: relative; background-image: url(&quot;https://i.ytimg.com/vi/${random_lev.ytcode}/mqdefault.jpg&quot;); height: 163.35px;" data-property="background-image" data-property-value="url('https://i.ytimg.com/vi/${random_lev.ytcode}/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=${random_lev.ytcode}','_blank')" title="Clicking on the image will take you to the verification video.">
+        </div>
+        <div class="title">
+        <h2 class="">${random_lev.position}. ${random_lev.name} by ${random_lev.publisher}</h2>
+        <h4 class="p_text">You have to get ${random_lev.percent}%</h4>
+        <div class="special">
+        <input type="number" id="percent" placeholder="At least ${random_lev.percent}%">
+        <input type="button" value="Submit" onclick="progress()"><p id="err"></p></div>
+        </div>
+        </section>
+        </button>
+          <div class="content"></div>
+         </div>
+      </div>`
+      } catch(e) {
+        console.log(e)
+      }
+    }
+  </script>
+   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+  <link href="CSS/levelcards.css?v=2022-03-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+    
+ <%- include("./navbar.ejs") %>
+    <h1 style="text-align: center;">Mobile List Roulette</h1>
+    <div style="margin-left: 8%;" id="disappear">
+    <input type="checkbox" id="main" checked>Main List</input><br>
+    <input type="checkbox" id="extended" checked>Extended List</input><p></p>
+      <button class="UIButton" style="background: blue;" onclick="start()">Start</button>
+      </div>
+    <p></p>
+    <div style="margin-left: 8%; display: none;" id="appear">
+      <h1 id="score"></h1>
+      <h3 id="settings"></h3>
+      <button class="UIButton" style="background: red;" onclick="end()">End</button>
+    </div>
+    <div id = "levels-container"> 
+     
+    </div>
+    <!-- scripts to include -->
+    <script>
+    if(localStorage.getItem("roulette")) {
+      document.getElementById("disappear").style.display = "none"
+      document.getElementById("appear").style.display = "block"
+      try {
+        let json = JSON.parse(localStorage.getItem("roulette"))
+        document.getElementById("score").innerText = `Score: ${json.progs.length-1}`
+        document.getElementById("settings").innerText = `Levels: ${json.settings.join(", ")}`
+        for(const item of json.progs) {
+          document.getElementById("levels-container").innerHTML += `<div class="column">
+          <div class="card">
+        <button type="button" class="collapsible active">
+        <section class="LevelCard flex">
+        <div class="thumb ratio-16-9 js-delay-css" style="position: relative; background-image: url(&quot;https://i.ytimg.com/vi/${item.ytcode}/mqdefault.jpg&quot;); height: 163.35px;" data-property="background-image" data-property-value="url('https://i.ytimg.com/vi/${item.ytcode}/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=${item.ytcode}','_blank')" title="Clicking on the image will take you to the verification video.">
+        </div>
+        <div class="title">
+        <h2 class="">${item.position}. ${item.name} by ${item.publisher}</h2>
+        <h4 class="p_text"> ${json.progs[json.progs.length-1] == item ? `You have to get ${item.percent}%` : `You got ${json.progs[json.progs.findIndex(e => e == item)+1].percent-1}%`}</h4>
+        ${json.progs[json.progs.length-1] == item ? `<div class="special">
+        <input type="number" id="percent" placeholder="At least ${item.percent}%">
+        <input type="button" value="Submit" onclick="progress()"><p id="err"></p></div>` : ""}
+        </div>
+        </section>
+        </button>
+          <div class="content"></div>
+         </div>
+      </div>`
+        }
+      } catch(_) {
+        
+      }
+    }
+  
+</script>
+ <script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js"></script>
+  </body>
+</html>

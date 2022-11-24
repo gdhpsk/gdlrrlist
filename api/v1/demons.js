@@ -48,7 +48,6 @@ while(true) {
   count++
 }
   }
-  
   for(let j = 2; j < dom.window.document.getElementsByClassName("oKdM2c Kzv0Me").length; j++) {
     let txt = ""
   let level = dom.window.document.getElementsByClassName("oKdM2c Kzv0Me")[j].getElementsByClassName("CDt4Ke zfr3Q").item(0)
