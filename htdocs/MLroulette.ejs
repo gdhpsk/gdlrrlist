@@ -25,6 +25,9 @@
       localStorage.setItem("roulette", {})
       let content = await fetch("https://gdlrrlist.com/api/v1/demons/ML?simplify=true")
       let json = await content.json()
+      for(let i = 0; i < json.length; i++) {
+        json[i].position = i+1
+      }
       let array = []
       let settings = []
       let checked = {
@@ -32,8 +35,8 @@
         extended: !!document.getElementById("extended").checked
       }
       let levels = {
-        main: json.filter(e => parseInt(Object.entries(json).find(x => x[1] == e)[0]) < 50),
-        extended: json.filter(e => parseInt(Object.entries(json).find(x => x[1] == e)[0]) > 49)
+        main: json.filter(e => e.position < 50),
+        extended: json.filter(e => e.position > 49)
       }
       for(const key in checked) {
         if(checked[key]) {
@@ -50,7 +53,7 @@
         name: e.name,
         ytcode: reg.exec(e.records[0].link)[1],
         publisher: e.creators.host,
-        position: parseInt(Object.entries(json).find(x => x[1] == e)[0])+1
+        position: e.position
       })
       let random_pos = Math.floor(Math.random() * (json.length-1))
       let random_lev = json[random_pos]
