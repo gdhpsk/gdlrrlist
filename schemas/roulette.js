@@ -10,11 +10,16 @@ let rouletteLevelSchema = new mongoose.Schema({
     publisher: String
 })
 
+let configSchema = new mongoose.Schema({
+    levels: [],
+    options: Object
+})
+
 var rouletteSchema = new mongoose.Schema({
     levels: [rouletteLevelSchema],
     user: String,
     site_user: String,
-    config: Object,
+    config: configSchema,
     redirect: String,
   username: String
 })
