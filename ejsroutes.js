@@ -7,6 +7,7 @@ const rolePacksSchema = require("./schemas/role_packs.js")
 const allowedPeople = require("./schemas/allowedPeople.js")
 const leaderboardSchema = require("./schemas/leaderboard.js")
 const app = express.Router()
+const config = require("./api/config")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
@@ -322,7 +323,7 @@ app.get("/roulette", async (req, res) => {
     editing = true
   }
   }
-  if(!loggedIn.exists) return res.render("404.ejs")
+  if(!loggedIn.exists) return res.render("404.ejs", {error: config["401"][0], message: "In order to use the LRR roulette, you must make an LRR account / log in to the website!"})
   let exists = await rouletteSchema.findOne({site_user: loggedIn.ID})
   let users = []
 
