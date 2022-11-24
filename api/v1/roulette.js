@@ -34,7 +34,7 @@ const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
 
 
-router.put("/start", authenticator, validFields({name: "filters", type: Array, args: ["main", "extended", "legacy"], description: "Levels that you want to include in the LRR roulette.", optional: true}, {name: "redirect", type: String, description: "Connect to another players roulette", optional: true}), async (req, res) => {
+router.put("/start", authenticator, rate_lim(5000, 1), validFields({name: "filters", type: Array, args: ["main", "extended", "legacy"], description: "Levels that you want to include in the LRR roulette.", optional: true}, {name: "redirect", type: String, description: "Connect to another players roulette", optional: true}), async (req, res) => {
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let exists = await rouletteSchema.findOne({site_user: id})
   if(exists) return res.status(400).json({error: config["400"], message: "This user already has a roulette session!"})
@@ -47,6 +47,7 @@ router.put("/start", authenticator, validFields({name: "filters", type: Array, a
       return res.status(400).json({error: config["400"], message: "The user you are trying to redirect to does not exist!"})
     }
     let doc = await rouletteSchema.create({
+      _id: new mongoose.Types.ObjectId(),
       site_user: id,
       redirect: req.body.redirect
     })
@@ -75,6 +76,7 @@ router.put("/start", authenticator, validFields({name: "filters", type: Array, a
         position
       } = random_lev
   let doc = {
+    _id: new mongoose.Types.ObjectId(),
     site_user: id,
     config: {
       levels: levels.map(e => e = {name: e.name, pos: e.position}),
@@ -99,7 +101,7 @@ router.put("/start", authenticator, validFields({name: "filters", type: Array, a
   res.json(doc)
 })
 
-router.post("/generate", authenticator, validFields({name: "percent", type: Number, description: "The percentage you got on the previous level", optional: true}, {name: "skipped", type: Boolean, description: "Was the level skipped?", optional: true}), async (req, res) => {
+router.post("/generate", authenticator, rate_lim(5000, 1), validFields({name: "percent", type: Number, description: "The percentage you got on the previous level", optional: true}, {name: "skipped", type: Boolean, description: "Was the level skipped?", optional: true}), async (req, res) => {
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let exists = await rouletteSchema.findOne({site_user: id})
   if(!exists) return res.status(400).json({error: config["400"], message: "Please start a roulette session first!"})
@@ -163,7 +165,7 @@ router.route("/session")
   }
   res.json(exists)
 })
-.delete(authenticator, async (req, res) => {
+.delete(authenticator, rate_lim(5000, 1), async (req, res) => {
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let exists = await rouletteSchema.findOne({site_user: id})
   if(!exists) return res.status(400).json({error: config["400"], message: "Please start a roulette session first!"})
