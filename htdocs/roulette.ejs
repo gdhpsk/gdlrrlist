@@ -25,7 +25,7 @@
       
       var json;
       try {
-        json = await content.json()
+        json = await session.json()
         document.getElementById("bind_err").innerText = json.message
       } catch(_) {
         window.location.reload()
@@ -67,7 +67,7 @@
       
       var json;
       try {
-        json = await content.json()
+        json = await session.json()
         document.getElementById("bind_err").innerText = json.message
       } catch(_) {
         document.getElementById("bind_err").innerText = `Successfully ${checked ? "" : "un"}binded.`
