@@ -101,7 +101,7 @@ router.put("/start", authenticator, rate_lim(5000, 1), validFields({name: "filte
   res.json(doc)
 })
 
-router.post("/generate", authenticator, rate_lim(5000, 1), validFields({name: "percent", type: Number, description: "The percentage you got on the previous level", optional: true}, {name: "skipped", type: Boolean, description: "Was the level skipped?", optional: true}), async (req, res) => {
+router.post("/generate", authenticator, rate_lim(2000, 1), validFields({name: "percent", type: Number, description: "The percentage you got on the previous level", optional: true}, {name: "skipped", type: Boolean, description: "Was the level skipped?", optional: true}), async (req, res) => {
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let exists = await rouletteSchema.findOne({site_user: id})
   if(!exists) return res.status(400).json({error: config["400"], message: "Please start a roulette session first!"})
