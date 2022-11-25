@@ -152,6 +152,29 @@ router.post("/generate", authenticator, rate_lim(2000, 1), validFields({name: "p
         position
       })
   doc = await exists.save()
+  let redirects = await rouletteSchema.find({redirect: exists._id.toString()})
+  redirects = redirects.map(e => e = e.site_user)
+  redirects.push(exists.site_user)
+  redirects = redirects.filter(e => e != id)
+  for(let item of redirects) {
+    try {
+      item = await loginSchema.findById(item)
+      send(JSON.stringify({ 
+        minimumPercent: minimumPercent ?? 100,
+        name,
+        percent: (parseInt(req.body.percent) || exists.levels[exists.levels.length-1].percent)+1,
+        ytcode,
+        publisher,
+        position
+      }), {
+        userResource: true,
+        target: item.name,
+        type: "roulette"
+      })
+    } catch(e) {
+      console.log(e)
+    }
+  }
   res.json(doc)
 })
 

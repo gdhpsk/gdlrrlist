@@ -93,6 +93,11 @@ if(permission === "granted") {
   audio.play();
 }
             }
+          if(!data.error && data.ytcode) {
+            if("<%= locals.active %>" == "roulette") {
+              window.location.reload()
+            }
+          }
         }
     }
   
