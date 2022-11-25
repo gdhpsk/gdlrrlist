@@ -65,8 +65,9 @@ if(level_id) {
   g.pointercrateID = level_id.id
 }
 }
+    let len = txt.split("(")[0].split("by")
 g.creators =  {
-  host: txt.split("(")[0].split("by")[1].trim()
+  host: len[len.length-1].trim()
 }
 let recordarr = []
 let records = dom.window.document.getElementsByClassName("tyJCtd mGzaTb baZpAe")[(j*2)-1].getElementsByClassName("CDt4Ke zfr3Q")
