@@ -31,7 +31,7 @@
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
      <% for(const key in documentation) { %>
        <div style="padding-bottom: 50px; display: grid; place-items: center;">
-         <h1><span style="color: yellow;"><%= key.split(" ")[0] %></span> <%= key.split(" ")[1] %></h1>
+         <h1><span style="color: var(--tr-alternate);"><%= key.split(" ")[0] %></span> <%= key.split(" ")[1] %></h1>
          <%- include(`${dir}${type}/${key.replace(" /", "-").replaceAll("/", "-").replaceAll(":", "=")}`, {tableMaker: tableMaker(documentation[key])}) %>  
        </div>
       <% } %>
