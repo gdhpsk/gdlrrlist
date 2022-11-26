@@ -7,6 +7,22 @@
     }
   </style>
   <script>
+    function uploadFile() {
+  var FD = new FormData()
+  var fileInput = document.getElementById('fileUpload')
+   var fileReader=new FileReader();
+
+   fileReader.onload=function(){ 
+     try {
+       localStorage.setItem("roulette", fileReader.result)
+       window.location.reload()
+     } catch(e) {
+       console.log(e)
+     }
+   }
+
+   fileReader.readAsText(fileInput.files[0]);
+}
     let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/
     function end() {
       try {
@@ -15,6 +31,7 @@
       column[column.length-1].style.display = "none"
         let level = json.progs[json.progs.length-1]
       document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">You have ended the roulette at ${level.percent}% on ${level.name} by ${level.publisher}. Thanks for playing :)</h1>`
+        document.getElementById("export").style.display = "none"
         localStorage.removeItem("roulette")
           document.body.scrollTop = document.body.scrollHeight;
   document.documentElement.scrollTop = document.body.scrollHeight;
@@ -116,6 +133,7 @@
           special[special.length-1].innerHTML = `<div></div>`
           document.getElementById("score").innerText = `Score: ${json.progs.length}`
           document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">Congratulations, you have completed the Mobile List Roulette!</h1>`
+          document.getElementById("export").style.display = "none"
           localStorage.removeItem("roulette")
           return
         }
@@ -195,13 +213,21 @@
     <div style="margin-left: 8%;" id="disappear">
     <input type="checkbox" id="main" checked>Main List</input><br>
     <input type="checkbox" id="extended" checked>Extended List</input><p></p>
-      <button class="UIButton" style="background: blue;" onclick="start()">Start</button>
+      <button class="UIButton" style="background: blue;" onclick="start()">Start</button><br>
+      <input
+  type="file"
+  id="fileUpload"
+  style="display: none;"
+        onchange = "uploadFile()"/>
+      <br>
+<button><label for="fileUpload">Import</label></button>
       </div>
     <p></p>
     <div style="margin-left: 8%; display: none;" id="appear">
       <h1 id="score"></h1>
       <h3 id="settings"></h3>
-      <button class="UIButton" style="background: red;" onclick="end()">End</button>
+      <button class="UIButton" style="background: red;" onclick="end()">End</button><p></p>
+      <button id="export">Export</button>
     </div>
     <div id = "levels-container"> 
      
@@ -248,7 +274,13 @@
         
       }
     }
-  
+  let button = document.getElementById("export")
+  button.onclick = () => {
+    let j = document.createElement("a")
+  j.download = "ML_roulette.json"
+  j.href = URL.createObjectURL(new Blob([localStorage.getItem("roulette")]))
+  j.click()
+  }
 </script>
  <script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js"></script>
   </body>
