@@ -44,13 +44,13 @@ document.getElementById(smt).style.height = "20px"
      <h1 style = "text-align:center">LRR Demon List Email #<%= locals.number %></h1>
     <br></br>
       <p style="text-align: center; font-size: 30px;">
-        Subject: <%= locals.subject %> <br></br>
-        Message: <%= locals.message %> <br></br>
-        From: <%= locals.from %> <br></br>
-        To: <%= locals.to %> <br></br>
-        Date: <%= locals.date %> <br></br>
+        Subject: <%- locals.subject %> <br></br>
+        Message: <%- locals.message %> <br></br>
+        From: <%- locals.from %> <br></br>
+        To: <%- locals.to %> <br></br>
+        Date: <%- locals.date %> <br></br>
           <% if(locals.active == "notifications-from") { %>
-             Read: <%= !!locals.read %> <br></br>
+             Read: <%- !!locals.read %> <br></br>
             <% } %>
       </p>
           <br><br>
