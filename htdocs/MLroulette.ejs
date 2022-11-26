@@ -96,16 +96,16 @@
         let random_pos = Math.floor(Math.random() * (json.levels.length-1))
         let random_lev = json.levels[random_pos]
         let percent = parseInt(document.getElementById("percent").value) || json.progs[json.progs.length-1].percent
+        if(percent == 100 || json.levels.length == 0) {
+          document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">Congratulations, you have completed the Mobile List Roulette!</h1>`
+          localStorage.removeItem("roulette")
+          return
+        }
         if(percent < json.progs[json.progs.length-1].percent || percent > 100) {
           document.getElementById("err").innerText = `Please input a percentage between ${json.progs[json.progs.length-1].percent}% and 100%!`
           setTimeout(() => {
             document.getElementById("err").innerText = ``
           }, 3000)
-          return
-        }
-        if(percent == 100 || json.levels.length == 1) {
-          document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">Congratulations, you have completed the Mobile List Roulette!</h1>`
-          localStorage.removeItem("roulette")
           return
         }
         random_lev.percent = percent+1
