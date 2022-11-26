@@ -269,6 +269,7 @@ if(getFromUser) {
 if(gettoUser) {
   userMail.push(...toUser)
 }
+  userMail.sort((a, b) => Date.parse(a.date) - Date.parse(b.date))
   if(req.query.number) {
     let mail = userMail[req.query.number-1]
     if(!mail) return res.status(400).json({error: config["400"], message: "Please input a valid mail number!"})
