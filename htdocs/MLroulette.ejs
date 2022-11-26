@@ -16,6 +16,9 @@
         let level = json.progs[json.progs.length-1]
       document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">You have ended the roulette at ${level.percent}% on ${level.name} by ${level.publisher}. Thanks for playing :)</h1>`
         localStorage.removeItem("roulette")
+          document.body.scrollTop = document.body.scrollHeight;
+  document.documentElement.scrollTop = document.body.scrollHeight;
+        
       } catch(_) {
         
       }
@@ -89,6 +92,16 @@
          </div>
       </div>`
       localStorage.setItem("roulette", JSON.stringify(obj))
+      document.addEventListener("keydown", (event) => {
+          if (event.keyCode === 13) {
+            let input = document.querySelectorAll("[value^='Submit']")
+            input = input[input.length-1]
+            input.click()
+            return;
+          }
+        });
+      document.body.scrollTop = document.body.scrollHeight;
+  document.documentElement.scrollTop = document.body.scrollHeight;
     }
     function progress() {
       try {
@@ -97,6 +110,11 @@
         let random_lev = json.levels[random_pos]
         let percent = parseInt(document.getElementById("percent").value) || json.progs[json.progs.length-1].percent
         if(percent == 100 || json.levels.length == 0) {
+          let special = document.getElementsByClassName("special")
+          let txt = document.getElementsByClassName("p_text")
+          txt[txt.length-1].innerText = `You got ${percent}%`
+          special[special.length-1].innerHTML = `<div></div>`
+          document.getElementById("score").innerText = `Score: ${json.progs.length}`
           document.getElementById("levels-container").innerHTML += `<hr/><h1 style="text-align: center;">Congratulations, you have completed the Mobile List Roulette!</h1>`
           localStorage.removeItem("roulette")
           return
@@ -141,6 +159,8 @@
           <div class="content"></div>
          </div>
       </div>`
+        document.body.scrollTop = document.body.scrollHeight;
+  document.documentElement.scrollTop = document.body.scrollHeight;
       } catch(e) {
         console.log(e)
       }
@@ -178,7 +198,7 @@
       <button class="UIButton" style="background: blue;" onclick="start()">Start</button>
       </div>
     <p></p>
-    <div style="margin-left: 8%; display: none;" id="appear">
+    <div style="margin-left: 8%; display: none; position: fixed;" id="appear">
       <h1 id="score"></h1>
       <h3 id="settings"></h3>
       <button class="UIButton" style="background: red;" onclick="end()">End</button>
@@ -188,6 +208,7 @@
     </div>
     <!-- scripts to include -->
     <script>
+      
     if(localStorage.getItem("roulette")) {
       document.getElementById("disappear").style.display = "none"
       document.getElementById("appear").style.display = "block"
@@ -215,6 +236,14 @@
          </div>
       </div>`
         }
+        document.addEventListener("keydown", (event) => {
+          if (event.keyCode === 13) {
+            let input = document.querySelectorAll("[value^='Submit']")
+            input = input[input.length-1]
+            input.click()
+            return;
+          }
+        });
       } catch(_) {
         
       }
