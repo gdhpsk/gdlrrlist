@@ -374,7 +374,7 @@ app.route("/editupcoming")
   res.render("../adding/edit_upcoming.ejs", {content: upcoming.content})
 })
 .post(async (req, res) => {
-  let approved = await hasAccess(false, req, res)
+  let approved = await hasAccess(false, req, res, true)
   if(!approved) return res.render("404.ejs")
   rest.patch(Routes.channelMessage("720157738658955321", "984981897794977792"), {
     body: {

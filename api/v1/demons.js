@@ -122,7 +122,10 @@ obj.push(g)
     })
   })
   }
-
+  if(req.query.amp) {
+    let points = (i) => (2250/((0.37*(i+1))+9)) - 40
+    obj = Object.values(obj).map(e => e = {"fullname": `${e.name} by ${e.creators.host}`, shortname: e.name.toLowerCase(), points: points(Object.values(obj).indexOf(e)), position: Object.values(obj).indexOf(e)+1})
+  }
   res.json(obj)
 })
 
@@ -229,6 +232,9 @@ router.get("/MLL", async (req, res) => {
       }
       obj[record.name].points += [2250/((0.37 * x) + 9)] - 40
     }
+  }
+  if(req.query.amp) {
+    
   }
   res.json(obj)
 })
