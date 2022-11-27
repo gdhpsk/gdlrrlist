@@ -778,11 +778,12 @@ app.get("/leaderboard/:name", async (req, res) => {
    if(profile.progs[0] != "none") {
      for(let i = 0; i < profile.progs.length; i++) {
        let placement = everything.findIndex(e => e.name == profile.progs[i].name)+1
+       let points = levels_progs_calc(profile.progs[i].name, profile.progs[i].percent, levels)
     array2.push({
      name: profile.progs[i].name,
     percent: profile.progs[i].percent,
       placement,
-      points: levels_progs_calc(profile.progs[i].name, profile.progs[i].percent, levels)
+      points: points <= 0 ? 0 : points
     })
   }
    }

@@ -166,7 +166,6 @@ async function hasCorrectAuth(req, res, authMethods) {
   }
   return false
 }
-
 const cors = require("cors")
 const mongoose = require("mongoose")
 mongoose.connect(process.env.MONGODB_URI)
