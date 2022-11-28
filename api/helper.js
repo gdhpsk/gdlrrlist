@@ -430,7 +430,7 @@ if(submission.status != req.body.status) {
       hertz: obj.hertz
     })
 })
-  .delete(validFields({name: "name", type: String, description: "The name of the player who holds this record."}, {name: "level", type: String, description: "The name of the level you want to remove this record from."}, {name: "progress", type: Number, description: "The progress the player got on this level."}), async (req, res) => {
+  .delete(validFields({name: "username", type: String, description: "The name of the player who holds this record."}, {name: "demon", type: String, description: "The name of the level you want to remove this record from."}, {name: "progress", type: Number, description: "The progress the player got on this level."}), async (req, res) => {
   let message;
   let level = await levelsSchema.findOne({name: req.body.demon.trim()})
   if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
