@@ -45,7 +45,7 @@ async function findToken(req) {
     try {
        let token = jwt.verify(getCookie("token", req),  process.env.WEB_TOKEN)
   let people = await loginSchema.findById(token.id)
-  return {exists: true, name: people.name, pc_info: !!people.pc_info, ID: token.id}
+  return {exists: true, name: people.name, pc_info: !!people.pc_info, ID: token.id, full_page_lead: !!people.full_page_lead}
     }catch(e) {
       return {exists: false}
     }
@@ -583,7 +583,7 @@ app.get("/leaderboard.html", async (req, res) => {
       let leaderboardProfile = await leaderboardSchema.findOne({"socials.discordid": {$eq: user.discord, $ne: undefined}})
       if(leaderboardProfile) {
         leaderboardProfile = array.find(e => e.name == leaderboardProfile.name)
-         return res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr, user: leaderboardProfile})
+         return res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr, user: leaderboardProfile, full: loggedIn.full_page_lead})
       }
     } catch(_) {
       
@@ -595,7 +595,7 @@ app.get("/leaderboard.html", async (req, res) => {
       let leaderboardProfile = await leaderboardSchema.findOne({"socials.youtube": {$regex: item}})
       if(leaderboardProfile) {
         leaderboardProfile = array.find(e => e.name == leaderboardProfile.name)
-        return res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr, user: leaderboardProfile})
+        return res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr, user: leaderboardProfile, full: loggedIn.full_page_lead})
       }
       }
     } catch(_) {
@@ -603,8 +603,8 @@ app.get("/leaderboard.html", async (req, res) => {
     }
   }
   }
-  
-  res.render("leaderboard.ejs", {page: page, last: Math.floor(array.findIndex(e => e.points == 0)/50), active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr})
+  let last = Math.floor(array.findIndex(e => e.points == 0)/50)
+  res.render("leaderboard.ejs", {page: page, last, active: "leaderboard", editable, editing, loggedIn: loggedIn.exists, profiles: array, flag_data: nationabbr, full: loggedIn.full_page_lead})
 })
 
 app.get("/alllevels", async (req, res) => {

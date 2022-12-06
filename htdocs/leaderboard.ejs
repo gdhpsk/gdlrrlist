@@ -79,7 +79,7 @@
           <% if(last < parseInt(page)) {
               page = 0;
                } %>
-          <% let zeroindex = 50 * (parseInt(page) + 1) %>
+          <% let zeroindex = locals.full ? profiles.length : 50 * (parseInt(page) + 1) %>
             <% if(last == page) {
               zeroindex = profiles.findIndex(e => e.points == 0)
               
@@ -100,10 +100,14 @@
         </tbody>
       </table>
     </div>
+                <% if(!locals.full) { %>
   <div style="display: flex; flex-direction: row; justify-content: center;">
    <% if(parseInt(locals.page) != 0) { %> <button id = "back-button" onclick = "backPage()" style="font-size: 30px;">back</button> <% } %>
     <% if(parseInt(locals.page) < parseInt(locals.last)) { %> <button id = "next-button" onclick = "nextPage()" style="font-size: 30px;">next</button> <% } %>
       </div>
+      <% } else {%>
+        <br>
+        <% } %>
     <!-- scripts to include -->
     
 

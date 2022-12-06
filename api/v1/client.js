@@ -67,6 +67,12 @@ let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_
   }
   
   let {name, password} = await loginSchema.findById(token.id)
+  if(['true', 'false'].includes(req.body.full_page_lead?.toString())) {
+    let user = await loginSchema.findById(token.id)
+    user.full_page_lead = req.body.full_page_lead
+    await user.save()
+    return res.sendStatus(204)
+  }
   if(['true', 'false'].includes(req.body.pc_info?.toString())) {
     let user = await loginSchema.findById(token.id)
     user.pc_info = req.body.pc_info

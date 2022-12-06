@@ -132,6 +132,13 @@ input:checked + .slider:before {
   </label>&nbsp;
     <h3 style="margin: 5px;">Include pointercrate information on level page</h3>
   </div>
+      <div style="display: flex; justify-content: center;">
+  <label class="switch">
+  <input type="checkbox" id="full_page_lead" class="checkbox" <%= locals.user.full_page_lead ? "checked" : '' %>>
+  <span class="slider round"></span>
+  </label>&nbsp;
+    <h3 style="margin: 5px;">Include all leaderboard profiles on 1 page (yes this includes 0 points also)</h3>
+  </div>
 </div>
       
       <hr style="width: 95%; background-color: white"/>
@@ -188,6 +195,20 @@ input:checked + .slider:before {
               },
               body: JSON.stringify({
                 pc_info: this.checked
+              })
+            })
+              console.log(res)
+          }
+          let element3 = document.getElementById("full_page_lead")
+          element3.onchange = async function() {
+             let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
+              method: "PATCH",
+              headers: {
+                authorization: `User ${getCookie("token")}`,
+                'content-type': "application/json"
+              },
+              body: JSON.stringify({
+                full_page_lead: this.checked
               })
             })
               console.log(res)
