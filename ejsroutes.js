@@ -139,6 +139,14 @@ app.get("/documentation/api/:version/:type", (req, res, next) => {
 
 // user settings
 
+let authLevel = {
+    "user": 0,
+    "spectator": 1,
+    "helper": 2,
+    "moderator": 3,
+    "leader": 4
+  }
+
 app.get("/user_settings", async (req, res) => {
   let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)
@@ -244,10 +252,16 @@ info.userinfo.get({
 
 app.get("/", async (req, res) => {
   let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let {mod_vid} = process.env
   let loggedIn = await findToken(req)
+  let isHelper = false
   let editing = false
   let editable = false
-  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+  let person = allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id)
+  if(person && loggedIn.exists) {
+    if(authLevel[person.tag] > 1) {
+      isHelper = true
+    }
     editable = true
     if(getCookie("editing", req) == "true") {
     editing = true
@@ -301,7 +315,7 @@ const json = await userResult.body.json()
 			//console.error(error);
 		}
   }
-  res.render("homepage.ejs", {editable, editing, loggedIn: loggedIn.exists, profile: loggedIn.name})
+  res.render("homepage.ejs", {editable, mod_vid, isHelper, editing, loggedIn: loggedIn.exists, profile: loggedIn.name})
 })
 
 app.get("/404.ejs", (req, res) => {

@@ -35,6 +35,10 @@
       <h5 style = "text-align:center">Welcome back, <%= locals.profile %>!</h5>
     <% } %>
     <div id="levels-container"> 
+      <% if(locals.isHelper) { %>
+        <h6 style = "text-align:center">Hello there fellow list mod! Wanna see how the editing system works? Watch this (do check the description from time to time, incase of any new changes!):</h6>
+        <iframe src="<%- locals.mod_vid %>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style = "display:block;margin:0 auto"></iframe>
+        <% } %>
       <h1 style = "text-align:center">The Geometry Dash Low Refresh Rate Demon List</h1>
       <h3 style = "text-align:center">Now on its own website as opposed to a slow, limited <a target = "_blank" href = "https://sites.google.com/view/lrrdemonlist/about-the-list?authuser=0">Google Site!</a></h3>
       <h6 style = "text-align:center">Sponsored by ryan9328<sup>TM</sup> & hpsk<sup>TM</sup></h6>
