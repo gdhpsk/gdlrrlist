@@ -116,7 +116,10 @@
       
       <script>
     let data = <%- JSON.stringify(locals.profiles) %>
+      let full_page_lead = <%- locals.full %>
+             if(!full_page_lead) {
     data.splice(data.findIndex(e => e.points == 0))
+    }
     var searchBar = document.getElementById("search-field");
 var div = document.getElementById("leaderboard");
 
@@ -187,7 +190,10 @@ async function onTextEntered() {
          function logger() {
        let nation = this.value
            let data = <%- JSON.stringify(locals.profiles) %>
+             let full_page_lead = <%- locals.full %>
+             if(!full_page_lead) {
     data.splice(data.findIndex(e => e.points == 0))
+           }
           data = data.filter(e => e?.nationreal?.toLowerCase() == nation)
            let txt = ""
         if(nation != "International") {
