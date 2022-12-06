@@ -13,7 +13,7 @@ module.exports = (obj) => {
       return res.render("../nationalities/add.ejs", { loggedIn, editing, editable })
     })
     .post(async (req, res) => {
-      let response = await request("https://gdlrrlist.com/api/mods/nationalities", {
+      let response = await request("https://gdlrrlist.com/api/helper/nationalities", {
         method: "POST",
         body: JSON.stringify(req.body),
         headers: {
@@ -34,7 +34,7 @@ module.exports = (obj) => {
       return res.render("../nationalities/delete.ejs", { loggedIn, editing, editable })
     })
     .post(async (req, res) => {
-      let response = await request("https://gdlrrlist.com/api/mods/nationalities", {
+      let response = await request("https://gdlrrlist.com/api/helper/nationalities", {
         method: "DELETE",
         body: JSON.stringify(req.body),
         headers: {

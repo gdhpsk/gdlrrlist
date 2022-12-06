@@ -13,7 +13,7 @@ module.exports = (obj) => {
       return res.render("../socials/add.ejs", { loggedIn, editing, editable })
     })
     .post(async (req, res) => {
-      let response = await request("https://gdlrrlist.com/api/mods/socials", {
+      let response = await request("https://gdlrrlist.com/api/helper/socials", {
         method: "POST",
         body: JSON.stringify(req.body),
         headers: {
@@ -34,7 +34,7 @@ module.exports = (obj) => {
       return res.render("../socials/delete.ejs", { loggedIn, editing, editable })
     })
     .post(async (req, res) => {
-      let response = await request("https://gdlrrlist.com/api/mods/socials", {
+      let response = await request("https://gdlrrlist.com/api/helper/socials", {
         method: "DELETE",
         body: JSON.stringify(req.body),
         headers: {
