@@ -61,7 +61,6 @@ const levelsSchema = require("./schemas/levels.js")
 const sixtyoneSchema = require("./schemas/61hertz.js")
 const rolePacksSchema = require("./schemas/role_packs.js")
 const leaderboardSchema = require("./schemas/leaderboard.js")
-const mailSchema = require("./schemas/mail.js") 
 const {google} = require("googleapis")
 
 server.on("connection", (socket) => {
@@ -317,7 +316,7 @@ app.route("/test")
 
 // notifications
 
-app.use("/notifications", require("./scripts/notifications.js")({ getDetails, getCookie, mailSchema, submitSchema }))
+app.use("/notifications", require("./scripts/notifications.js")({ getDetails, getCookie, submitSchema }))
 
 // settings
 

@@ -26,8 +26,8 @@
     localStorage.setItem("notif-1", "seen")
   }
 
-  let url = "https://gdlrrlist.com/api/v1/client/notifications?" + new URLSearchParams({fromUser: false, toUser: true}).toString()
-
+  let url = "https://gdlrrlist.com/api/v1/client/unread"
+<% if(locals.active != "notifications") { %>
   fetch(url, {
     method: "GET",
     headers: {
@@ -41,14 +41,14 @@
   })
   .then(function (data) {
     console.log(data)
-    if(data.mail.filter(e => !e.read).length) {
-      alert(`Please check your mail! You have ${data.mail.filter(e => !e.read).length} unread notifications. You can check by either going to https://gdlrrlist.com/notifications or clicking on the "More..." navigation bar button and then clicking on "Notifications".`)
+    if(data.length) {
+      alert(`Please check your DMs! You have ${data.length} unread notifications. You can check by either going to https://gdlrrlist.com/notifications or clicking on the "More..." navigation bar button and then clicking on "Notifications".`)
     }
   })
   .catch(function (err) {
     console.log(err)
   });
-  
+  <% } %>
 </script>
 <script>
   let permission = Notification.permission;
@@ -109,7 +109,7 @@ if(permission === "granted") {
   let title = data.subject;
    let icon = "https://gdlrrlist.com/icon.png"
    let body = data.message;
-   let notification = new Notification(data.from, { body, icon });
+   let notification = new Notification(title, { body: `From ${data.from}: ${body}`, icon });
 
     new Promise((resolve, reject) => {
       setTimeout(() => {

@@ -5,6 +5,18 @@
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
+
+    let arrOfUsers = []
+    function add(user) {
+      arrOfUsers.push(user)
+      document.getElementById("newDM").value = arrOfUsers.join(", ")
+      document.getElementById("newDM").style.width = document.getElementById("newDM").value.length + "ch"
+    }
+
+    function list() {
+   let list = document.getElementById("list")
+    list.style.display = list.style.display == "block" ? "none": "block"
+  }
     function deep(smt) {
       let visibility = document.getElementById(smt).style.visibility
         if(visibility == "hidden") {
@@ -15,6 +27,24 @@ document.getElementById(smt).style.height = "20px"
           document.getElementById(smt).style.height = "0px"
     }
               }
+
+    async function make() {
+      let text = document.getElementById("newDM").value
+      if(text == "") return
+      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+        method: "POST",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          users: text.split(", ")
+        })
+      })
+      let json = await content.json()
+      if(content.status == 201) return window.location.reload()
+      document.getElementById("err").innerText = json.message
+    }
   </script>
   <head>
     <meta charset="utf-8">
@@ -40,87 +70,29 @@ document.getElementById(smt).style.height = "20px"
   </head>
   <body class = "" id="wesure">
   <%- include("./navbar.ejs") %>
-
-    <h2 style="text-align: center;">Want to compose an email? compose one <a href="https://gdlrrlist.com/notifications/compose">here</a></h2>
-    <% let fromUser = locals.mail.filter(e => e.from == locals.username) %>
-    <% let toUser = locals.mail.filter(e => e.to == locals.username && !e.hide) %>
-  <div id="fromUser" style="width: 45%; float: left;">
-<h1 style="text-align: center;">Emails sent</h1>
-    <div class="search-bar" style="display: flex; justify-content: center;">
-        <div class="search-bar-input">
-          <input id = "search-field" placeholder="type to search..." style="text-align: center; width: 100%;">
-        </div>
+  <br>
+  
+  <div style="display: grid; place-items: center;">
+    <div style="border: 1px solid; margin-bottom: 20px; max-width: 100%; height: 50px; background-color: var(--header-color)">
+      <p style="text-align: center;"><i class="fa fa-sticky-note-o"></i> Create new DM (<a onclick="list()" style="text-decoration: underline;">add users</a>): <input type="text" id="newDM" disabled/><input type="button" value="Submit" onclick="make()"/></p>
+      <p id="err"></p>
+    </div>
+    <div id="list" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.everyone) { %>
+      <p style="padding: 10px; border: 2px solid;" onclick="add('<%= item.name %>')"><%= item.name %></p>
+    <% } %></div>
+    <% for(const item of locals.messages) { %>
+      <div style="border: 1px solid; margin-bottom: 20px; width: 600px; height: 150px; background-color: var(--tr-alternate)" onclick="window.location.href = '/notifications/<%= item._id.toString() %>'">
+        <div style="float: left; padding-left: 10px"><img style="border-radius: 50px; margin-top: 25%" src="/icons/group_chat.png"></div>
+        <h3 style="text-align: center;"><%= item.name %></h3>
+        <h5 style="text-align: center; color: var(--header-color);"><%= item.users.length %> members: <%= item.users.join(", ") %></h5>
+          <% if(locals.unread.includes(item._id.toString())) { %>
+          <p style="text-align: center; color: var(--header-color);""><i class="fa fa-dot-circle-o" style="color: var(--header-color);"></i> Unread</p>
+            <% } %>
       </div>
-    <div id = "fromUserEmails">
-  <% for(let i = 0; i < fromUser.length; i++) { %>
-     <br></br>
-    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/from/<%= i+1 %>'">
-      <div class = "title">
-              <h3 class = "date"><%= fromUser[i].subject %></h3><sup>To: <%= fromUser[i].to %></sup>
-            </div>
-    </button>
-  <% } %>
-  </div>
-  </div>
-
-    <div id="toUser" style="width: 45%; float: right;">
-      <h1 style="text-align: center;">Emails received</h1>
-      <div class="search-bar" style="display: flex; justify-content: center;">
-        <div class="search-bar-input">
-          <input id = "search-field-2" placeholder="type to search..." style="text-align: center; width: 100%;">
-        </div>
-      </div>
-      <div id = "toUserEmails">
-  <% for(let i = 0; i < toUser.length; i++) { %>
-    <br></br>
-    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/to/<%= i+1 %>'">
-      <div class = "title">
-              <h3 class = "date"><%= toUser[i].subject %></h3><sup>From: <%= toUser[i].from %></sup>
-            </div>
-    </button>
-  <% } %>
-  </div>
+    <% } %>
   </div>
 <script>
-  let allActualVals = JSON.parse("<%= JSON.stringify(locals.mail) %>".replaceAll("&#34;", '"'))
-  document.getElementById("search-field").addEventListener("input", fromUser)
-  document.getElementById("search-field-2").addEventListener("input", toUser)
-function fromUser() {
-  let {value} = this
-  console.log(value)
-  let allVals = JSON.parse("<%= JSON.stringify(locals.mail) %>".replaceAll("&#34;", '"'))
-  allVals = allVals.filter(e => (e.subject.toLowerCase().includes(value.toLowerCase().trim()) || e.message.toLowerCase().includes(value.toLowerCase().trim()) || e.to.toLowerCase().includes(value.toLowerCase().trim())) && e.from == "<%= locals.username %>")
-  let txt = ``
-  for(const item of allVals) {
-    txt += ` <br></br>
-    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/from/${allActualVals.filter(e => e.from == "<%= locals.username %>").findIndex(e => e._id == item._id) + 1}'">
-      <div class = "title">
-              <h3 class = "date">${item.subject}</h3><sup>To: ${item.to}</sup>
-            </div>
-    </button>`
-  }
-
-  document.getElementById("fromUserEmails").innerHTML = txt
-}
-  function toUser() {
-  let {value} = this
-  console.log(value)
-  let allVals = JSON.parse("<%= JSON.stringify(locals.mail) %>".replaceAll("&#34;", '"'))
-    
-  allVals = allVals.filter(e => (e.subject.toLowerCase().includes(value.toLowerCase().trim()) || e.message.toLowerCase().includes(value.toLowerCase().trim()) || e.from.toLowerCase().includes(value.toLowerCase().trim())) && !e.hide && e.to == "<%= locals.username %>")
   
-      let txt = ""
-  for(const item of allVals) {
-    txt += `<br></br>
-    <button style="width: 100%" onclick="window.location.href = 'https://gdlrrlist.com/notifications/to/${allActualVals.filter(e => e.to == "<%= locals.username %>" && !e.hide).findIndex(e => e._id == item._id) + 1}'">
-      <div class = "title">
-              <h3 class = "date">${item.subject}</h3><sup>To: ${item.to}</sup>
-            </div>
-    </button>`
-  }
-
- document.getElementById("toUserEmails").innerHTML = txt
-}
 </script>
     <!-- scripts to include -->
      <script src="JS/collapsible.js?v=2020-10-06"></script>

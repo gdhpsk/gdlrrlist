@@ -7,7 +7,6 @@ const levelsSchema = require("../../schemas/levels.js")
 const dayjs = require("dayjs")
 const submitSchema = require("../../schemas/submissions.js")
 const loginSchema = require("../../schemas/logins.js")
-const mailSchema = require("../../schemas/mail")
 const bcrypt = require("bcrypt")
 const {validFields} = require("../functions")
 let routes = {}

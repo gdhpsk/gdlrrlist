@@ -115,7 +115,7 @@
     <script src="JS/darkbutton.js?v=2022-07-30"></script>
       
       <script>
-    let data = <%- JSON.stringify(locals.profiles) %>
+    let data = "<%- locals.profiles %>".split(",")
       let full_page_lead = <%- locals.full %>
              if(!full_page_lead) {
     data.splice(data.findIndex(e => e.points == 0))

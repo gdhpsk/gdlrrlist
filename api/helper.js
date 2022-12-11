@@ -4,11 +4,13 @@ const allowedPeople = require("../schemas/allowedPeople.js")
 const jwt = require("jsonwebtoken")
 const opinionSchema = require("../schemas/opinions.js")
 const levelsSchema = require("../schemas/levels.js")
+const loginSchema = require("../schemas/logins.js")
 const leaderboardSchema = require("../schemas/leaderboard.js")
 let routes = {}
 const dayjs = require("dayjs")
 const submitSchema = require("../schemas/submissions.js")
 const {request} = require("undici")
+const messageSchema = require("../schemas/direct_messages.js")
 const {validFields} = require("./functions")
 
 function getCookie(cname, req) {
@@ -234,7 +236,8 @@ router.use(express.urlencoded({ extended: true }))
   } catch(_) {
      return res.status(400).json({error: config["400"], message: "Please input a valid submission ID!"})
   }
-
+let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let {name} = await loginSchema.findById(id)
   for(const key in req.body) {
     req.body[key] = req.body[key].toString()
   }
@@ -266,16 +269,29 @@ if(req.body.video) {
 if(submission.status != req.body.status) {
     if(req.body.status == "accepted") {
         try {
-   let alr = await request("https://gdlrrlist.com/api/v1/client/notifications", {
+         let exists = await messageSchema.findOne({users: [submission.account, name]}) 
+          if(!exists) {
+           exists = await request("https://gdlrrlist.com/api/v1/client/dm", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
           'authorization': req.headers.authorization
         },
         body: JSON.stringify({
-          subject: `Information about your ${submission.demon} ${submission.progress}% submission`,
+          users: [submission.account],
+          name: "Record Information"
+        })
+      })
+          }
+   let alr = await request("https://gdlrrlist.com/api/v1/client/messages", {
+        method: "POST",
+        headers: {
+          'content-type': 'application/json',
+          'authorization': req.headers.authorization
+        },
+        body: JSON.stringify({
           message: `Your submission has been accepted by the LRR List Moderators! Submission: ${submission.demon} ${submission.progress}%`,
-          to: submission.account
+          id: exists._id.toString()
         })
       })
       if(alr.statusCode == 429) {
@@ -286,16 +302,29 @@ if(submission.status != req.body.status) {
   }
     } else if(req.body.status == "denied") {
      try {
-        let alr = await request("https://gdlrrlist.com/api/v1/client/notifications", {
+       let exists = await messageSchema.findOne({users: [submission.account, name]}) 
+          if(!exists) {
+            exists = await request("https://gdlrrlist.com/api/v1/client/dm", {
+        method: "POST",
+        headers: {
+          'content-type': 'application/json',
+          'authorization': req.headers.authorization
+        },
+        body: JSON.stringify({
+          users: [submission.account],
+          name: "Record Information"
+        })
+      })
+          }
+        let alr = await request("https://gdlrrlist.com/api/v1/client/messages", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
           authorization: req.headers.authorization
         },
         body: JSON.stringify({
-          subject: `Information about your ${submission.demon} ${submission.progress}% submission`,
-          message: `Your submission (${submission.demon} ${submission.progress}%) has been rejected by the LRR List Moderators. If you have questions about why your record was denied, please email me.`,
-          to: submission.account
+          message: `Your submission (${submission.demon} ${submission.progress}%) has been rejected by the LRR List Moderators. If you have questions about why your record was denied, please DM me.`,
+          id: exists._id.toString()
         })
       })
        if(alr.statusCode == 429) {

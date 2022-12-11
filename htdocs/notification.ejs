@@ -1,6 +1,124 @@
 <!DOCTYPE html>
 <html>
+  <style>
+    #text-bar {
+      border-top: 2px solid;
+      display: flex;
+      justify-content: center;
+    }
+    #text-bar input {
+       width: 80%;
+      padding-left: 20px;
+      height: 50px;
+    }
+  </style>
   <script>
+  function list() {
+   let list = document.getElementById("list")
+    list.style.display = list.style.display == "block" ? "none": "block"
+  }
+    function list2() {
+   let list = document.getElementById("list2")
+    list.style.display = list.style.display == "block" ? "none": "block"
+  }
+    async function send(id) {
+      let text = document.getElementById("text").value
+      if(text == "") return
+      let content = await fetch("https://gdlrrlist.com/api/v1/client/messages", {
+        method: "POST",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          message: text,
+          id
+        })
+      })
+      let json = await content.json()
+      if(content.status == 201) return window.location.reload()
+      document.getElementById("err").innerText = json.message
+    }
+
+    async function del(id) {
+      let content = await fetch("https://gdlrrlist.com/api/v1/client/messages", {
+        method: "DELETE",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          id
+        })
+      })
+      try {
+        let json = await content.json()
+        document.getElementById("err").innerText = json.message
+      } catch(_) {
+        if(content.status == 204) return window.location.reload()
+      }
+    }
+
+    async function delUser(id, user) {
+      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+        method: "PATCH",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          id,
+          users: "<%- locals.messages.users %>".split(",").filter(e => e != user)
+        })
+      })
+      try {
+        let json = await content.json()
+        document.getElementById("err").innerText = json.message
+      } catch(_) {
+        if(content.status == 204) return window.location.reload()
+      }
+    }
+
+    async function edit(id, user) {
+      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+        method: "PATCH",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          id,
+          users: [..."<%- locals.messages.users %>".split(","), user]
+        })
+      })
+      try {
+        let json = await content.json()
+        document.getElementById("err").innerText = json.message
+      } catch(_) {
+        if(content.status == 204) return window.location.reload()
+      }
+    }
+
+    async function titleChange(id) {
+      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+        method: "PATCH",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          id,
+          name: document.getElementById("title").value
+        })
+      })
+      try {
+        let json = await content.json()
+        document.getElementById("err").innerText = json.message
+      } catch(_) {
+        if(content.status == 204) return window.location.reload()
+      }
+    }
+    
     function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
@@ -41,33 +159,59 @@ document.getElementById(smt).style.height = "20px"
   <body class = "" id="wesure">
   <%- include("./navbar.ejs") %>
 
-     <h1 style = "text-align:center">LRR Demon List Email #<%= locals.number %></h1>
-    <br></br>
-      <p style="text-align: center; font-size: 30px;">
-        Subject: <%- locals.subject %> <br></br>
-        Message: <%= locals.message %> <br></br>
-        From: <%- locals.from %> <br></br>
-        To: <%- locals.to %> <br></br>
-        Date: <%- locals.date %> <br></br>
-          <% if(locals.active == "notifications-from") { %>
-             Read: <%- !!locals.read %> <br></br>
-            <% } %>
-      </p>
-          <br><br>
-          <div style="display: flex; justify-content: center;">
-        <button onclick="window.location.href = 'https://gdlrrlist.com/notifications'" style="height: 50px;">Go Back</button>
-            <% if(locals.active == "notifications-from") { %>
-              <form action="https://gdlrrlist.com/notifications/hide" method="post">
-                <input type="hidden" name="id" value="<%= locals._id %>">
-                <button type="submit" style="height: 50px;">Delete email</button>
-              </form>
-            <% } %>
-            <% if(locals.active != "notifications-from") { %>
-            <button onclick="window.location.href = 'https://gdlrrlist.com/notifications/hide?id=<%= locals._id %>'" style="height: 50px;">Hide Email</button>
-            <button onclick="window.location.href = 'https://gdlrrlist.com/notifications/compose?to=<%= locals.from %>'" style="height: 50px;">Reply to user</button>
+     <h1 style = "text-align:center"><input type="text" value="<%= locals.messages.name %>" id="title"></h1>
+    <h2 style = "text-align:center">Users: <%= locals.messages.users.join(", ") %></h2>
+    <br>
+    <div style="display: grid; place-items: center;">
+      <button onclick="titleChange('<%= locals.messages._id.toString() %>')">Change Title</button>
+      <br>
+    <button onclick="list()">Add User</button>
+    <div id="list" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.everyone.filter(e => locals.messages.users.includes(e.name))) { %>
+      <p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '<%= item.name %>')"><%= item.name %></p>
+    <% } %></div>
+      <br>
+      <button onclick="list2()">Delete User / Leave</button>
+    <div id="list2" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.messages.users) { %>
+      <p style="padding: 10px; border: 2px solid;" onclick="delUser('<%= locals.messages._id.toString() %>', '<%= item %>')"><%= item %></p>
+    <% } %></div>
+      </div>
+    <hr/>
+    <br><br><br>
+    <div id="content">
+      <% let findRead = locals.messages.users.filter(e => e != locals.profile).copyWithin() %>
+        <% let ok = (name) => locals.messages.messages.filter(x => x.read.includes(name));
+          findRead = findRead.map(e => e = {
+          name: e,
+          item: ok(e)[ok(e).length-1]
+          }) %>
+      <% for(const item of locals.messages.messages) { %>
+        <% if(item.from == locals.profile) { %>
+          <div style="float: right; margin-bottom: 20px; width: 200px; border: 2px solid; margin-right: 10px; border-radius: 25px 25px 0px 25px; background-color: #8186e3;"><button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="del('<%= item._id.toString() %>')"><i class="fa fa-trash-o"></i></button><p style="line-break: anywhere; text-align: center;"><%= item.message %></p><footer style="text-align: center;">Sent at: <%= item.date %></footer>
+            <% if(findRead.filter(e => e.item == item).length) { %>
+              <footer style="text-align: center; color: var(--txt-color);">Read by: <%= findRead.filter(e => e.item == item).map(e => e.name).join(", ") %></footer>
               <% } %>
-            </div>
+      </div>
+          <div style="width: 100%; clear: both;"></div>
+        <% } else { %>
+          <div style="float: left; margin-bottom: 20px; width: 200px; border: 2px solid; margin-left: 10px; border-radius: 25px 25px 25px 0px; background-color: #e381de;"><p style="line-break: anywhere; text-align: center;"><%= item.message %></p><footer style="text-align: center;">Sent at: <%= item.date %></footer>
+          </div>
+          <div style="width: 100%; clear: both;"></div>
+          <% } %>
+      <% } %>
+    </div>
+        <div id="text-bar">
+          <input style="border-radius: 50px; margin-top: 10px; margin-right: 10px;" type="text" id="text">
+          <button style="border-radius: 50px; width: 50px; height: 50px; margin-top: 10px;" onclick="send('<%= locals.messages._id.toString() %>')" id="sendButton"><i class="fa fa-paper-plane"></i></button>
+        </div>
+        <p id="err" style="text-align: center;"></p>
     <!-- scripts to include -->
+        <script>
+          document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && e.srcElement?.id == "text") {
+      document.getElementById("sendButton").click()
+    }
+});
+        </script>
      <script src="https://gdlrrlist.com/JS/collapsible.js?v=2020-10-06"></script>
      <script src="https://gdlrrlist.com/JS/dropdown.js?v=2022-04-6"></script><script src="https://gdlrrlist.com/JS/videoresize.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
   </body>

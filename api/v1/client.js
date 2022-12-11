@@ -8,7 +8,7 @@ const levelsSchema = require("../../schemas/levels.js")
 const dayjs = require("dayjs")
 const submitSchema = require("../../schemas/submissions.js")
 const loginSchema = require("../../schemas/logins.js")
-const mailSchema = require("../../schemas/mail")
+const messagesSchema = require("../../schemas/direct_messages.js")
 const bcrypt = require("bcrypt")
 let routes = {}
 const {REST} = require("@discordjs/rest")
@@ -236,92 +236,179 @@ if(req.body.video) {
   res.json(deleted)
 })
 
-router.route("/notifications")
-.post(authenticator, rate_lim(60000, 1), validFields({name: "to", type: String, description: ""}, {name: "subject", type: String, description: ""}, {name: "message", type: String, description: ""}), async (req, res) => {
-  if(req.body.message.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
-  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-  let {name: username} = await loginSchema.findById(id)
-  req.body.from = username
-  req.body.date = new Date(Date.now()).toISOString()
-  await mailSchema.create(req.body)
-  send(JSON.stringify(req.body), {
-    userResource: true,
-    target: req.body.to,
-    type: "mail"
-  })
-  res.status(201).json(req.body)
-})
-.get(authenticator, validFields({name: "fromUser", type: Boolean, description: "Get emails sent by a user (in this case, you)", optional: true}, {name: "toUser", type: Boolean, description: "Get emails sent by a user to you.", optional: true}, {name: "number", type: Number, description: "Get a specific mail number.", optional: true}), async (req, res) => {
-  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
-  let {name: username} = await loginSchema.findById(id)
-  let userMail = []
-  let fromUser = await mailSchema.find({from: username})
-  let toUser = await mailSchema.find({to: username})
-  let getFromUser = true
-  let gettoUser = true
-  if(req.query.fromUser === false) {
-    getFromUser = false
-  }
-  if(req.query.toUser === false) {
-    gettoUser = false
-  }
-if(getFromUser) {
-  for(const mail of fromUser) {
-    if(mail.from == mail.to && gettoUser) continue;
-    userMail.push(mail)
-  }
-}
-  
-if(gettoUser) {
-  userMail.push(...toUser)
-}
-  userMail.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
-  if(req.query.number) {
-    let mail = userMail[req.query.number-1]
-    if(!mail) return res.status(400).json({error: config["400"], message: "Please input a valid mail number!"})
-    return res.json({username, mail})
-  }
-  
-  return res.json({username, mail: userMail})
-})
-.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String, description: ""}, {name: "to", type: String, description: "", optional: true}, {name: "subject", type: String, description: "", optional: true}, {name: "message", type: String, description: "", optional: true}),async (req, res) => {
-  try {
-    await mailSchema.findById(req.body.id)
+router.route("/unread")
+  .get(authenticator, async (req, res) => {
+    try {
+    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {name} = await loginSchema.findById(id)
+    let data = await messagesSchema.find({users: {$elemMatch: {$eq: name}}})
+      let unread = []
+      for(const item of data) {
+        item.messages = item.messages.filter(e => e.from != name)
+        let alr = item.messages.filter(e => e.read.includes(name))
+        item.messages.splice(0, item.messages.findIndex(e => e == alr[alr.length-1])+1)
+        for(const k of item.messages) {
+          k.dmID = item._id.toString()
+        }
+        unread.push(...item.messages)
+      }
+      return res.json(unread)
   } catch(_) {
-    return res.status(400).json({error: config["400"], message: "Please input a valid Object ID!"})
+    return res.status(400).json({error: config["400"], message: "Something bad happened folks..."})
   }
-  if(req.body?.message?.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
-  if(req.body.hide) {
-    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-    let {name: username} = await loginSchema.findById(id)
-    let mail = await mailSchema.findById(req.body.id)
-    if(mail.to == username) {
-      mail.hide = true
-      await mail.save()
-      return res.json(mail)
+  })
+
+router.route("/dm")
+.post(authenticator, validFields({name: "name", type: String, description: "", optional: true}, {name: "users", type: Array, description: ""}), async (req, res) => {
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {name} = await loginSchema.findById(id)
+  req.body.users = req.body.users?.filter(e => e != name)
+  if(!req.body.users.length) return res.status(400).json({error: config["400"], message: "Please input at least one user to send this DM to!"})
+  req.body.users = Array.from(new Set(req.body.users))
+  for(const item of req.body.users) {
+    try {
+      let exists = await loginSchema.findOne({name: item})
+      if(!exists) {
+        return res.status(400).json({error: config["400"], message: "Please make sure all of your site users are valid users!"})
+      }
+    } catch(_) {
+      return res.status(400).json({error: config["400"], message: "Please make sure all of your site users are valid users!"})
     }
   }
-  delete req.body.to
-  delete req.body.from
-  delete req.body.date
-  return res.json(req.body)
+  req.body.users.push(name)
+  if(!req.body.name) {
+    req.body.name = req.body.users.join(", ")
+  }
+  
+  let create = await messagesSchema.create(req.body)
+  return res.status(201).json(create)
+})
+.patch(authenticator, validFields({name: "name", type: String, description: "", optional: true}, {name: "users", type: Array, description: "", optional: true}, {name: "id", type: String, description: ""}), async (req, res) => {
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let nameUsers = ""
+  let {name} = await loginSchema.findById(id)
+  if(req.body.users) {
+  req.body.users = Array.from(new Set(req.body.users))
+  if(!req.body.users?.length) return res.status(400).json({error: config["400"], message: "Please input at least one user to send this DM to!"})
+  for(const item of req.body.users) {
+    try {
+      let exists = await loginSchema.findOne({name: item})
+      if(!exists) {
+        return res.status(400).json({error: config["400"], message: "Please make sure all of your site users are valid users!"})
+      }
+    } catch(_) {
+      return res.status(400).json({error: config["400"], message: "Please make sure all of your site users are valid users!"})
+    }
+  }
+   nameUsers = req.body.users.join(", ")
+  }
+  try {
+    let alreadyCreated = await messagesSchema.findOne({_id: new mongoose.Types.ObjectId(req.body.id), users: {$elemMatch: {$eq: name}}})
+    if(!alreadyCreated) return res.status(400).json({error: config["400"], message: "This user DM does not exists!"})
+    alreadyCreated.name = req.body.name || nameUsers || alreadyCreated.name
+    alreadyCreated.users = req.body.users ?? alreadyCreated.users
+    await alreadyCreated.save()
+    if(alreadyCreated.users.length < 2) {
+      await messagesSchema.findByIdAndDelete(req.body.id)
+    }
+  return res.sendStatus(204)
+  } catch(_) {
+    return res.status(400).json({error: config["400"], message: "This user DM does not exists!"})
+  }
+})
+  .delete(authenticator, validFields({name: "id", type: String, description: ""}), async (req, res) => {
+  try {
+    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {name} = await loginSchema.findById(id)
+    let DM = await messagesSchema.findById(req.body.id)
+    if(DM.users.length <= 2) {
+      await messagesSchema.findByIdAndDelete(req.body.id)
+    } else {
+      DM.users = DM.users.filter(e => e != name)
+      await DM.save()
+    }
+    return res.sendStatus(204)
+  } catch(_) {
+    return res.status(400).json({error: config["400"], message: "Could not find the ID of the message to delete."})
+  }
+})
+.get(authenticator, async (req, res) => {
+  try {
+    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {name} = await loginSchema.findById(id)
+    let msg = await messagesSchema.find({users: {$elemMatch: {$eq: name}}})
+    return res.json(msg)
+  } catch(_) {
+    return res.status(400).json({error: config["400"], message: "Could not find the ID of the DM."})
+  }
+})
+  
+  
+
+router.route("/messages")
+.post(authenticator, validFields({name: "id", type: String, description: ""}, {name: "message", type: String, description: ""}), rate_lim(5000, 1), async (req, res) => {
+  if(req.body.message.toString().length > 2000) return res.status(400).json({error: config["400"], message: "Sorry, but as of right now, we will only allow messages up to 2000 characters."})
+  if(req.body.message.toString().length == 0) return res.status(400).json({error: config["400"], message: "Your message must be at least 1 character long!"})
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let {name} = await loginSchema.findById(id)
+  try {
+  let userDM = await messagesSchema.findOne({users: {$elemMatch: {$eq: name}}, _id: new mongoose.Types.ObjectId(req.body.id)})
+  if(!userDM) return res.status(400).json({error: config["400"], message: "I could not find this DM that is associated with you!"})
+  req.body.from = name
+  req.body.date = new Date(Date.now()).toISOString()
+    req.body.subject = userDM.name
+  userDM.messages.push(req.body)
+  let msg = await userDM.save()
+    for(const item of userDM.users.filter(e => e != name)) {
+    send(JSON.stringify(req.body), {
+    userResource: true,
+    target: item,
+    type: "mail"
+  })
+    }
+  res.status(201).json(msg)
+  } catch(_) {
+    return res.status(400).json({error: config["400"], message: "I could not find this DM that is associated with you!"})
+  }
 })
 .delete(authenticator, validFields({name: "id", type: String, description: ""}), async (req, res) => {
   try {
-    await mailSchema.findById(req.body.id)
+    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {name} = await loginSchema.findById(id)
+    await messagesSchema.findOneAndUpdate({"messages._id": new mongoose.Types.ObjectId(req.body.id), "messages.from": name}, {
+      $pull: {
+        messages: {
+          _id: new mongoose.Types.ObjectId(req.body.id),
+          from: name
+        }
+      }
+    })
+    return res.sendStatus(204)
   } catch(_) {
-    return res.status(400).json({error: config["400"], message: "Please input a valid Object ID!"})
+    return res.status(400).json({error: config["400"], message: "Could not find the ID of the message to delete."})
   }
-
-    let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
-  let {name: username} = await loginSchema.findById(id)
-    let mail = await mailSchema.findById(req.body.id)
-    if(mail.from == username) {
-      await mailSchema.findByIdAndDelete(req.body.id)
-      return res.json(mail)
-    }
-  return res.status(400).send({error: config["400"], message: "You may only delete your own emails!"})
 })
+  .get(authenticator, validFields({name: "id", type: String, description: ""}), async (req, res) => {
+  try {
+     let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
+  let {name} = await loginSchema.findById(id)
+    let msg = await messagesSchema.findOne({_id: new mongoose.Types.ObjectId(req.query.id), users: {$elemMatch: {$eq: name}}})
+    if(!msg) return res.status(400).json({error: config["400"], message: "Could not find the ID of the DM."})
+    let otherPeople = msg.messages.filter(e => e.from != name)
+    let findLast = msg.messages.findIndex(e => e == otherPeople[otherPeople.length-1])
+    let readUsers = msg.messages[findLast]?.read
+    if(!readUsers?.includes(name)) {
+      msg.messages[findLast]?.read.push(name)
+    }
+    await msg.save()
+    return res.json(msg)
+  } catch(_) {
+    return res.status(400).json({error: config["400"], message: "Could not find the ID of the DM."})
+  }
+})
+
+
+
   for(let i = 0; i < router.stack.length; i++) {
     let stack = router.stack[i].route
     let layers = stack?.stack.filter(layers => layers.handle.name == validFields({}).name)
