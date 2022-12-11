@@ -110,7 +110,9 @@ if(permission === "granted") {
    let icon = "https://gdlrrlist.com/icon.png"
    let body = data.message;
    let notification = new Notification(title, { body: `From ${data.from}: ${body}`, icon });
-
+<% if(locals.active == "notifications") { %>
+  window.location.reload()
+  <% } %>
     new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
