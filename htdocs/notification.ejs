@@ -198,9 +198,9 @@ document.getElementById(smt).style.height = "20px"
             </div>
             <p style="line-break: normal; text-align: center;"><%= item.message %></p>
             <div id="<%= item._id.toString() %>" style="display: none;">
-             <footer style="text-align: center;">Sent at: <%= item.date %></footer>
+             <footer style="text-align: center; font-size: 0.8em;"><strong>Sent at: <%= item.date %></strong></footer>
             <% if(findRead.filter(e => e.item == item).length) { %>
-              <footer style="text-align: center; color: var(--txt-color);"><strong>Read by: <%= findRead.filter(e => e.item == item).map(e => e.name).join(", ") %></strong></footer>
+              <footer style="text-align: center; font-size: 0.8em; color: var(--txt-color);"><strong><strong>Read by: <%= findRead.filter(e => e.item == item).map(e => e.name).join(", ") %></strong></strong></footer>
               <% } %>
                 </div>
       </div> 
@@ -213,8 +213,8 @@ document.getElementById(smt).style.height = "20px"
             <div style="clear: both"></div>
             <p style="line-break: normal; text-align: center;"><%= item.message %></p>
             <div id="<%= item._id.toString() %>" style="display: none;">
-            <footer style="text-align: center;">Sent at: <%= item.date %></footer>
-            <strong><strong><footer style="text-align: center;">From: <%= item.from %></footer></strong></strong>
+            <footer style="text-align: center; font-size: 0.8em;"><strong>Sent at: <%= item.date %></strong></footer>
+            <strong><strong><footer style="text-align: center; font-size: 0.8em;">From: <%= item.from %></footer></strong></strong>
             </div>
           </div>
           <div style="width: 100%; clear: both;"></div>
