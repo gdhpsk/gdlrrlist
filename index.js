@@ -24,7 +24,8 @@ let send_to_client = async (msg, options) => {
   try {
     let json_msg = JSON.parse(msg)
     if(options.type == "mail") {
-      let person = await loginSchema.findOne({name: json_msg.to, discord: {$exists: true}, dm_channel: {$exists: true}, mail_notifs: true})
+      for(const item of json_msg.to) {
+      let person = await loginSchema.findOne({name: item.to, discord: {$exists: true}, dm_channel: {$exists: true}, mail_notifs: true})
       if(person) {
         await rest.post(Routes.channelMessages(person.dm_channel), {
           body: {
@@ -37,6 +38,7 @@ let send_to_client = async (msg, options) => {
           }
         })
       }
+    }
     }
   } catch(e) {
     //console.log(e)
