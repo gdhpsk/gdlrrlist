@@ -194,6 +194,7 @@ document.getElementById(smt).style.height = "20px"
           <div style="width: 100%; clear: both;"></div>
         <% } else { %>
           <div style="float: left; margin-bottom: 20px; width: 200px; border: 2px solid; margin-left: 10px; border-radius: 25px 25px 25px 0px; background-color: #e381de;"><p style="line-break: anywhere; text-align: center;"><%= item.message %></p><footer style="text-align: center;">Sent at: <%= item.date %></footer>
+            <strong><strong><footer style="text-align: center;">From: <%= item.from %></footer></strong></strong>
           </div>
           <div style="width: 100%; clear: both;"></div>
           <% } %>
