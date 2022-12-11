@@ -354,6 +354,7 @@ if(submission.status != req.body.status) {
   .put(validFields({name: "demon", type: String, description: "The name of the demon the person got progress on / beat."}, {name: "username", type: String, description: "The name of the player"}, {name: "hertz", type: String, description: "refresh rate of the player"}, {name: "progress", type: Number, description: "what % the player got on the level"}, {name: "video", type: "URL", description: "The progress / completion video."}), async (req, res) => {
   var level = await levelsSchema.findOne({name: req.body.demon})
   var user = await leaderboardSchema.findOne({name: req.body.username.trim()})
+    
     if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
   if(!user) {
    user = await leaderboardSchema.create({name: req.body.username.trim(), levels: [], progs: ["none"]})
@@ -433,17 +434,33 @@ if(submission.status != req.body.status) {
   })
   if(req.body.record) {
     try {
+      let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  let {name} = await loginSchema.findById(id)
       let something = await submitSchema.findById(req.body.record)
   if(something) {
-    await request("https://gdlrrlist.com/api/helper/submissions/mod", {
+   let exists = await messageSchema.findOne({users: [submission.account, name]}) 
+          if(!exists) {
+           exists = await request("https://gdlrrlist.com/api/v1/client/dm", {
+        method: "POST",
         headers: {
-          authorization: req.headers.authorization,
-          'content-type': 'application/json'
+          'content-type': 'application/json',
+          'authorization': req.headers.authorization
         },
-       method: "PATCH",
         body: JSON.stringify({
-          id: req.body.record,
-          status: "accepted"
+          users: [submission.account],
+          name: "Record Information"
+        })
+      })
+          }
+   await request("https://gdlrrlist.com/api/v1/client/messages", {
+        method: "POST",
+        headers: {
+          'content-type': 'application/json',
+          'authorization': req.headers.authorization
+        },
+        body: JSON.stringify({
+          message: `Your submission has been accepted by the LRR List Moderators! Submission: ${req.body.demon.trim()} ${req.body.progress}%`,
+          id: exists._id.toString()
         })
       })
   }
