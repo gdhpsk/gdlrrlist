@@ -196,7 +196,7 @@ document.getElementById(smt).style.height = "20px"
             <div style="float: right;">
             <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">. . .</button>
             </div>
-            <p style="line-break: anywhere; text-align: center;"><%= item.message %></p>
+            <p style="line-break: normal; text-align: center;"><%= item.message %></p>
             <div id="<%= item._id.toString() %>" style="display: none;">
              <footer style="text-align: center;">Sent at: <%= item.date %></footer>
             <% if(findRead.filter(e => e.item == item).length) { %>
@@ -211,7 +211,7 @@ document.getElementById(smt).style.height = "20px"
             <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">. . .</button>
             </div>
             <div style="clear: both"></div>
-            <p style="line-break: anywhere; text-align: center;"><%= item.message %></p>
+            <p style="line-break: normal; text-align: center;"><%= item.message %></p>
             <div id="<%= item._id.toString() %>" style="display: none;">
             <footer style="text-align: center;">Sent at: <%= item.date %></footer>
             <strong><strong><footer style="text-align: center;">From: <%= item.from %></footer></strong></strong>
