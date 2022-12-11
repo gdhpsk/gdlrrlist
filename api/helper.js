@@ -271,7 +271,7 @@ if(submission.status != req.body.status) {
         try {
          let exists = await messageSchema.findOne({users: [submission.account, name]}) 
           if(!exists) {
-           exists = await request("https://gdlrrlist.com/api/v1/client/dm", {
+           let makeNew = await request("https://gdlrrlist.com/api/v1/client/dm", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
@@ -282,6 +282,7 @@ if(submission.status != req.body.status) {
           name: "Record Information"
         })
       })
+            exists = await makeNew.body.json()
           }
    let alr = await request("https://gdlrrlist.com/api/v1/client/messages", {
         method: "POST",
@@ -298,13 +299,12 @@ if(submission.status != req.body.status) {
          return res.status(429).send({error: config["429"][0], message: config["429"][1]})
        }
     } catch(_) {
-    
   }
     } else if(req.body.status == "denied") {
      try {
        let exists = await messageSchema.findOne({users: [submission.account, name]}) 
           if(!exists) {
-            exists = await request("https://gdlrrlist.com/api/v1/client/dm", {
+            let request = await request("https://gdlrrlist.com/api/v1/client/dm", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
@@ -315,6 +315,7 @@ if(submission.status != req.body.status) {
           name: "Record Information"
         })
       })
+            exists = await makeNew.body.json()
           }
         let alr = await request("https://gdlrrlist.com/api/v1/client/messages", {
         method: "POST",
@@ -331,7 +332,6 @@ if(submission.status != req.body.status) {
          return res.status(429).send({error: config["429"][0], message: config["429"][1]})
        }
      } catch(_) {
-       
      }
     }
   webhook(`A submission has been ${req.body.status}!`, [{description: `A submission by ${submission.username} has been ${req.body.status}. (submission: [${submission.demon} ${submission.progress}% on ${submission.hertz}](${submission.video}), comments: ${submission.comments || "none"})`}], {
@@ -351,7 +351,7 @@ if(submission.status != req.body.status) {
 })
 
   router.route("/records")
-  .put(validFields({name: "demon", type: String, description: "The name of the demon the person got progress on / beat."}, {name: "username", type: String, description: "The name of the player"}, {name: "hertz", type: String, description: "refresh rate of the player"}, {name: "progress", type: Number, description: "what % the player got on the level"}, {name: "video", type: "URL", description: "The progress / completion video."}), async (req, res) => {
+  .put(validFields({name: "demon", type: String, description: "The name of the demon the person got progress on / beat."}, {name: "username", type: String, description: "The name of the player"}, {name: "hertz", type: String, description: "refresh rate of the player"}, {name: "progress", type: Number, description: "what % the player got on the level"}, {name: "video", type: "URL", description: "The progress / completion video."}, {name: "id", type: String, body_type: "query", description: "", optional: true}), async (req, res) => {
   var level = await levelsSchema.findOne({name: req.body.demon})
   var user = await leaderboardSchema.findOne({name: req.body.username.trim()})
     
@@ -438,29 +438,15 @@ if(submission.status != req.body.status) {
   let {name} = await loginSchema.findById(id)
       let something = await submitSchema.findById(req.body.record)
   if(something) {
-   let exists = await messageSchema.findOne({users: [submission.account, name]}) 
-          if(!exists) {
-           exists = await request("https://gdlrrlist.com/api/v1/client/dm", {
-        method: "POST",
+   await request("https://gdlrrlist.com/api/helper/submissions/mod", {
+        method: "PATCH",
         headers: {
           'content-type': 'application/json',
           'authorization': req.headers.authorization
         },
         body: JSON.stringify({
-          users: [submission.account],
-          name: "Record Information"
-        })
-      })
-          }
-   await request("https://gdlrrlist.com/api/v1/client/messages", {
-        method: "POST",
-        headers: {
-          'content-type': 'application/json',
-          'authorization': req.headers.authorization
-        },
-        body: JSON.stringify({
-          message: `Your submission has been accepted by the LRR List Moderators! Submission: ${req.body.demon.trim()} ${req.body.progress}%`,
-          id: exists._id.toString()
+          id: something._id.toString(),
+          status: "accepted"
         })
       })
   }
