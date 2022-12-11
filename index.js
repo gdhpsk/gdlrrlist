@@ -28,10 +28,10 @@ let send_to_client = async (msg, options) => {
       if(person) {
         await rest.post(Routes.channelMessages(person.dm_channel), {
           body: {
-            content: `From: ${json_msg.from}`,
+            content: `${json_msg.subject}`,
             embeds: [
               {
-                description: `**${json_msg.subject}**\n\n${json_msg.message}`
+                description: `**From: ${json_msg.from}**\n\n${json_msg.message}`
               }
             ]
           }
