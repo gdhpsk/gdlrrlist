@@ -360,7 +360,7 @@ router.route("/messages")
     req.body.subject = userDM.name
   userDM.messages.push(req.body)
   let msg = await userDM.save()
-    for(const item of userDM.users.filter(e => e != name)) {
+    for(const item of req.body.to) {
     send(JSON.stringify(req.body), {
     userResource: true,
     target: item,
