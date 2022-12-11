@@ -13,6 +13,11 @@
     }
   </style>
   <script>
+    function expand(id) {
+      let div = document.getElementById(id)
+      let block = div.style.display == "block" ? "none" : "block"
+      div.style.display = block
+    }
   function list() {
    let list = document.getElementById("list")
     list.style.display = list.style.display == "block" ? "none": "block"
@@ -186,15 +191,31 @@ document.getElementById(smt).style.height = "20px"
           }) %>
       <% for(const item of locals.messages.messages) { %>
         <% if(item.from == locals.profile) { %>
-          <div style="float: right; margin-bottom: 20px; width: 200px; border: 2px solid; margin-right: 10px; border-radius: 25px 25px 0px 25px; background-color: #8186e3;"><button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="del('<%= item._id.toString() %>')"><i class="fa fa-trash-o"></i></button><p style="line-break: anywhere; text-align: center;"><%= item.message %></p><footer style="text-align: center;">Sent at: <%= item.date %></footer>
+          <div style="float: right; margin-bottom: 20px; width: 200px; border: 2px solid; margin-right: 10px; border-radius: 25px 25px 0px 25px; background-color: #8186e3;">
+            <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="del('<%= item._id.toString() %>')"><i class="fa fa-trash-o"></i></button>
+            <div style="float: right;">
+            <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">. . .</button>
+            </div>
+            <p style="line-break: anywhere; text-align: center;"><%= item.message %></p>
+            <div id="<%= item._id.toString() %>" style="display: none;">
+             <footer style="text-align: center;">Sent at: <%= item.date %></footer>
             <% if(findRead.filter(e => e.item == item).length) { %>
-              <footer style="text-align: center; color: var(--txt-color);">Read by: <%= findRead.filter(e => e.item == item).map(e => e.name).join(", ") %></footer>
+              <footer style="text-align: center; color: var(--txt-color);"><strong>Read by: <%= findRead.filter(e => e.item == item).map(e => e.name).join(", ") %></strong></footer>
               <% } %>
-      </div>
+                </div>
+      </div> 
           <div style="width: 100%; clear: both;"></div>
         <% } else { %>
-          <div style="float: left; margin-bottom: 20px; width: 200px; border: 2px solid; margin-left: 10px; border-radius: 25px 25px 25px 0px; background-color: #e381de;"><p style="line-break: anywhere; text-align: center;"><%= item.message %></p><footer style="text-align: center;">Sent at: <%= item.date %></footer>
+          <div style="float: left; margin-bottom: 20px; width: 200px; border: 2px solid; margin-left: 10px; border-radius: 25px 25px 25px 0px; background-color: #e381de;">
+            <div style="float: left;">
+            <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">. . .</button>
+            </div>
+            <div style="clear: both"></div>
+            <p style="line-break: anywhere; text-align: center;"><%= item.message %></p>
+            <div id="<%= item._id.toString() %>" style="display: none;">
+            <footer style="text-align: center;">Sent at: <%= item.date %></footer>
             <strong><strong><footer style="text-align: center;">From: <%= item.from %></footer></strong></strong>
+            </div>
           </div>
           <div style="width: 100%; clear: both;"></div>
           <% } %>
