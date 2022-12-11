@@ -42,10 +42,10 @@ let send_to_client = async (msg, options) => {
       }
     }
     }
+    json_msg.to = undefined
   } catch(e) {
     //console.log(e)
   }
-  json_msg.to = undefined
   for(const ws of server.clients) {
     if(!ws.isAlive) continue;
     if(!options?.userResource && !ws.isAdmin) continue;

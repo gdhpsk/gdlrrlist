@@ -337,6 +337,7 @@ router.route("/dm")
     let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN) 
   let {name} = await loginSchema.findById(id)
     let msg = await messagesSchema.find({users: {$elemMatch: {$eq: name}}})
+    msg.sort((a, b) => Date.parse(b.messages[b.messages.length-1]?.date ?? 0) - Date.parse(a.messages[a.messages.length-1]?.date ?? 0))
     return res.json(msg)
   } catch(_) {
     return res.status(400).json({error: config["400"], message: "Could not find the ID of the DM."})
