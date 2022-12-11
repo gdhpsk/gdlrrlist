@@ -166,7 +166,7 @@ document.getElementById(smt).style.height = "20px"
       <button onclick="titleChange('<%= locals.messages._id.toString() %>')">Change Title</button>
       <br>
     <button onclick="list()">Add User</button>
-    <div id="list" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.everyone.filter(e => locals.messages.users.includes(e.name))) { %>
+    <div id="list" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.everyone.filter(e => !locals.messages.users.includes(e.name))) { %>
       <p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '<%= item.name %>')"><%= item.name %></p>
     <% } %></div>
       <br>
