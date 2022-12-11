@@ -77,9 +77,9 @@ document.getElementById(smt).style.height = "20px"
       <p style="text-align: center;"><i class="fa fa-sticky-note-o"></i> Create new DM (<a onclick="list()" style="text-decoration: underline;">add users</a>): <input type="text" id="newDM" disabled/><input type="button" value="Submit" onclick="make()"/></p>
       <p id="err"></p>
     </div>
-    <div id="list" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.everyone) { %>
+    <div id="list" style="display: none; height: 200px; overflow: auto;"><input type="text" id="search"><div id="levs"><% for(const item of locals.everyone) { %>
       <p style="padding: 10px; border: 2px solid;" onclick="add('<%= item.name %>')"><%= item.name %></p>
-    <% } %></div>
+    <% } %></div></div>
     <% for(const item of locals.messages) { %>
       <div style="border: 1px solid; margin-bottom: 20px; width: 600px; height: 150px; background-color: var(--tr-alternate)" onclick="window.location.href = '/notifications/<%= item._id.toString() %>'">
         <div style="float: left; padding-left: 10px"><img style="border-radius: 50px; margin-top: 25%" src="/icons/group_chat.png"></div>
@@ -92,7 +92,15 @@ document.getElementById(smt).style.height = "20px"
     <% } %>
   </div>
 <script>
-  
+  document.getElementById("search").addEventListener("input", function () {
+    let data = <%- JSON.stringify(locals.everyone) %>
+    data = data.filter(e => e.name.toLowerCase().includes(this.value.toLowerCase()))
+    let txt = ""
+    for(const item of data) {
+      txt += `<p style="padding: 10px; border: 2px solid;" onclick="add('${item.name}')">${item.name}</p>`
+    }
+    document.getElementById("levs").innerHTML = txt
+  })
 </script>
     <!-- scripts to include -->
      <script src="JS/collapsible.js?v=2020-10-06"></script>

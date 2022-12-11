@@ -116,6 +116,11 @@ try {
 }
        return res.status(400).json({error: config["400"], message: "Please input a property value to change for your lrr profile!"})
 })
+.delete(authenticator, async (req, res) => {
+  let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  await loginSchema.findByIdAndDelete(id)
+  return res.sendStatus(204)
+})
 .get(authenticator, async (req, res) => {
   let everyone = await loginSchema.find()
   let mods = await allowedPeople.findById("6270b923564c64eb5ed912a4")

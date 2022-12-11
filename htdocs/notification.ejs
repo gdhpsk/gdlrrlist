@@ -166,14 +166,14 @@ document.getElementById(smt).style.height = "20px"
       <button onclick="titleChange('<%= locals.messages._id.toString() %>')">Change Title</button>
       <br>
     <button onclick="list()">Add User</button>
-    <div id="list" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.everyone.filter(e => !locals.messages.users.includes(e.name))) { %>
+      <div id="list" style="display: none; height: 200px; overflow: auto;"><input type="text" id="search"><div id="levs"><% for(const item of locals.everyone.filter(e => !locals.messages.users.includes(e.name))) { %>
       <p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '<%= item.name %>')"><%= item.name %></p>
-    <% } %></div>
+    <% } %></div></div>
       <br>
       <button onclick="list2()">Delete User / Leave</button>
-    <div id="list2" style="display: none; height: 200px; overflow: auto;"><% for(const item of locals.messages.users) { %>
+    <div id="list2" style="display: none; height: 200px; overflow: auto;"><input type="text" id="search2"><div id="levs2"><% for(const item of locals.messages.users) { %>
       <p style="padding: 10px; border: 2px solid;" onclick="delUser('<%= locals.messages._id.toString() %>', '<%= item %>')"><%= item %></p>
-    <% } %></div>
+    <% } %></div></div>
       </div>
     <hr/>
     <br><br><br>
@@ -213,6 +213,27 @@ document.getElementById(smt).style.height = "20px"
     }
 });
         </script>
+        <script>
+  document.getElementById("search").addEventListener("input", function () {
+    let data = <%- JSON.stringify(locals.everyone) %>
+    data = data.filter(e => e.name.toLowerCase().includes(this.value.toLowerCase()))
+    let txt = ""
+    for(const item of data) {
+      txt += `<p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '${item.name}')">${item.name}</p>`
+    }
+    document.getElementById("levs").innerHTML = txt
+  })
+
+          document.getElementById("search2").addEventListener("input", function () {
+    let data = <%- JSON.stringify(locals.messages.users) %>
+    data = data.filter(e => e.toLowerCase().includes(this.value.toLowerCase()))
+    let txt = ""
+    for(const item of data) {
+      txt += `<p style="padding: 10px; border: 2px solid;" onclick="delUser('<%= locals.messages._id.toString() %>', '${item}')">${item}</p>`
+    }
+    document.getElementById("levs2").innerHTML = txt
+  })
+</script>
      <script src="https://gdlrrlist.com/JS/collapsible.js?v=2020-10-06"></script>
      <script src="https://gdlrrlist.com/JS/dropdown.js?v=2022-04-6"></script><script src="https://gdlrrlist.com/JS/videoresize.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
   </body>
