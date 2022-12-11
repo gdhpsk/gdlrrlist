@@ -194,7 +194,7 @@ document.getElementById(smt).style.height = "20px"
           <div style="float: right; margin-bottom: 20px; width: 200px; border: 2px solid; margin-right: 10px; border-radius: 25px 25px 0px 25px; background-color: #8186e3;">
             <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="del('<%= item._id.toString() %>')"><i class="fa fa-trash-o"></i></button>
             <div style="float: right;">
-            <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">. . .</button>
+            <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">...</button>
             </div>
             <p style="line-break: normal; text-align: center;"><%= item.message %></p>
             <div id="<%= item._id.toString() %>" style="display: none;">
@@ -208,7 +208,7 @@ document.getElementById(smt).style.height = "20px"
         <% } else { %>
           <div style="float: left; margin-bottom: 20px; width: 200px; border: 2px solid; margin-left: 10px; border-radius: 25px 25px 25px 0px; background-color: #e381de;">
             <div style="float: left;">
-            <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">. . .</button>
+            <button style="width: 40px; height: 40px; border-radius: 50px; background-color: inherit;" onclick="expand('<%= item._id.toString() %>')">...</button>
             </div>
             <div style="clear: both"></div>
             <p style="line-break: normal; text-align: center;"><%= item.message %></p>
