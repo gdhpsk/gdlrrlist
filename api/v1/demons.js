@@ -12,6 +12,9 @@ let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)
 
 let routes = {}
 
+
+
+
 module.exports = (authFunction, webhook, rate_lim) => {
   async function authenticator (req, res, next) {
       let path = req.url.split("?")[0]
@@ -23,48 +26,37 @@ module.exports = (authFunction, webhook, rate_lim) => {
   if(!routes[path]) return next()
   if(!routes[path][req.method.toLowerCase()]) return res.status(405).json({error: config["405"][0], message: config["405"][1]})
   next()
-}
+};
+  
   const express = require("express")
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
   router.use(authenticator)
 
-router.get("/ldms", async (req, res) => {
-  let array = []
+  router.get("/ldms", async (req, res) => {
+    try {
+      let array = []
 async function generate(page) {
-    let obj = []
-let data = {
-    secret: "Wmfd2893gb7",
-    type: 5,
-    str: "149663583",
-    page
-};
-    let request2 = await request("http://www.boomlings.com/database/getGJLevels21.php", {
-        method: "POST",
-       headers: {
-        'user-agent': "",
-        'content-type': 'application/x-www-form-urlencoded'
-       },
-       body:  new URLSearchParams(data).toString()
-    })
-    let text = await request2.body.text()
-   let pipes = text.split("|")
-    for (let txt of pipes) {
-        txt = txt.split(":")
-        if(txt.length == 1) break;
-        obj.push({name: txt[1], ID: txt[3]})
-    }
-    return obj
+    let request2 = await request(`https://gdbrowser.com/api/search/LRRlist?page=${page}&count=10&user`)
+    let text = await request2.body.json()
+      return text
 }
     let count = 0
     while(true) {
         let ok = await generate(count)
         if(ok.length == 0) break;
+      try {
         array.push(...ok)
+      } catch(_) {
+        break;
+      }
         count++
     }
-  return res.json(array)
-})
+      return res.json(array)
+    } catch(_) {
+      return res.status(400).json([])
+    }
+  })
 
 router.get("/ML", validFields({name: "simplify", type: Number, description: "Simplifies the amount of data recieved.", optional: true}), async (req, res) => {
   let ok = await request("https://sites.google.com/view/gd-mobile-lists/top-100-demons-completed")

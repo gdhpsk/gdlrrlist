@@ -318,6 +318,20 @@ const json = await userResult.body.json()
   res.render("homepage.ejs", {editable, mod_vid, isHelper, editing, loggedIn: loggedIn.exists, profile: loggedIn.name})
 })
 
+app.get("/ldms", async (req, res) => {
+  let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
+  let loggedIn = await findToken(req)
+  let editing = false
+  let editable = false
+  if(allowed.find(e => e.name == loggedIn.name && e.id == loggedIn.id) && loggedIn.exists) {
+    editable = true
+    if(getCookie("editing", req) == "true") {
+    editing = true
+  }
+  }
+  res.render("LDMs.ejs", {loggedIn: loggedIn.exists, editing, editable, active: "ldms"})
+})
+
 app.get("/404.ejs", (req, res) => {
   res.render("404.ejs")
 })

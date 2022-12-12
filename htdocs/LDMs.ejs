@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta property="og:title" content="Geometry Dash LRR Demonlist">
+    <meta property="og:description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <meta name="author" content="ryan9328">
+    <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
+    <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
+    <title>GD LRR Demon List</title>
+  <link href="CSS/levelcards.css?v=2022-03-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4543250064393866"
+     crossorigin="anonymous"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body class = "" id="wesure">
+
+    <%- include("./navbar.ejs") %>
+      <div style="display: grid; place-items: center;"><h1 style="text-align: center;">Approved LRR List LDMs:</h1><br><br><br><input id="search" style="border: 3px solid;" placeholder="Search..."><br><br><div id="ldms"></div></div>
+
+    <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
+    <p><a href = "Extendedlist.html">Extended page</a></p> -->
+    <!-- scripts to include -->
+      <script>
+        let levels = [];
+        (async () => {
+    let request2 = await fetch(`https://gdlrrlistcom.gdhpsk.repl.co/api/v1/demons/ldms`)
+    let array = await request2.json()
+          for(const item of array) {
+            levels.push(item)
+            document.getElementById("ldms").innerHTML += `<p style="text-align: center;">${item.name} - ${item.id}</p>`
+          }
+        })()
+        document.getElementById("search").addEventListener("input", function() {
+          let array = levels.filter(e => e.name.toLowerCase().includes(this.value))
+          let txt = ""
+          for(const item of array) {
+            txt += `<p style="text-align: center;">${item.name} - ${item.id}</p>`
+          }
+          document.getElementById("ldms").innerHTML = txt
+        })
+      </script>
+    <script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+  </body>
+</html>

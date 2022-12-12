@@ -35,6 +35,8 @@ module.exports = (authFunction, webhook, rate_lim, send) => {
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
 
+
+
 router.route("/login")
 .post(rate_lim(600000, 1), validFields({name: "password", type: String, description: ""}, {name: "name", type: String, description: ""}), async (req, res) => {
   if(req.headers.authorization) return res.status(400).json({error: config["400"], message: "Please input an empty authorization header!"})
