@@ -15,7 +15,6 @@ const rest = new REST({version: '10'}).setToken(discord_token);
 const fetchUser = async id => rest.get(Routes.user(id));
 const {WebSocketServer} = require("ws");
 const {request} = require("undici")
-
 const http_server = require("http").createServer(app);
 
 let server = new WebSocketServer({server: http_server});

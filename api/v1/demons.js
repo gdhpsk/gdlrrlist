@@ -29,6 +29,43 @@ const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
   router.use(authenticator)
 
+router.get("/ldms", async (req, res) => {
+  let array = []
+async function generate(page) {
+    let obj = []
+let data = {
+    secret: "Wmfd2893gb7",
+    type: 5,
+    str: "149663583",
+    page
+};
+    let request2 = await request("http://www.boomlings.com/database/getGJLevels21.php", {
+        method: "POST",
+       headers: {
+        'user-agent': "",
+        'content-type': 'application/x-www-form-urlencoded'
+       },
+       body:  new URLSearchParams(data).toString()
+    })
+    let text = await request2.body.text()
+   let pipes = text.split("|")
+    for (let txt of pipes) {
+        txt = txt.split(":")
+        if(txt.length == 1) break;
+        obj.push({name: txt[1], ID: txt[3]})
+    }
+    return obj
+}
+    let count = 0
+    while(true) {
+        let ok = await generate(count)
+        if(ok.length == 0) break;
+        array.push(...ok)
+        count++
+    }
+  return res.json(array)
+})
+
 router.get("/ML", validFields({name: "simplify", type: Number, description: "Simplifies the amount of data recieved.", optional: true}), async (req, res) => {
   let ok = await request("https://sites.google.com/view/gd-mobile-lists/top-100-demons-completed")
   let html = await ok.body.text()
