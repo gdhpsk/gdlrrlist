@@ -95,9 +95,7 @@ if(level_id) {
 }
 }
     let len = txt.split("(")[0].split("by")
-g.creators =  {
-  host: len[len.length-1].trim()
-}
+g.creators = len[len.length-1].trim()
 let recordarr = []
 let records = dom.window.document.getElementsByClassName("tyJCtd mGzaTb baZpAe")[(j*2)-1].getElementsByClassName("CDt4Ke zfr3Q")
 for(let x = 0; x < records.length; x++) {

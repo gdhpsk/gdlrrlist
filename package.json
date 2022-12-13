@@ -1,7 +1,7 @@
 {
   "name": "gdlrrlist",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is the official gdlrrlist website! If you guys want more documentation on how everything works, please tell me, my discord is gdhpsk#0001.",
   "main": "index.js",
   "scripts": {
     "devStart": "nodemon index.js"
@@ -32,6 +32,7 @@
     "node-cron": "^3.0.1",
     "node-fetch": "^3.2.0",
     "node-localstorage": "^2.2.1",
+    "npm": "^9.2.0",
     "path": "^0.12.7",
     "php": "^1.0.2",
     "phpcgijs": "^1.0.0-beta7",
@@ -43,6 +44,16 @@
     "ws": "^8.8.1"
   },
   "devDependencies": {
+    "node": "^18.12.1",
     "nodemon": "^2.0.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gdhpsk/gdlrrlist.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/gdhpsk/gdlrrlist/issues"
+  },
+  "homepage": "https://github.com/gdhpsk/gdlrrlist#readme"
 }
