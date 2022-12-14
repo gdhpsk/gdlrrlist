@@ -84,7 +84,6 @@ let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_
   if(['true', 'false'].includes(req.body.mail_notifs?.toString())) {
     let user = await loginSchema.findById(token.id)
 try {
-  if(user.dm_channel == undefined) {
     let {id} = await rest.post("/users/@me/channels", {
           body: {
             recipient_id: user.discord
@@ -98,7 +97,6 @@ try {
     if(!response_rest.errors) {
       user.dm_channel = id
     }
-  }
     user.mail_notifs = req.body.mail_notifs
     await user.save()
     return res.sendStatus(204)
