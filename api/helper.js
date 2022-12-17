@@ -267,9 +267,9 @@ if(req.body.video) {
       status: req.body.status
     }
 if(submission.status != req.body.status) {
-  req.body.deletable = req.body.status == "pending" ? false : true
+  req.body.deletable = req.body.status == "pending" ? true : false
+  req.body.editable = req.body.status == "accepted" ? false : true
     if(req.body.status == "accepted") {
-      req.body.editable = false
         try {
          let exists = await messageSchema.findOne({users: [submission.account, name]}) 
           if(!exists) {
