@@ -20,6 +20,7 @@
     <a onclick="openSwal()"><i class="fa fa-sign-in"></i>&nbsp;&nbsp;Log In</a>
     <% } else { %>
       <a class="nav-buttons" href="https://gdlrrlist.com/user_settings"><i class="fas fa-user-cog"></i>&nbsp;&nbsp;Settings</a>
+      <a class="nav-buttons <%= locals.active == 'user_submissions' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/submissions/user"><i class="fa fa-address-book"></i>&nbsp;&nbsp;Your Submissions</a>
       <a onclick="logout()"><i class='fas fa-sign-out'></i>&nbsp;&nbsp;Log Out</a>
       <% } %>
          <a class="nav-buttons <%= locals.active == 'ldms' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/ldms">LRR List LDMs</a>

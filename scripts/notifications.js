@@ -41,7 +41,7 @@ module.exports = (obj) => {
     }
   })
   let body3 = await everyone.body.json()
-  
+  body3.sort((a, b) => b.mod - a.mod)
   body = {
     messages: body,
     unread: body2.map(e => e = e.dmID),
@@ -76,6 +76,7 @@ app.route("/:id")
     }
   })
   let body2 = await everyone.body.json()
+  body2.sort((a, b) => b.mod - a.mod)
   body = {
     messages: body,
     everyone: body2

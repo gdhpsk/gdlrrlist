@@ -45,6 +45,40 @@ app.get("/archive/:num", async (req, res) => {
   return res.render("../submissions/each.ejs", obj)
 })
 
+app.get("/user", async (req, res) => {
+  const submissions = await request('https://gdlrrlist.com/api/v1/client/submissions', {
+    headers: {
+      authorization: `User ${getCookie("token", req)}`
+    }
+  })
+  let json = await submissions.body.json()
+  if(submissions.statusCode != 200) {
+    return res.render("404.ejs", json)
+  }
+   let {loggedIn, editing, editable} = await getDetails(req)
+  return res.render("../submissions/users/submissions.ejs", {amount: json.length, text: json, loggedIn, editing, editable, active: "user_submissions" })
+})
+
+  app.get("/user/:num", async (req, res) => {
+  const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions?num=${req.params.num}`, {
+    headers: {
+      authorization: `User ${getCookie("token", req)}`
+    }
+  })
+  let obj = await submissions.body.json()
+  if(submissions.statusCode != 200) {
+    return res.render("404.ejs", obj)
+  }
+   let {loggedIn, editing, editable} = await getDetails(req)
+  obj.number = req.params.num
+  obj.loggedIn = loggedIn
+  obj.editable = editable
+  obj.editing = editing
+  let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/
+  obj.embed = obj.video.trim().match(reg) ? `https://www.youtube.com/embed/${reg.exec(obj.video.trim())[1]}`: obj.video
+  return res.render("../submissions/users/edit.ejs", obj)
+})
+
 app.get("/:num", async (req, res) => {
   const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions?num=${req.params.num}`, {
     headers: {

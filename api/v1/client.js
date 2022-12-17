@@ -188,8 +188,8 @@ router.route("/submissions")
   let new_submission = await submitSchema.create(req.body)
   return res.status(201).json(new_submission)
 })
-.patch(authenticator, rate_lim(60000, 1), validFields({name: "id", type: String, description: ""}, {name: "demon", type: String, description: "", optional: true}, {name: "username", type: String, description: "", optional: true}, {name: "video", type: "URL", description: "", optional: true}, {name: "comments", type: String, description: "", optional: true}, {name: "hertz", type: String, description: "", optional: true}, {name: "progress", type: Number, description: "", optional: true}, {name: "raw", type: "URL", description: "", optional: true}) ,async (req, res) => {
-
+.patch(authenticator, rate_lim(86400000, 1), validFields({name: "id", type: String, description: ""}, {name: "demon", type: String, description: "", optional: true}, {name: "username", type: String, description: "", optional: true}, {name: "video", type: "URL", description: "", optional: true}, {name: "comments", type: String, description: "", optional: true}, {name: "hertz", type: String, description: "", optional: true}, {name: "progress", type: Number, description: "", optional: true}, {name: "raw", type: "URL", description: "", optional: true}) ,async (req, res) => {
+req.body.status = "pending"
   try {
     let checkSub = await submitSchema.findById(req.body.id)
     let auth = req.headers.authorization.split(" ")
@@ -212,16 +212,14 @@ if(req.body.video) {
   }
 }
   req.body.edited = dayjs(Date.now()).format("MMMM D, YYYY h:mm:ss A")
-  let dupe = await submitSchema.findOne({video: req.body.video?.trim()})
-  if(dupe && hasSubmitted._id.toString() != req.body.id) return res.status(400).json({error: config["400"], message: "The link you inputted is already in this database, so can you PLEASE be patient? Thanks :)"})
-  let hasSubmitted = await submitSchema.findOne({demon: {$regex: new RegExp(`\\b${req.body.demon}\\b`, 'i')}, username: {$regex: new RegExp(`\\b${req.body.username}\\b`, 'i')}, progress: req.body.progress})
-  if(hasSubmitted && hasSubmitted._id.toString() != req.body.id) return res.status(400).json({error: config["400"], message: "You have already submitted a record for this level! If you have any questions about your record, please contact the staff team."})
+  let dupe = await submitSchema.findOne({video: req.body.video?.trim(), _id: {$nin: [new mongoose.Types.ObjectId(req.body.id)]}})
+  if(dupe) return res.status(400).json({error: config["400"], message: "The link you inputted is already in this database, so can you PLEASE be patient? Thanks :)"})
+  let hasSubmitted = await submitSchema.findOne({demon: {$regex: new RegExp(`\\b${req.body.demon}\\b`, 'i')}, username: {$regex: new RegExp(`\\b${req.body.username}\\b`, 'i')}, progress: req.body.progress, _id: {$nin: [new mongoose.Types.ObjectId(req.body.id)]}})
+  if(hasSubmitted) return res.status(400).json({error: config["400"], message: "You have already submitted a record for this level! If you have any questions about your record, please contact the staff team."})
 
     let submission = await submitSchema.findById(req.body.id)
     for(const key in req.body) {
-      if(req.body[key] && key != "_id") {
         submission[key] = req.body[key]
-      }
     }
     await submission.save()
     return res.json(submission)

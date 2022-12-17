@@ -79,7 +79,7 @@ document.getElementById(smt).style.height = "20px"
       <br><br>
     </div>
     <div id="list" style="display: none; height: 200px; overflow: auto;"><input type="text" id="search"><div id="levs"><% for(const item of locals.everyone) { %>
-      <p style="padding: 10px; border: 2px solid;" onclick="add('<%= item.name %>')"><%= item.name %></p>
+      <p style="padding: 10px; border: 2px solid;" onclick="add('<%= item.name %>')"><%= item.name %> <% if(item.mod) { %><abbr title="Certified Moderator"><img src="/icons/moderator.png" width="15px" height="15px"></abbr><% } %></p>
     <% } %></div></div>
     <% for(const item of locals.messages) { %>
       <div style="border: 1px solid; margin-bottom: 20px; width: 600px; height: 150px; background-color: var(--tr-alternate)" onclick="window.location.href = '/notifications/<%= item._id.toString() %>'">
@@ -98,7 +98,7 @@ document.getElementById(smt).style.height = "20px"
     data = data.filter(e => e.name.toLowerCase().includes(this.value.toLowerCase()))
     let txt = ""
     for(const item of data) {
-      txt += `<p style="padding: 10px; border: 2px solid;" onclick="add('${item.name}')">${item.name}</p>`
+      txt += `<p style="padding: 10px; border: 2px solid;" onclick="add('${item.name}')">${item.name}${item.mod ? ' <abbr title="Certified Moderator"><img src="/icons/moderator.png" width="15px" height="15px"></abbr>' : ""}</p>`
     }
     document.getElementById("levs").innerHTML = txt
   })

@@ -172,12 +172,12 @@ document.getElementById(smt).style.height = "20px"
       <br>
     <button onclick="list()">Add User</button>
       <div id="list" style="display: none; height: 200px; overflow: auto;"><input type="text" id="search"><div id="levs"><% for(const item of locals.everyone.filter(e => !locals.messages.users.includes(e.name))) { %>
-      <p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '<%= item.name %>')"><%= item.name %></p>
+      <p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '<%= item.name %>')"><%= item.name %> <% if(item.mod) { %><abbr title="Certified Moderator"><img src="/icons/moderator.png" width="15px" height="15px"></abbr><% } %></p>
     <% } %></div></div>
       <br>
       <button onclick="list2()">Delete User / Leave</button>
     <div id="list2" style="display: none; height: 200px; overflow: auto;"><input type="text" id="search2"><div id="levs2"><% for(const item of locals.messages.users) { %>
-      <p style="padding: 10px; border: 2px solid;" onclick="delUser('<%= locals.messages._id.toString() %>', '<%= item %>')"><%= item %></p>
+      <p style="padding: 10px; border: 2px solid;" onclick="delUser('<%= locals.messages._id.toString() %>', '<%= item %>')"><%= item %> <% if(locals.everyone.find(e => e.name == item).mod) { %><abbr title="Certified Moderator"><img src="/icons/moderator.png" width="15px" height="15px"></abbr><% } %></p>
     <% } %></div></div>
       </div>
     <hr/>
@@ -240,17 +240,18 @@ document.getElementById(smt).style.height = "20px"
     data = data.filter(e => e.name.toLowerCase().includes(this.value.toLowerCase()))
     let txt = ""
     for(const item of data) {
-      txt += `<p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '${item.name}')">${item.name}</p>`
+      txt += `<p style="padding: 10px; border: 2px solid;" onclick="edit('<%= locals.messages._id.toString() %>', '${item.name}')">${item.name}${item.mod ? ' <abbr title="Certified Moderator"><img src="/icons/moderator.png" width="15px" height="15px"></abbr>' : ""}</p>`
     }
     document.getElementById("levs").innerHTML = txt
   })
 
           document.getElementById("search2").addEventListener("input", function () {
+     let data2 = <%- JSON.stringify(locals.everyone) %>
     let data = <%- JSON.stringify(locals.messages.users) %>
     data = data.filter(e => e.toLowerCase().includes(this.value.toLowerCase()))
     let txt = ""
     for(const item of data) {
-      txt += `<p style="padding: 10px; border: 2px solid;" onclick="delUser('<%= locals.messages._id.toString() %>', '${item}')">${item}</p>`
+      txt += `<p style="padding: 10px; border: 2px solid;" onclick="delUser('<%= locals.messages._id.toString() %>', '${item}')">${item}${data2.find(e => e.name == item).mod ? ' <abbr title="Certified Moderator"><img src="/icons/moderator.png" width="15px" height="15px"></abbr>' : ""}</p>`
     }
     document.getElementById("levs2").innerHTML = txt
   })
