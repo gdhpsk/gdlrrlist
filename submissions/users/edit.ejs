@@ -46,6 +46,8 @@
           <input value="<%= locals._id.toString() %>" id="id" type="hidden">
       </p>
           <button type="button" onclick="edit()" style="font-size: 30px;">Save</button>
+    <br></br>
+          <button type="button" onclick="del()" style="font-size: 30px;">Delete</button>
           <p id="err"></p>
           <br></br>
               </div>
@@ -77,6 +79,26 @@
                 return
               }
         window.location.reload()
+            }
+
+            async function del() {
+              let session = await fetch("https://gdlrrlist.com/api/v1/client/submissions", {
+        method: "DELETE",
+        headers: {
+          'content-type': "application/json",
+          authorization: `User ${getCookie("token")}`
+        },
+        body: JSON.stringify({
+          id: document.getElementById("id").value
+        })
+      })
+      
+        let json = await session.json()
+              if(session.status != 200) {
+        document.getElementById("err").innerText = json.message
+                return
+              }
+        window.location.href = "/submissions/user"
             }
           </script>
     <script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js"></script>
