@@ -77,6 +77,12 @@
     <% if(locals.loggedIn) { %>
       registerServiceWorker();
       <% } %>
+} else {
+      navigator.serviceWorker.getRegistrations().then(async function(registrations) {
+        if(registrations.length) {
+          await removeWorker()
+        }
+ })
 }
   function getCookie(cname) {
   var cookies = ` ${document.cookie}`.split(";");
@@ -112,12 +118,20 @@ function requestAndShowPermission() {
   }
     window.location = window.location
   }
-  function logout() {
-  document.cookie = "token=; Max-Age=0; path=/; domain="
+    async function removeWorker() {
+      await fetch("https://gdlrrlist.com/api/v1/notifications/subscribe", {
+      method: "DELETE",
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({})
+    })
     navigator.serviceWorker.getRegistrations().then(function(registrations) {
  for(let registration of registrations) {
   registration.unregister()
 } })
+    }
+  async function logout() {
+  document.cookie = "token=; Max-Age=0; path=/; domain="
+    await removeWorker()
     window.location = window.location
   }
   function dosmt(type) {

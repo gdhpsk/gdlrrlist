@@ -43,12 +43,22 @@ module.exports = (authFunction, webhook, rate_lim, send) => {
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
 
-router.post("/subscribe", authenticator, async (req, res) => {
+router.route("/subscribe")
+.post(authenticator, async (req, res) => {
   const subscription = req.body
   let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   await loginSchema.findByIdAndUpdate(token.id, {
     $set: {
       subscription
+    }
+  })
+  res.sendStatus(204)
+})
+.delete(authenticator, async (req, res) => {
+  let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
+  await loginSchema.findByIdAndUpdate(token.id, {
+    $set: {
+      subscription: undefined
     }
   })
   res.sendStatus(204)
