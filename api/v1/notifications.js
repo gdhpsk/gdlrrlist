@@ -57,8 +57,8 @@ router.route("/subscribe")
 .delete(authenticator, async (req, res) => {
   let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   await loginSchema.findByIdAndUpdate(token.id, {
-    $set: {
-      subscription: undefined
+    $unset: {
+      subscription: {}
     }
   })
   res.sendStatus(204)
