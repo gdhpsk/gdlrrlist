@@ -1,5 +1,6 @@
 const config = require("../config.json")
 const { default: mongoose } = require("mongoose")
+const webpush = require('web-push')
 const {validFields, docMaker} = require("../functions")
 const allowedPeople = require("../../schemas/allowedPeople.js")
 const jwt = require("jsonwebtoken")
@@ -10,10 +11,17 @@ const submitSchema = require("../../schemas/submissions.js")
 const loginSchema = require("../../schemas/logins.js")
 const messagesSchema = require("../../schemas/direct_messages.js")
 const bcrypt = require("bcrypt")
+const path = require("path")
 let routes = {}
 const {REST} = require("@discordjs/rest")
 const {Routes} = require("discord-api-types/v10")
 const rest = new REST({version: '10'}).setToken(process.env.discord_token);
+
+webpush.setVapidDetails(
+  'https://gdlrrlist.com',
+  process.env.vapid_public,
+  process.env.vapid_private
+)
 
 module.exports = (authFunction, webhook, rate_lim, send) => {
   async function authenticator(req, res, next) {
@@ -34,7 +42,6 @@ module.exports = (authFunction, webhook, rate_lim, send) => {
   const express = require("express")
 const router = express.Router()
 router.use(express.urlencoded({ extended: true }))
-
 
 
 router.route("/login")
@@ -348,7 +355,11 @@ router.route("/dm")
     return res.status(400).json({error: config["400"], message: "Could not find the ID of the DM."})
   }
 })
-  
+
+  router.get("/sw.js", (req, res) => {
+     let indexPath = path.join(__dirname, "../../htdocs/sw.js");
+      res.sendFile(indexPath);
+  })
   
 
 router.route("/messages")

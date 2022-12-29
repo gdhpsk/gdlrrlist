@@ -10,7 +10,8 @@ var login = new mongoose.Schema({
     full_page_lead: Boolean,
     pc_info: Boolean,
     dm_channel: String,
-    message: String 
+    message: String,
+    subscription: Object
 })
 
 module.exports = mongoose.model("login", login)

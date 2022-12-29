@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const {discord_token} = process.env
 const path = require("path")
+const webpush = require("web-push")
 const dayjs = require("dayjs")
 const cron = require("node-cron")
 const bcrypt = require("bcrypt")
@@ -17,12 +18,30 @@ const {WebSocketServer} = require("ws");
 const {request} = require("undici")
 const http_server = require("http").createServer(app);
 
+webpush.setVapidDetails(
+  'https://gdlrrlist.com',
+  process.env.vapid_public,
+  process.env.vapid_private
+)
+
 let server = new WebSocketServer({server: http_server});
+
+const sendNotification = (subscription, dataToSend='') => {
+  try {
+    webpush.sendNotification(subscription, dataToSend)
+  } catch(_) {
+    
+  }
+}
 
 let send_to_client = async (msg, options) => {
   try {
     let json_msg = JSON.parse(msg)
     if(options.type == "mail") {
+      let userPush = await loginSchema.findOne({name: options?.target, subscription: {$exists: true}, mail_notifs: true})
+      if(userPush) {
+        sendNotification(userPush.subscription, JSON.stringify(json_msg))
+      }
       let person = await loginSchema.findOne({name: options?.target, discord: {$exists: true}, dm_channel: {$exists: true}, mail_notifs: true})
       if(person) {
         await rest.post(Routes.channelMessages(person.dm_channel), {

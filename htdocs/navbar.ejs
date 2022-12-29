@@ -1,8 +1,27 @@
-
 <script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script defer>
+
+  const registerServiceWorker = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+      });
+      if (registration.installing) {
+        console.log("Service worker installing");
+      } else if (registration.waiting) {
+        console.log("Service worker installed");
+      } else if (registration.active) {
+        console.log("Service worker active");
+      }
+    } catch (error) {
+      console.error(`Registration failed with ${error}`);
+    }
+  }
+};
+  
   function getCookie(cname) {
   var cookies = ` ${document.cookie}`.split(";");
   var val = "";
@@ -54,6 +73,10 @@
   let permission = Notification.permission;
   if(permission === "default") {
     requestAndShowPermission();
+} else if(permission == "granted") {
+    <% if(locals.loggedIn) { %>
+      registerServiceWorker();
+      <% } %>
 }
   function getCookie(cname) {
   var cookies = ` ${document.cookie}`.split(";");
@@ -65,69 +88,6 @@
     }
   }
   return "";
-}
-
-  let socket = new WebSocket("wss://gdlrrlist.com")
-  socket.onopen = () => {
-    socket.close()
-  }
-
-  socket.onclose = function yes() {
-     socket = new WebSocket("wss://gdlrrlist.com")
-
-    socket.onopen = () => {
-        socket.send(JSON.stringify({
-            token: getCookie("token")
-        }))
-        socket.onmessage = message => {
-            let data = JSON.parse(message.data)
-            if(!data.error && data.message) {
-          
-              let permission = Notification.permission;
-if(permission === "granted") {
-   showNotification(data);
-} else if(permission === "default"){
-   requestAndShowPermission();
-} else {
-  const audio = new Audio("https://gdlrrlist.com/notification.mp3");
-  audio.play();
-}
-            }
-          if(!data.error && data.ytcode) {
-            if("<%= locals.active %>" == "roulette") {
-              window.location.reload()
-            }
-          }
-        }
-    }
-  
-    socket.onclose = yes
-  }
-  
-
-  function showNotification(data) {
-  let title = data.subject;
-   let icon = "https://gdlrrlist.com/icon.png"
-   let body = data.message;
-   let notification = new Notification(title, { body: `From ${data.from}: ${body}`, icon });
-<% if(locals.active == "notifications") { %>
-  window.location.reload()
-  <% } %>
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          notification.close();
-        } catch(_) {
-          
-        }
-        resolve()
-      }, 5000)
-    })
-    
-   notification.onclick = () => { 
-          notification.close();
-          window.open("https://gdlrrlist.com/notifications")
-   }
 }
 
   function showRemainingNav() {
@@ -154,6 +114,10 @@ function requestAndShowPermission() {
   }
   function logout() {
   document.cookie = "token=; Max-Age=0; path=/; domain="
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+ for(let registration of registrations) {
+  registration.unregister()
+} })
     window.location = window.location
   }
   function dosmt(type) {
