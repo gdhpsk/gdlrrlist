@@ -121,7 +121,10 @@ function requestAndShowPermission() {
     async function removeWorker() {
       await fetch("https://gdlrrlist.com/api/v1/notifications/subscribe", {
       method: "DELETE",
-      headers: {'content-type': 'application/json'},
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `User ${getCookie("token")}`
+      },
       body: JSON.stringify({})
     })
     navigator.serviceWorker.getRegistrations().then(function(registrations) {
