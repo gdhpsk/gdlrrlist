@@ -45,7 +45,6 @@ router.use(express.urlencoded({ extended: true }))
 
 router.post("/subscribe", authenticator, async (req, res) => {
   const subscription = req.body
-  console.log(req.headers)
   let token = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   await loginSchema.findByIdAndUpdate(token.id, {
     $set: {

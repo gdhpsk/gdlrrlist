@@ -27,6 +27,11 @@ const saveSubscription = async subscription => {
 }
 self.addEventListener('install', function (event) {
 	self.skipWaiting();
+  event.waitUntil(
+    addResourcesToCache([
+      "/"
+    ])
+  );
 })
 self.addEventListener('activate', async () => {
   try {
@@ -42,14 +47,6 @@ self.addEventListener('activate', async () => {
   }
 })
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    addResourcesToCache([
-      "/"
-    ])
-  );
-});
-
 self.addEventListener('push', function(event) {
   if (event.data) {
     let data = event.data.json()
@@ -62,11 +59,9 @@ self.addEventListener('push', function(event) {
           swreg.showNotification(title, { body: `From ${data.from}: ${body}`, icon });
         });
     } catch(e) {
-      console.log(e)
       try {
         self.registration.showNotification(title, { body: `From ${data.from}: ${body}`, icon });
       } catch(x) {
-        console.log(x)
       }
     }
   } else {
