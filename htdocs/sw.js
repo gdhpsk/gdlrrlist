@@ -76,17 +76,31 @@ self.addEventListener('notificationclick', function(event) {
     );
 });
 
-self.addEventListener('pushsubscriptionchange', function(event) {
-  event.waitUntil(
-    fetch('https://gdlrrlist.com/api/v1/notifications/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        old_endpoint: event.oldSubscription ? event.oldSubscription.endpoint : null,
-        new_endpoint: event.newSubscription ? event.newSubscription.endpoint : null,
-        new_p256dh: event.newSubscription ? event.newSubscription.toJSON().keys.p256dh : null,
-        new_auth: event.newSubscription ? event.newSubscription.toJSON().keys.auth : null
-      })
-    })
-  );
+const storage = new ServiceWorkerStorage('sw:storage', 1);
+
+async function handlePush() {
+  const newSubscription = await self.registration.pushManager.getSubscription();
+  const oldSubscription = JSON.parse(await storage.getItem('subscription'));
+  if(newSubscription.endpoint !== oldSubscription.endpoint) {
+    storage.setItem('subscription', newSubscription);
+    const req = new Request('https://gdlrrlist.com/api/v1/notifications/subscribe', {
+    method: 'POST',
+    body: JSON.stringify(
+        {oldSubscription: oldSubscription, newSubscription: newSubscription})
+    });
+    const response = await self.fetch(req);
+  }
+
+}
+
+async function savePush(subscription) {
+  await storage.setItem('subscription', subscription);
+}
+
+self.addEventListener('pushsubscriptionchange', (event) => 
+                      event.waitUntil(handlePush()));
+self.addEventListener('message', (event) => {
+  if(event.data.action === 'REQUEST_SUBSCRIPTION') {
+     event.waitUntil(savePush(event.data.subscription));
+  }
 });
