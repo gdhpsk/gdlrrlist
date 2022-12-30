@@ -84,9 +84,9 @@ async function handlePush() {
   if(newSubscription.endpoint !== oldSubscription.endpoint) {
     storage.setItem('subscription', newSubscription);
     const req = new Request('https://gdlrrlist.com/api/v1/notifications/subscribe', {
-    method: 'POST',
-    body: JSON.stringify(
-        {oldSubscription: oldSubscription, newSubscription: newSubscription})
+      method: 'POST',
+      headers: {'content-type': "application/json"},
+      body: JSON.stringify(newSubscription)
     });
     const response = await self.fetch(req);
   }
