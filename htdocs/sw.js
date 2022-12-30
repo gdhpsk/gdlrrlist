@@ -69,6 +69,13 @@ self.addEventListener('push', function(event) {
   }
 })
 
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+    event.waitUntil(
+      clients.openWindow("https://gdlrrlist.com/notifications")
+    );
+});
+
 self.addEventListener('pushsubscriptionchange', function(event) {
   event.waitUntil(
     fetch('https://gdlrrlist.com/api/v1/notifications/subscribe', {
