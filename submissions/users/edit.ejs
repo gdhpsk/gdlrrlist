@@ -45,11 +45,11 @@
           Comments - <input value="<%= locals.comments %>" id="comments"> <br></br>
           <input value="<%= locals._id.toString() %>" id="id" type="hidden">
       </p>
-          <% if(locals.editable != false) { %>
+          <% if(locals.status != "accepted") { %>
           <button type="button" onclick="edit()" style="font-size: 30px;">Save</button>
     <br></br>
             <% } %>
-              <% if(locals.deletable != false) { %>
+              <% if(locals.status != "pending") { %>
           <button type="button" onclick="del()" style="font-size: 30px;">Delete</button>
                 <% } %>
           <p id="err"></p>

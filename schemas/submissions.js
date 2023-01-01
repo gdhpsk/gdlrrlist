@@ -18,9 +18,7 @@ let schema = new mongoose.Schema({
       type: String,
       immutable: true
     },
-  edited: String,
-  deletable: Boolean,
-  editable: Boolean
+  edited: String
 })
 
 module.exports = mongoose.model("submissions", schema)

@@ -71,9 +71,6 @@ self.addEventListener('push', function(event) {
 
 self.addEventListener('notificationclick', function(event) {
   event.notification.close();
-    event.waitUntil(
-      clients.openWindow("https://gdlrrlist.com/notifications")
-    );
 });
 
 const storage = new ServiceWorkerStorage('sw:storage', 1);
@@ -88,7 +85,7 @@ async function handlePush() {
       headers: {'content-type': "application/json"},
       body: JSON.stringify(newSubscription)
     });
-    const response = await self.fetch(req);
+    await self.fetch(req);
   }
 
 }
