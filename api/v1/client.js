@@ -199,7 +199,7 @@ router.route("/submissions")
 req.body.status = "pending"
   try {
     let checkSub = await submitSchema.findById(req.body.id)
-    if(checkSub.status != "accepted") return res.status(400).json({error: config["400"], message: `You cannot edit this submission!`})
+    if(checkSub.status == "accepted") return res.status(400).json({error: config["400"], message: `You cannot edit this submission!`})
     let auth = req.headers.authorization.split(" ")
   let {id} = jwt.verify(auth[1], process.env.WEB_TOKEN)
     let correct_user = await loginSchema.findById(id)
