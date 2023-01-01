@@ -49,7 +49,7 @@
           <button type="button" onclick="edit()" style="font-size: 30px;">Save</button>
     <br></br>
             <% } %>
-              <% if(locals.status != "pending") { %>
+              <% if(locals.status == "pending") { %>
           <button type="button" onclick="del()" style="font-size: 30px;">Delete</button>
                 <% } %>
           <p id="err"></p>
