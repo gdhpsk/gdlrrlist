@@ -18,6 +18,10 @@ const {WebSocketServer} = require("ws");
 const {request} = require("undici")
 const http_server = require("http").createServer(app);
 
+process.on('uncaughtException', (err, origin) => {
+  console.error(err)
+});
+
 webpush.setVapidDetails(
   'https://gdlrrlist.com',
   process.env.vapid_public,
