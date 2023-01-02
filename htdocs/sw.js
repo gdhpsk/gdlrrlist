@@ -68,6 +68,11 @@ self.addEventListener('push', function(event) {
 
 self.addEventListener('notificationclick', function(event) {
   event.notification.close();
+  if (event.action === 'archive') {
+    archiveEmail();
+  } else {
+    clients.openWindow('/notifications');
+  }
 });
 
 const sub = {}
