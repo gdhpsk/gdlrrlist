@@ -373,7 +373,6 @@ router.route("/messages")
   if(!userDM) return res.status(400).json({error: config["400"], message: "I could not find this DM that is associated with you!"})
   req.body.from = name
     req.body.to = userDM.users.filter(e => e != name)
-
   req.body.date =  dayjs(Date.now()).format("MMMM D, YYYY h:mm:ss A")
     req.body.subject = userDM.name
   userDM.messages.push(req.body)

@@ -47,17 +47,16 @@ self.addEventListener('activate', async () => {
 self.addEventListener('push', function(event) {
   if (event.data) {
     let data = event.data.json()
-    console.log('Push event!! ', data)
     let title = data.subject;
    let icon = "https://gdlrrlist.com/icon.png"
    let body = data.message;
     try {
      navigator.serviceWorker.ready.then(function(swreg) {
-          swreg.showNotification(title, { body: `From ${data.from}: ${body}`, icon });
+          swreg.showNotification(title, { body: `From ${data.from}: ${body}`, icon, tag: data.id});
         });
     } catch(e) {
       try {
-        self.registration.showNotification(title, { body: `From ${data.from}: ${body}`, icon });
+        self.registration.showNotification(title, { body: `From ${data.from}: ${body}`, icon, tag: data.id});
       } catch(x) {
       }
     }
@@ -71,7 +70,7 @@ self.addEventListener('notificationclick', function(event) {
   if (event.action === 'archive') {
     archiveEmail();
   } else {
-    clients.openWindow('/notifications');
+    clients.openWindow(`/notifications${event.notification.tag ? `/${event.notification.tag}` : ""}`);
   }
 });
 
