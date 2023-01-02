@@ -18,10 +18,6 @@ const {WebSocketServer} = require("ws");
 const {request} = require("undici")
 const http_server = require("http").createServer(app);
 
-process.on('uncaughtException', (err, origin) => {
-  console.error(err)
-});
-
 webpush.setVapidDetails(
   'https://gdlrrlist.com',
   process.env.vapid_public,
@@ -30,12 +26,8 @@ webpush.setVapidDetails(
 
 let server = new WebSocketServer({server: http_server});
 
-const sendNotification = (subscription, dataToSend='') => {
-  try {
-    webpush.sendNotification(subscription, dataToSend)
-  } catch(_) {
-    
-  }
+const sendNotification = async (subscription, dataToSend='') => {
+  webpush.sendNotification(subscription, dataToSend).catch(_ => {})
 }
 
 let send_to_client = async (msg, options) => {
