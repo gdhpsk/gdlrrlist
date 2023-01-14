@@ -23,7 +23,7 @@ router.use(express.urlencoded({ extended: true }))
   router.route("/settings")
 .patch(validFields({name: "name", type: String, description: ""}, {name: "tag", type: String, description: ""}), async (req, res) => {
   let data = {
-    username: name
+    username: req.body.name
   }
   let everything = await allowedPeople.findById("6270b923564c64eb5ed912a4")
   let person = everything.allowed.findIndex(e => e.name == req.body.name)
