@@ -355,11 +355,6 @@ router.route("/dm")
     return res.status(400).json({error: config["400"], message: "Could not find the ID of the DM."})
   }
 })
-
-  router.get("/sw.js", (req, res) => {
-     let indexPath = path.join(__dirname, "../../htdocs/sw.js");
-      res.sendFile(indexPath);
-  })
   
 
 router.route("/messages")
