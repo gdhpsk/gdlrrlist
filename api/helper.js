@@ -12,6 +12,10 @@ const submitSchema = require("../schemas/submissions.js")
 const {request} = require("undici")
 const messageSchema = require("../schemas/direct_messages.js")
 const {validFields} = require("./functions")
+const {REST} = require("@discordjs/rest")
+const {Routes} = require("discord-api-types/v10")
+const rest = new REST({version: '10'}).setToken(process.env.discord_token);
+const fetchUser = async id => rest.get(Routes.user(id));
 
 function getCookie(cname, req) {
   return req.cookies[cname] ? req.cookies[cname] : "";
