@@ -271,6 +271,7 @@ if(req.body.video) {
       old: submission.status,
       status: req.body.status
     }
+    console.log({status: submission.status, k: req.body.status})
 if(submission.status != req.body.status) {
     if(req.body.status == "accepted") {
         try {
@@ -333,10 +334,12 @@ if(submission.status != req.body.status) {
           id: exists._id.toString()
         })
       })
+       let json = await alr.body.json()
        if(alr.statusCode == 429) {
          return res.status(429).send({error: config["429"][0], message: config["429"][1]})
        }
-     } catch(_) {
+     } catch(e) {
+       console.log(e)
      }
     }
   webhook(`A submission has been ${req.body.status}!`, [{description: `A submission by ${submission.username} has been ${req.body.status}. (submission: [${submission.demon} ${submission.progress}% on ${submission.hertz}](${submission.video}), comments: ${submission.comments || "none"})`}], {
