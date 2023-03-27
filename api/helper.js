@@ -357,8 +357,10 @@ if(submission.status != req.body.status) {
 
   router.route("/records")
   .put(validFields({name: "demon", type: String, description: "The name of the demon the person got progress on / beat."}, {name: "username", type: String, description: "The name of the player"}, {name: "hertz", type: String, description: "refresh rate of the player"}, {name: "progress", type: Number, description: "what % the player got on the level"}, {name: "video", type: "URL", description: "The progress / completion video."}, {name: "id", type: String, body_type: "query", description: "", optional: true}), async (req, res) => {
+    let arrayType = "levels"
   var level = await sixtyoneSchema.findOne({name: req.body.demon})
       if(level) {
+        arrayType = "sixtyOneHertz"
         if(req.body.progress != 100) return res.status(400).json({error: config["400"], message: "The percentage must be 100%, as this is a 61hz+ level!"})
         if(parseInt(req.body.hertz) < 61) return res.status(400).json({error: config["400"], message: "The hertz must be at least 61, as this is a 61hz+ level!"})
       } else {
@@ -415,14 +417,14 @@ if(submission.status != req.body.status) {
       level.progresses[0] == "none"
     }
     await level.save()
-    if(user.levels[0]) {
-      if(user.levels[0] != "none") {
-        user.levels.push(level.name)
+    if(user[arrayType][0]) {
+      if(user[arrayType][0] != "none") {
+        user[arrayType].push(level.name)
       } else {
-        user.levels[0] = level.name
+        user[arrayType][0] = level.name
       }
     } else {
-        user.levels.push(level.name)
+        user[arrayType].push(level.name)
     }
     user.progs = user.progs.filter(e => e.name != level.name)
     if(!user.progs[0]) {
@@ -474,7 +476,14 @@ if(submission.status != req.body.status) {
 })
   .delete(validFields({name: "username", type: String, description: "The name of the player who holds this record."}, {name: "demon", type: String, description: "The name of the level you want to remove this record from."}, {name: "progress", type: Number, description: "The progress the player got on this level."}), async (req, res) => {
   let message;
-  let level = await levelsSchema.findOne({name: req.body.demon.trim()})
+  let arrayType = "levels";
+  var level = await sixtyoneSchema.findOne({name: req.body.demon})
+      if(level) {
+        arrayType = "sixtyOneHertz"
+        if(req.body.progress != 100) return res.status(400).json({error: config["400"], message: "The percentage must be 100%, as this is a 61hz+ level!"})
+      } else {
+        level = await levelsSchema.findOne({name: req.body.demon})
+      }
   if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
     let dataTwo = {
       name: req.body.username.trim(),
@@ -499,7 +508,7 @@ if(submission.status != req.body.status) {
     }
     await level.save()
     await player.save()
-    if(player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
+    if(player.levels.length + player.progs.length + player.sixtyOneHertz.length == 0 || !player.levels[0] && !player.sixtyOneHertz[0] && player.progs[0] == "none") {
       await leaderboardSchema.findByIdAndDelete(player._id.toString())
     }
   } else if(req.body.progress == 100) {
@@ -514,10 +523,10 @@ if(submission.status != req.body.status) {
     if(level.list.length == 0) {
       level.list = ["none"]
     }
-    player.levels = player.levels.filter(e => e != level.name)
+    player[arrayType] = player[arrayType].filter(e => e != level.name)
     await level.save()
     await player.save()
-    if(player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
+    if(player.levels.length + player.progs.length + player.sixtyOneHertz.length == 0 || !player.levels[0] && !player.sixtyOneHertz[0] && player.progs[0] == "none") {
       await leaderboardSchema.findByIdAndDelete(player._id.toString())
     }
   }

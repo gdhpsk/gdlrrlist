@@ -4,6 +4,7 @@ var leaderboard = new mongoose.Schema({
     nationality: String,
     name: String,
     levels: [],
+    sixtyOneHertz: [],
     progs: [],
   socials: Object,
   ban: Boolean,
