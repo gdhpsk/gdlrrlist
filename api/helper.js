@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken")
 const opinionSchema = require("../schemas/opinions.js")
 const levelsSchema = require("../schemas/levels.js")
 const loginSchema = require("../schemas/logins.js")
+const sixtyoneSchema = require("../schemas/61hertz")
 const leaderboardSchema = require("../schemas/leaderboard.js")
 let routes = {}
 const dayjs = require("dayjs")
@@ -356,9 +357,14 @@ if(submission.status != req.body.status) {
 
   router.route("/records")
   .put(validFields({name: "demon", type: String, description: "The name of the demon the person got progress on / beat."}, {name: "username", type: String, description: "The name of the player"}, {name: "hertz", type: String, description: "refresh rate of the player"}, {name: "progress", type: Number, description: "what % the player got on the level"}, {name: "video", type: "URL", description: "The progress / completion video."}, {name: "id", type: String, body_type: "query", description: "", optional: true}), async (req, res) => {
-  var level = await levelsSchema.findOne({name: req.body.demon})
+  var level = await sixtyoneSchema.findOne({name: req.body.demon})
+      if(level) {
+        if(req.body.progress != 100) return res.status(400).json({error: config["400"], message: "The percentage must be 100%, as this is a 61hz+ level!"})
+        if(parseInt(req.body.hertz) < 61) return res.status(400).json({error: config["400"], message: "The hertz must be at least 61, as this is a 61hz+ level!"})
+      } else {
+        level = await levelsSchema.findOne({name: req.body.demon})
+      }
   var user = await leaderboardSchema.findOne({name: req.body.username.trim()})
-    
     if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
   if(!user) {
    user = await leaderboardSchema.create({name: req.body.username.trim(), levels: [], progs: ["none"]})
