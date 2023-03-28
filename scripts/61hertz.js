@@ -4,7 +4,7 @@ const {request} = require("undici")
 app.use(express.urlencoded({ extended: true }))
 
 module.exports = (obj) => {
-  let { hasAccess, getDetails, sixtyoneSchema, webhook } = obj
+  let { hasAccess, getDetails, sixtyoneSchema, webhook, leaderboardSchema, getCookie } = obj
   app.route("/edit61hzrecord/:name/:id")
 .post(async (req, res) => {
   let approved = await hasAccess(false, req, res);   if(!approved) return res.render("404.ejs")
@@ -74,6 +74,13 @@ app.route("/add61hertzlevel")
   let above = everything.findIndex(e => e.name == req.body.above)
   var newlev = new sixtyoneSchema({name: req.body.name.trim(), ytcode: req.body.ytcode.trim(), ranking: req.body.ranking.trim(), minimumPercent: 57, publisher: req.body.publisher.trim(), list: [obj], progresses: ["none"], position: above})
   if(above == -1) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level 61hz for it to be above!"})
+  let player = await leaderboardSchema.findOne({name: obj.name})
+  if (!player) {
+        await leaderboardSchema.create({ name: obj.name, levels: [], sixtyOneHertz: [newlev.name], progs: ["none"] })
+      } else {
+        player.sixtyOneHertz.push(newlev.name)
+        await player.save()
+      }
   await sixtyoneSchema.insertMany([newlev])
   everything = await sixtyoneSchema.find().sort({position: 1})
   for(let i = 0; i < everything.length; i++) {
@@ -100,6 +107,20 @@ app.route("/delete61hertz/:name")
   req.body.name = req.params.name
   var level = await sixtyoneSchema.findOne({name: req.body.name.trim()})
   if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level name!"})
+  for(const record of level.list) {
+  await request("https://gdlrrlist.com/api/helper/records", {
+    method: "DELETE",
+    headers: {
+      "content-type": "application/json",
+      "authorization": `Helper ${getCookie("token")}`
+    },
+    body: JSON.stringify({
+      username: record.name,
+      demon: level.name,
+      progress: 100
+    })
+  })
+  }
   await sixtyoneSchema.findOneAndDelete({name: req.body.name.trim()})
   let everything = await sixtyoneSchema.find().sort({position: 1})
   for(let i = level.position-1; i < everything.length; i++) {

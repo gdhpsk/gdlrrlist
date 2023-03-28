@@ -365,7 +365,7 @@ app.use("/", require("./scripts/levels")({ hasAccess, getDetails, levelsSchema, 
 
 // 61hz+ levels
 
-app.use("/", require("./scripts/61hertz")({ hasAccess, getDetails, sixtyoneSchema, webhook }))
+app.use("/", require("./scripts/61hertz")({ hasAccess, getDetails, sixtyoneSchema, webhook, leaderboardSchema, getCookie }))
 
 // records
 
