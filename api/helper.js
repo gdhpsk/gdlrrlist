@@ -310,7 +310,7 @@ if(submission.status != req.body.status) {
      try {
        let exists = await messageSchema.findOne({users: [submission.account, name]}) 
           if(!exists) {
-            let request = await request("https://gdlrrlist.com/api/v1/client/dm", {
+            let makeNew = await request("https://gdlrrlist.com/api/v1/client/dm", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
@@ -334,7 +334,6 @@ if(submission.status != req.body.status) {
           id: exists._id.toString()
         })
       })
-       let json = await alr.body.json()
        if(alr.statusCode == 429) {
          return res.status(429).send({error: config["429"][0], message: config["429"][1]})
        }

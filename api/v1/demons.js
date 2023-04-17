@@ -59,6 +59,7 @@ async function generate(page) {
   })
 
 router.get("/ML", validFields({name: "simplify", type: Number, description: "Simplifies the amount of data recieved.", optional: true}), async (req, res) => {
+  try {
   let ok = await request("https://sites.google.com/view/gd-mobile-lists/top-100-demons-completed")
   let html = await ok.body.text()
   const dom = new JSDOM(html);
@@ -86,7 +87,12 @@ while(true) {
   }
  txt = JSDOM.fragment(txt).textContent.split("(~")[0]
 let g = {}
-g.name = txt.split(`"`)[1].trim()
+console.log(txt.split(`"`))
+try {
+  g.name = txt.split(`"`)[1].trim()
+} catch(_) {
+  continue
+}
 
 if (!req.query.simplify) {
 let level_id = all_pointer_demons.find(e => e.name == g.name)
@@ -154,6 +160,10 @@ obj.push(g)
     obj = Object.values(obj).map(e => e = {"fullname": `${e.name} by ${e.creators.host}`, shortname: e.name.toLowerCase(), points: points(Object.values(obj).indexOf(e)), position: Object.values(obj).indexOf(e)+1})
   }
   res.json(obj)
+  } catch(e) {
+    console.log(e)
+    
+  }
 })
 
 router.get("/random", async (req, res) => {
