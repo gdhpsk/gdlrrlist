@@ -182,7 +182,7 @@ router.route("/submissions")
     return res.json(everything)
   }
 })
-.post(authenticator, rate_lim(60000, 1), validFields({name: "demon", type: String, description: "The name of the demon you want to submit."}, {name: "username", type: String, description: "The player who wants to submit this record."}, {name: "video", type: "URL", description: "The URL of the progress / completion video"}, {name: "comments", type: String, description: "Additional comments the user can add.", optional: true}, {name: "hertz", type: String, description: "The refresh rate the person got this record on."}, {name: "progress", type: Number, description: "The progress this person got on this level."}, {name: "raw", type: "URL", description: "The raw footage of the player playing the level.", optional: true}), async (req, res) => {
+.post(authenticator, validFields({name: "demon", type: String, description: "The name of the demon you want to submit."}, {name: "username", type: String, description: "The player who wants to submit this record."}, {name: "video", type: "URL", description: "The URL of the progress / completion video"}, {name: "comments", type: String, description: "Additional comments the user can add.", optional: true}, {name: "hertz", type: String, description: "The refresh rate the person got this record on."}, {name: "progress", type: Number, description: "The progress this person got on this level."}, {name: "raw", type: "URL", description: "The raw footage of the player playing the level.", optional: true}), async (req, res) => {
   req.body.status = "pending"
   let {id} = jwt.verify(req.headers.authorization.split(" ")[1], process.env.WEB_TOKEN)
   let current_user = await loginSchema.findById(id)
