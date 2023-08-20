@@ -112,7 +112,7 @@ app.route("/delete61hertz/:name")
     method: "DELETE",
     headers: {
       "content-type": "application/json",
-      "authorization": `Helper ${getCookie("token")}`
+      "authorization": `Helper ${getCookie("token", req)}`
     },
     body: JSON.stringify({
       username: record.name,
