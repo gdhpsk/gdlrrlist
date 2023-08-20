@@ -523,7 +523,7 @@ if(submission.status != req.body.status) {
     message = `A completion of the level ${level?.name} by [${player?.name}](${level?.list?.[record]?.link}) has been deleted. `
     level.list = level.list.filter(e => e.name != req.body.username.trim())
     if(level.list.length == 0) {
-      level.list = ["none"]
+      level.list = []
     }
     player[arrayType] = player[arrayType].filter(e => e != level.name)
     await level.save()
