@@ -142,11 +142,10 @@ app.route("/delete61hertz/:name")
 app.route("/move61hzlevel/:name")
 .post(async (req, res) => {
   let approved = await hasAccess(true, req, res);   
-  console.log(approved)
   if(!approved) return res.render("404.ejs")
   
-  let level = await sixtyoneSchema.findOne({name: req.body.name})
-  if(!level) return res.render("404.ejs")
+  let level = await sixtyoneSchema.findOne({name: req.params.name})
+  if(!level) return res.render("404.ejs", {error: "400 BAD REQUEST", message: "This level does not exist!"})
   await request("https://gdlrrlist.com/addlevel", {
     method: "POST",
     headers: {
