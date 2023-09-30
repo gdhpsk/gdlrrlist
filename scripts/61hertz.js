@@ -141,7 +141,10 @@ app.route("/delete61hertz/:name")
 
 app.route("/move61hzlevel/:name")
 .post(async (req, res) => {
-  let approved = await hasAccess(true, req, res);   if(!approved) return res.render("404.ejs")
+  let approved = await hasAccess(true, req, res);   
+  console.log(approved)
+  if(!approved) return res.render("404.ejs")
+  
   let level = await sixtyoneSchema.findOne({name: req.body.name})
   if(!level) return res.render("404.ejs")
   await request("https://gdlrrlist.com/addlevel", {
