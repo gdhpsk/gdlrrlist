@@ -149,7 +149,8 @@ app.route("/move61hzlevel/:name")
   let ok = await request("https://gdlrrlist.com/addlevel", {
     method: "POST",
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "cookie": `token=${getCookie("token", req)}`
     },
     body: JSON.stringify({
        name: req.body.name,
@@ -165,7 +166,8 @@ app.route("/move61hzlevel/:name")
   let lol = await request(`https://gdlrrlist.com/delete61hertz/${level.name}`, {
     method: "POST",
     headers: {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "cookie": `token=${getCookie("token", req)};`
     },
     body: JSON.stringify({})
   })
