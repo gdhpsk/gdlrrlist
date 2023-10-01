@@ -75,6 +75,7 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
     }
   })
   let body = await response.body.json()
+  console.log(body)
   if(response.statusCode != 200) {return res.render("404.ejs", body)}
   let {loggedIn, editing, editable} = await getDetails(req)
   return res.render("added.ejs", {text: "level", type: "added", loggedIn, editing, editable})

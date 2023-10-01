@@ -162,7 +162,6 @@ app.route("/move61hzlevel/:name")
       hertz: level.list[0].hertz
     })
   })
-  let text = ok.statusCode
   let lol = await request(`https://gdlrrlist.com/delete61hertz/${level.name}`, {
     method: "POST",
     headers: {
@@ -170,8 +169,6 @@ app.route("/move61hzlevel/:name")
     },
     body: JSON.stringify({})
   })
-  let text2 = lol.statusCode
-  console.log({text, text2})
   res.redirect(req.headers.referer)
 })
   return app
