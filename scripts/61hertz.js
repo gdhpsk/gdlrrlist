@@ -146,7 +146,7 @@ app.route("/move61hzlevel/:name")
   
   let level = await sixtyoneSchema.findOne({name: req.params.name})
   if(!level) return res.render("404.ejs", {error: "400 BAD REQUEST", message: "This level does not exist!"})
-  await request("https://gdlrrlist.com/addlevel", {
+  let ok = await request("https://gdlrrlist.com/addlevel", {
     method: "POST",
     headers: {
       "content-type": "application/json"
@@ -162,13 +162,16 @@ app.route("/move61hzlevel/:name")
       hertz: level.list[0].hertz
     })
   })
-  await request(`https://gdlrrlist.com/delete61hertz/${level.name}`, {
+  let text = await ok.text()
+  let lol = await request(`https://gdlrrlist.com/delete61hertz/${level.name}`, {
     method: "POST",
     headers: {
       "content-type": "application/json"
     },
     body: JSON.stringify({})
   })
+  let text2 = await lol.text()
+  console.log({text, text2})
   res.redirect(req.headers.referer)
 })
   return app
