@@ -153,7 +153,7 @@ app.route("/move61hzlevel/:name")
       "cookie": `token=${getCookie("token", req)}`
     },
     body: JSON.stringify({
-       name: req.body.name,
+       name: req.params.name,
       ytcode: level.ytcode,
       minimumPercent: req.body.minimumPercent,
       publisher: level.publisher,
@@ -167,7 +167,7 @@ app.route("/move61hzlevel/:name")
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "cookie": `token=${getCookie("token", req)};`
+      "cookie": `token=${getCookie("token", req)}`
     },
     body: JSON.stringify({})
   })
