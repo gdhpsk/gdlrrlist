@@ -11,12 +11,17 @@ const point_calc = require("./point_calc")
 const loginSchema = require("./schemas/logins.js")
 const cookieParser = require("cookie-parser")
 const {REST} = require("@discordjs/rest")
+const dotenv = require("dotenv")
 const {Routes} = require("discord-api-types/v10")
 const rest = new REST({version: '10'}).setToken(discord_token);
 const fetchUser = async id => rest.get(Routes.user(id));
 const {WebSocketServer} = require("ws");
 const {request} = require("undici")
 const http_server = require("http").createServer(app);
+
+if(!process.env.MONGODB_URI) {
+  dotenv.config()
+}
 
 webpush.setVapidDetails(
   'https://gdlrrlist.com',
