@@ -1,5 +1,8 @@
 const express = require('express')
 const app = express()
+if(!process.env.MONGODB_URI) {
+  dotenv.config()
+}
 const {discord_token} = process.env
 const path = require("path")
 const webpush = require("web-push")
@@ -18,10 +21,6 @@ const fetchUser = async id => rest.get(Routes.user(id));
 const {WebSocketServer} = require("ws");
 const {request} = require("undici")
 const http_server = require("http").createServer(app);
-
-if(!process.env.MONGODB_URI) {
-  dotenv.config()
-}
 
 webpush.setVapidDetails(
   'https://gdlrrlist.com',
