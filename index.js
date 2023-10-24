@@ -186,7 +186,7 @@ async function hasCorrectAuth(req, res, authMethods) {
 const cors = require("cors")
 const mongoose = require("mongoose")
 mongoose.connect(process.env.MONGODB_URI, {
-                    dbName: "MobileWRList",
+                    dbName: "gdlrrdemonlist",
                     readPreference: "primaryPreferred",
                     authSource: "$external",
                     authMechanism: "MONGODB-X509",
