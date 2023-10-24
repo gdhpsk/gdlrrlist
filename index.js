@@ -185,7 +185,13 @@ async function hasCorrectAuth(req, res, authMethods) {
 }
 const cors = require("cors")
 const mongoose = require("mongoose")
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+                    dbName: "MobileWRList",
+                    readPreference: "primaryPreferred",
+                    authSource: "$external",
+                    authMechanism: "MONGODB-X509",
+                    tlsCertificateKeyFile: process.env.keyPath
+                })
 app.set('views', path.join(__dirname, 'htdocs'))
 app.set('view engine', "ejs")
 app.use(express.urlencoded({ extended: true }))
