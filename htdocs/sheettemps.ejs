@@ -26,8 +26,8 @@
     <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
     <title>GD LRR Demon List</title>
     <link href="/CSS/levelcards.css?v=2021-03-28" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -73,7 +73,7 @@
            <td><%= Math.round(ok2) %></td>
            <td><button type="button" onclick='putREQ("<%= everything._id %>")'>+</button></td>
        <td><button type="button" onclick='deleteREQ("<%= everything._id %>")'>Delete sheet</button></td>
-           <td><button type="button" onclick="window.location.href = 'https://gdlrrlist.com/sheets'">Go Back</button></td>
+           <td><button type="button" onclick="window.location.href = 'https://test.gdlrrlist.com/sheets'">Go Back</button></td>
          </tr>
        </table>
        <br></br>
@@ -113,7 +113,7 @@
            </table>
      <script>
        async function deleteREQ(name) {
-      let data = await fetch("https://gdlrrlist.com/api/helper/sheets", {
+      let data = await fetch("https://test.gdlrrlist.com/api/helper/sheets", {
         method: "DELETE",
       headers: {  
     'Content-Type': 'application/json'
@@ -126,11 +126,11 @@
         let json = await data.json()
         document.getElementById("error-message").innerText = json.message
       } catch(_) {
-        window.location.href = "https://gdlrrlist.com/sheets"
+        window.location.href = "https://test.gdlrrlist.com/sheets"
       }
     };
        async function putREQ(name) {
-      let data = await fetch("https://gdlrrlist.com/api/helper/sheets", {
+      let data = await fetch("https://test.gdlrrlist.com/api/helper/sheets", {
         method: "PUT",
       headers: {  
     'Content-Type': 'application/json'
@@ -147,7 +147,7 @@
       }
     };
        async function deleteOpinion(obj) {
-      let data = await fetch("https://gdlrrlist.com/api/helper/sheets/opinion", {
+      let data = await fetch("https://test.gdlrrlist.com/api/helper/sheets/opinion", {
         method: "DELETE",
       headers: {  
     'Content-Type': 'application/json'

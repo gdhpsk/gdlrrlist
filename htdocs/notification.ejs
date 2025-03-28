@@ -29,7 +29,7 @@
     async function send(id) {
       let text = document.getElementById("text").value
       if(text == "") return
-      let content = await fetch("https://gdlrrlist.com/api/v1/client/messages", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/client/messages", {
         method: "POST",
         headers: {
           'content-type': "application/json",
@@ -46,7 +46,7 @@
     }
 
     async function del(id) {
-      let content = await fetch("https://gdlrrlist.com/api/v1/client/messages", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/client/messages", {
         method: "DELETE",
         headers: {
           'content-type': "application/json",
@@ -65,7 +65,7 @@
     }
 
     async function delUser(id, user) {
-      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/client/dm", {
         method: "PATCH",
         headers: {
           'content-type': "application/json",
@@ -85,7 +85,7 @@
     }
 
     async function edit(id, user) {
-      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/client/dm", {
         method: "PATCH",
         headers: {
           'content-type': "application/json",
@@ -105,7 +105,7 @@
     }
 
     async function titleChange(id) {
-      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/client/dm", {
         method: "PATCH",
         headers: {
           'content-type': "application/json",
@@ -149,9 +149,9 @@ document.getElementById(smt).style.height = "20px"
     <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
     <title>GD LRR Demon List</title>
     <link href='https://css.gg/search.css' rel='stylesheet'>
-    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-04-23" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/levelcards.css?v=2021-04-23" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -256,7 +256,7 @@ document.getElementById(smt).style.height = "20px"
     document.getElementById("levs2").innerHTML = txt
   })
 </script>
-     <script src="https://gdlrrlist.com/JS/collapsible.js?v=2020-10-06"></script>
-     <script src="https://gdlrrlist.com/JS/dropdown.js?v=2022-04-6"></script><script src="https://gdlrrlist.com/JS/videoresize.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
+     <script src="https://test.gdlrrlist.com/JS/collapsible.js?v=2020-10-06"></script>
+     <script src="https://test.gdlrrlist.com/JS/dropdown.js?v=2022-04-6"></script><script src="https://test.gdlrrlist.com/JS/videoresize.js"></script><script src="https://test.gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
   </body>
 </html>

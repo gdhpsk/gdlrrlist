@@ -9,10 +9,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>GD LRR Demon List</title>
-    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/changelog.css?v=2020-10-05" rel="stylesheet" type="text/css" />
-     <link href="https://gdlrrlist.com/CSS/table?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/changelog.css?v=2020-10-05" rel="stylesheet" type="text/css" />
+     <link href="https://test.gdlrrlist.com/CSS/table?v=2021-03-23" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -31,15 +31,15 @@
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
      <h1>Introduction</h1>
      <h4>The LRR API is used for a variety of different things, including 
-fetching demons, changing the database, and YOU can use it as well. The base route of the api is <a href="https://gdlrrlist.com/api">https://gdlrrlist.com/api</a>, and here are some docs below to get you started: </h4>
+fetching demons, changing the database, and YOU can use it as well. The base route of the api is <a href="https://test.gdlrrlist.com/api">https://test.gdlrrlist.com/api</a>, and here are some docs below to get you started: </h4>
 
      <div style="display: grid; place-items: center;">
        <h1>Tokens</h1>
        <p>Most users, if you are logged in, have a token to prove that they are logged in. The LRR List uses JWT tokens, and you can easily find your token by going into your cookies. To use this token with any route, you have to use the appropriate prefix based on the permission level of the route. For example, for any "User" route, you have to set an authentication header of "User [token]". So for example, this route below would only require the "User" authentication level.</p>
-       <div style="background: var(--header-color); padding: 10px;"><div style="padding:25px; color: var(--txt-color);">GET https://gdlrrlist.com/api/v1/demons<br>
+       <div style="background: var(--header-color); padding: 10px;"><div style="padding:25px; color: var(--txt-color);">GET https://test.gdlrrlist.com/api/v1/demons<br>
 Authorization: User [token]</div></div>
        <p>However, if you were using say, a leader route, then your authentication header should look like this:</p>
-       <div style="background: var(--header-color); padding: 10px;"><div style="padding:25px; color: var(--txt-color);">PATCH https://gdlrrlist.com/leader/settings<br>
+       <div style="background: var(--header-color); padding: 10px;"><div style="padding:25px; color: var(--txt-color);">PATCH https://test.gdlrrlist.com/leader/settings<br>
 Authorization: Leader [token]</div></div>
        <p>If you want to know what prefix you should use, generally the permission level of the API routes specified in the boxes shown below are the prefixes also. These prefixes are also case-sensitive, so be careful!</p>
        <h1>Rate Limits</h1>
@@ -63,7 +63,7 @@ X-Ratelimit-Reset: 1668995076</div></div>
            }%>
     
    </div>
-    <script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
-    <script src="https://gdlrrlist.com/extrascripts/sheets.js"></script>
+    <script src="https://test.gdlrrlist.com/JS/dropdown.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
+    <script src="https://test.gdlrrlist.com/extrascripts/sheets.js"></script>
   </body>
 </html>

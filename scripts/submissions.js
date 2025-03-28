@@ -8,7 +8,7 @@ module.exports = (obj) => {
 
 
 app.get("/archive", async (req, res) => {
-  const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions`, {
+  const submissions = await request(`https://test.gdlrrlist.com/api/v1/client/submissions`, {
     headers: {
       authorization: `Helper ${getCookie("token", req)}`
     }
@@ -23,7 +23,7 @@ app.get("/archive", async (req, res) => {
 })
 
 app.get("/archive/:num", async (req, res) => {
-   const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions`, {
+   const submissions = await request(`https://test.gdlrrlist.com/api/v1/client/submissions`, {
     headers: {
       authorization: `Helper ${getCookie("token", req)}`
     }
@@ -46,7 +46,7 @@ app.get("/archive/:num", async (req, res) => {
 })
 
 app.get("/user", async (req, res) => {
-  const submissions = await request('https://gdlrrlist.com/api/v1/client/submissions', {
+  const submissions = await request('https://test.gdlrrlist.com/api/v1/client/submissions', {
     headers: {
       authorization: `User ${getCookie("token", req)}`
     }
@@ -60,7 +60,7 @@ app.get("/user", async (req, res) => {
 })
 
   app.get("/user/:num", async (req, res) => {
-  const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions?num=${req.params.num}`, {
+  const submissions = await request(`https://test.gdlrrlist.com/api/v1/client/submissions?num=${req.params.num}`, {
     headers: {
       authorization: `User ${getCookie("token", req)}`
     }
@@ -80,7 +80,7 @@ app.get("/user", async (req, res) => {
 })
 
 app.get("/:num", async (req, res) => {
-  const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions?num=${req.params.num}`, {
+  const submissions = await request(`https://test.gdlrrlist.com/api/v1/client/submissions?num=${req.params.num}`, {
     headers: {
       authorization: `Spectator ${getCookie("token", req)}`
     }
@@ -100,7 +100,7 @@ app.get("/:num", async (req, res) => {
 })
 
   app.get("/", async (req, res) => {
-  const submissions = await request('https://gdlrrlist.com/api/v1/client/submissions', {
+  const submissions = await request('https://test.gdlrrlist.com/api/v1/client/submissions', {
     headers: {
       authorization: `Spectator ${getCookie("token", req)}`
     }
@@ -114,7 +114,7 @@ app.get("/:num", async (req, res) => {
 })
 
 app.post("/status",async (req, res) => {
-  let submit = await request("https://gdlrrlist.com/api/helper/submissions/mod", {
+  let submit = await request("https://test.gdlrrlist.com/api/helper/submissions/mod", {
     headers: {
       'content-type': "application/json",
       authorization: `Helper ${getCookie("token", req)}`

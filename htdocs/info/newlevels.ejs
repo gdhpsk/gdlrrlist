@@ -10,9 +10,9 @@
     <meta name="author" content="ryan9328">
     <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
     <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
-    <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/panel.css?v=2022-12-01" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/panel.css?v=2022-12-01" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -34,9 +34,6 @@
     <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
     <div style="display: grid; place-items: center;">
-       <% if(locals.editing) { %> 
-         <p>Want to add a completion/progress? Go here: <a href="https://gdlrrlist.com/add">https://gdlrrlist.com/add</a>. To delete, go here: <a href="https://gdlrrlist.com/deletesub">https://gdlrrlist.com/deletesub</a></p>
-         <% } %>
     <% let fe_pos = Object.keys(everything).findIndex(e => e == "Final Epilogue")+1
           %>
         <% let total_records = locals.list.length
@@ -46,13 +43,13 @@
             %>
     <div style="display: flex; overflow: hidden;">
       <% if(position != 1) { %>
-      <i class="fas fa-angle-left" style="font-size: 40px; margin:0.67em 0; " onclick="window.location.href = '/level/<%= position - 1 %>'"></i>
+      <i class="fa fa-angle-left" style="font-size: 40px; margin:0.67em 0; " onclick="window.location.href = '/level/<%= position - 1 %>'"></i>
          <%} %>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <h1 id = "levelName">#<%= position %>. <%= name %></h1>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <% if(position != Object.keys(everything).length) { %>
-        <i class="fas fa-angle-right" style="font-size: 40px; margin:0.67em 0;" onclick="window.location.href = '/level/<%= position + 1 %>'"></i>
+        <i class="fa fa-angle-right" style="font-size: 40px; margin:0.67em 0;" onclick="window.location.href = '/level/<%= position + 1 %>'"></i>
           <% } %>
     </div>
     <span><i><% if(locals.pc_info.creators) { %>
@@ -67,7 +64,6 @@
     <% let videoLink = "https://www.youtube.com/embed/" + ytcode %> 
     <iframe src="<%= videoLink %>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       <p></p>
-      <% if(!locals.editing) { %>
        <link href="/CSS/table.css?v=2022-11-12" rel="stylesheet" type="text/css" />
       <div style="display: grid; align-items: center;">
         <% if(position > fe_pos) { %>
@@ -103,20 +99,20 @@
     <% for(let i = 0; i < locals.list.length; i++) {%>
      <tr style="font-weight: bold;">
        <td><% if(locals.list[i].nationality) { %> <abbr title="<%= locals.list[i].realnation.replace(/_/g, ' ') %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.list[i].nationality %>.svg" style="margin: -3px;"></abbr></img><% } else {%> <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr> <% } %></td>
-         <td><a href="https://gdlrrlist.com/leaderboard/<%= locals.list[i].name %>" style="color: black;"><%= locals.list[i].name %></a></td>
+         <td><a href="https://test.gdlrrlist.com/leaderboard/<%= locals.list[i].name %>" style="color: black;"><%= locals.list[i].name %></a></td>
          <td>100</td>
          <td><%= locals.list[i].hertz %></td>
-         <td><a href="<%= locals.list[i].link %>" target="_blank"><i style="color: blue;" class="fas fa-external-link-alt"></i></a></td>
+         <td><a href="<%= locals.list[i].link %>" target="_blank"><i style="color: blue;" class="fa fa-external-link-alt"></i></a></td>
        </tr>
       <% } %>
         <% if(position < 76 && locals.progresses[0] != "none") { %>
         <%  for(let i = 0; i < locals.progresses.length; i++) {%>
            <tr>
        <td><% if(locals.progresses[i].nationality) { %> <abbr title="<%= locals.progresses[i].realnation.replace(/_/g, ' ') %>" style="display: inline; border-bottom:none;"><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= locals.progresses[i].nationality %>.svg" style="margin: -3px;"></abbr></img><% } else {%> <abbr title="International" style="display: inline; border-bottom:none;"><img class="nationality" src="https://github.com/ppy/osu-resources/blob/master/osu.Game.Resources/Textures/Flags/__.png?raw=true" width="24" height="18"></img></abbr> <% } %></td>
-         <td><a href="https://gdlrrlist.com/leaderboard/<%= locals.progresses[i].name %>" style="color: black;"><%= locals.progresses[i].name %></a></td>
+         <td><a href="https://test.gdlrrlist.com/leaderboard/<%= locals.progresses[i].name %>" style="color: black;"><%= locals.progresses[i].name %></a></td>
          <td><%= locals.progresses[i].percent %></td>
          <td><%= locals.progresses[i].hertz %></td>
-         <td><a href="<%= locals.progresses[i].link %>" target="_blank"><i style="color: blue;" class="fas fa-external-link-alt"></i></a></td>
+         <td><a href="<%= locals.progresses[i].link %>" target="_blank"><i style="color: blue;" class="fa fa-external-link"></i></a></td>
      </tr>
       <% }
         }
@@ -124,63 +120,6 @@
         <br>
         </table>
       </div>
-        <% } else { %>
-          <style>
-   table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-    }
-    td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-  </style>
-            <p>Records (<%= position < 76 ? locals.minimumPercent : 100 %>% Required)</p> 
-              <table>
-       <tr>
-         <th>Nationality</th>
-         <th>Hertz</th>
-         <th>Percent</th>
-         <th>Link</th>
-         <th>Name</th>
-         <th>Pos</th>
-         <th>Update Info</th>
-       </tr>
-    <% for(let i = 0; i < locals.list.length; i++) {%>
-      <tr>
-        <form action="https://gdlrrlist.com/editrecordcomp/<%= locals.name %>/<%= i %>" method="post">
-        <td>
-     <%= locals.list[i].realnation ? locals.list[i].realnation.replace(/_/g, " ") : "None" %>
-       </td>
-        <td><input value="<%= locals.list[i].hertz %>" name="hertz" style="width: 4ch;"></td>
-        <td>100%</td>
-        <td><input value="<%= locals.list[i].link %>" name="link" style="width: <%= locals.list[i].link.length %>ch;"></td>
-        <td><%= locals.list[i].name %></td>
-        <td><input name="pos" type="number" value="<%= i+1 %>" style="width: 5ch;"></td>
-         <td><button type="submit">Update</button></td>
-        </form>
-       </tr>
-      <% } %>
-        <% if(position < 76 && locals.progresses[0] != "none") { %>
-        <%  for(let i = 0; i < locals.progresses.length; i++) {%>
-     <tr>
-       <form action="https://gdlrrlist.com/editrecordprog/<%= locals.name %>/<%= i %>" method="post">
-        <td>
-     <%= locals.progresses[i].realnation ? locals.progresses[i].realnation.replace(/_/g, " ") : "None" %>
-       </td>
-        <td><input value="<%= locals.progresses[i].hertz %>" name="hertz" style="width: 4ch;"></td>
-       <td><%= locals.progresses[i].percent %>%</td>
-        <td><input value="<%= locals.progresses[i].link %>" name="link" style="width: <%= locals.progresses[i].link.length %>ch;"></td>
-        <td><%= locals.progresses[i].name %></td>
-         <td><%= i+1 %></td>
-         <td><button type="submit">Update</button></td>
-       </form>
-       </tr>
-      <% }
-        }%>
-        </table>
-          <% } %>
         </div>
 
     <!-- scripts to include -->
@@ -190,7 +129,7 @@
                 element.style.background = "#ddd"
               }
             </script>
-    <script src="https://gdlrrlist.com/JS/collapsible.js?v=2020-10-05"></script><script src="https://gdlrrlist.com/JS/collapsiblebig.js?v=2020-10-05"></script><script src="https://gdlrrlist.com/JS/dropdown.js"></script><script src="https://gdlrrlist.com/JS/videoresize.js"></script><script src="https://gdlrrlist.com/JS/darkbutton.js"></script>
+    <script src="https://test.gdlrrlist.com/JS/collapsible.js?v=2020-10-05"></script><script src="https://test.gdlrrlist.com/JS/collapsiblebig.js?v=2020-10-05"></script><script src="https://test.gdlrrlist.com/JS/dropdown.js"></script><script src="https://test.gdlrrlist.com/JS/videoresize.js"></script><script src="https://test.gdlrrlist.com/JS/darkbutton.js"></script>
 
   </body>
 </html>

@@ -73,9 +73,9 @@ input:checked + .slider:before {
     <meta name="keywords" content="ryan9328,official,geometry,dash,hardest,extreme,insane,demon,list,demonlist,hardest,levels,gmd,gd,typier,game,top,level,levels,player,players,geometry dash, LRR, 60hz, 60HZ, 75hz, 75HZ, geometry dash 60hz demonlist, GD 60hz list">
     <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
     <title>GD LRR Demon List</title>
-  <link href="https://gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
-    <link href="https://gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
+  <link href="https://test.gdlrrlist.com/CSS/levelcards.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/nav.css?v=2021-03-23" rel="stylesheet" type="text/css" />
+    <link href="https://test.gdlrrlist.com/CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -98,9 +98,9 @@ input:checked + .slider:before {
   <h3 style="margin-top: -20px; text-align: center;">Google ID: <%= locals.user.google ? locals.user.google : "none" %></h3>
   <hr style="width: 95%; background-color: white"/>
   <h4 style="text-align: center;">Add / Change Socials</h4>
-<button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="window.location.href = 'https://discord.com/api/oauth2/authorize?client_id=1033274582855065704&redirect_uri=https%3A%2F%2Fgdlrrlist.com&response_type=code&scope=identify'"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Discord</p></button>
+<button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="window.location.href = 'https://discord.com/api/oauth2/authorize?client_id=1033274582855065704&redirect_uri=https%3A%2F%2Ftest.gdlrrlist.com&response_type=code&scope=identify'"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Discord</p></button>
 <p>
-      <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="window.location.href = 'https://gdlrrlist.com/google_signin'"><p><img style="height: 25px; margin: -4px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png"></img>&nbsp;&nbsp;Google</p></button>
+      <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="window.location.href = 'https://test.gdlrrlist.com/google_signin'"><p><img style="height: 25px; margin: -4px;" src="https://test.gdlrrlist.com/icons/google.png"></img>&nbsp;&nbsp;Google</p></button>
   <% if(locals.user.discord || locals.user.google) { %>
   <hr style="width: 95%; background-color: white"/>
   <h4 style="text-align: center;">Remove Socials</h4>
@@ -111,7 +111,7 @@ input:checked + .slider:before {
       <p>
       <% } %>
     <% if(locals.user.google) { %>
-      <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="remove('google')"><p><img style="height: 25px; margin: -4px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png"></img>&nbsp;&nbsp;Google</p></button>
+      <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="remove('google')"><p><img style="height: 25px; margin: -4px;" src="https://test.gdlrrlist.com/icons/google.png"></img>&nbsp;&nbsp;Google</p></button>
       <% } %>
   <br id="err"></br>
     <% } %>
@@ -142,7 +142,7 @@ input:checked + .slider:before {
 </div>
       
       <hr style="width: 95%; background-color: white"/>
-      <p style="text-align: center;">Leaderboard account: <a href="https://gdlrrlist.com/leaderboard/<%= locals.name %>"><%= locals.name ?? "none" %></a></p>
+      <p style="text-align: center;">Leaderboard account: <a href="https://test.gdlrrlist.com/leaderboard/<%= locals.name %>"><%= locals.name ?? "none" %></a></p>
       <hr style="width: 95%; background-color: white"/>
       <div style="display: grid; place-items: center;">
        <button style="border-radius: 25px; border: 2px solid red; background-color: red; color: black; height: 75px;" onclick="del()">Delete Account</button>
@@ -152,7 +152,7 @@ input:checked + .slider:before {
       <% if(locals.user.discord || locals.user.google) { %>
       <script>
         async function remove(type) {
-          let content = await fetch("https://gdlrrlist.com/api/v1/client/login", {
+          let content = await fetch("https://test.gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
                 authorization: `User ${getCookie("token")}`,
@@ -176,7 +176,7 @@ input:checked + .slider:before {
         <% if(locals.user.discord) { %>
         let element = document.getElementById("mail")
           element.onchange = async function() {
-             let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
+             let res = await fetch("https://test.gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
                 authorization: `User ${getCookie("token")}`,
@@ -190,7 +190,7 @@ input:checked + .slider:before {
           }
 <% } %>
             async function del() {
-           let content = await fetch("https://gdlrrlist.com/api/v1/client/login", {
+           let content = await fetch("https://test.gdlrrlist.com/api/v1/client/login", {
               method: "DELETE",
               headers: {
                 authorization: `User ${getCookie("token")}`,
@@ -206,7 +206,7 @@ input:checked + .slider:before {
         }
         let element2 = document.getElementById("pc_info")
           element2.onchange = async function() {
-             let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
+             let res = await fetch("https://test.gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
                 authorization: `User ${getCookie("token")}`,
@@ -220,7 +220,7 @@ input:checked + .slider:before {
           }
           let element3 = document.getElementById("full_page_lead")
           element3.onchange = async function() {
-             let res = await fetch("https://gdlrrlist.com/api/v1/client/login", {
+             let res = await fetch("https://test.gdlrrlist.com/api/v1/client/login", {
               method: "PATCH",
               headers: {
                 authorization: `User ${getCookie("token")}`,

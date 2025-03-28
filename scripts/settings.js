@@ -15,7 +15,7 @@ module.exports = (obj) => {
   return res.render("../misc/accessible.ejs", {editable, editing, loggedIn, everything, active: "settings"})
 })
 .post(async (req, res) => {
-   let response = await request("https://gdlrrlist.com/api/mods/settings", {
+   let response = await request("https://test.gdlrrlist.com/api/mods/settings", {
     method: "POST",
     headers: {
       "authorization": `Moderator ${getCookie("token", req)}`,

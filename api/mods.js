@@ -23,6 +23,7 @@ const config = require("./config.json")
 const { default: mongoose } = require("mongoose")
 const allowedPeople = require("../schemas/allowedPeople.js")
 const levelsSchema = require("../schemas/levels.js")
+const sixtyoneSchema = require("../schemas/61hertz.js")
 const loginSchema = require("../schemas/logins")
 const leaderboardSchema = require("../schemas/leaderboard.js")
 const jwt = require("jsonwebtoken")
@@ -176,39 +177,31 @@ router.route("/bans")
 
   router.route("/levels")
     .post(async (req, res) => {
-      var obj = {
-        name: req.body.username.trim(),
-        link: req.body.link.trim(),
-        hertz: req.body.hertz.trim()
-      }
+      let obj = req.body.completion
       req.body.list = [obj]
       req.body.progresses = ["none"]
       if (!req.body.minimumPercent) {
         delete req.body.minimumPercent
       }
-      if (req.body.placement < 76 && !req.body.minimumPercent) return res.status(400).json({ error: config["400"], message: "This placement requires a minimum percent to be included!" })
+      if (req.body.position < 76 && !req.body.minimumPercent) return res.status(400).json({ error: config["400"], message: "This placement requires a minimum percent to be included!" })
       req.body.name = req.body.name.trim()
       req.body.ytcode = req.body.ytcode.trim()
       req.body.publisher = req.body.publisher.trim()
-      req.body.position = req.body.placement - 1
+      let length = await levelsSchema.count()
+      if(length+1 < req.body.position || req.body.position <= 0) return res.status(400).json({ error: config["400"], message: "Not a valid position number" })
       var newlev = new levelsSchema(req.body)
-      var player = await leaderboardSchema.findOne({ name: obj.name })
-      if (!player) {
-        await leaderboardSchema.create({ name: obj.name, levels: [newlev.name], progs: ["none"] })
-      } else {
-        player.levels.push(newlev.name)
-        await player.save()
-      }
-      await levelsSchema.insertMany([newlev])
-      let everything = await levelsSchema.find().sort({ position: 1 })
-      for (let i = 0; i < everything.length; i++) {
-        await levelsSchema.findOneAndUpdate({ name: everything[i].name }, {
-          $set: {
-            position: i + 1
+      await levelsSchema.updateMany({position: {$gte: req.body.position}}, {
+          $inc: {
+            position: 1
           }
         })
-      }
-      webhook(`A new level by the name of ${newlev.name} has been added at #${req.body.placement}. (completion: [${obj.name} on ${obj.hertz}${isNaN(obj.hertz) ? "" : "hz"}](${obj.link}))`, null, {
+      await leaderboardSchema.updateOne({name: obj.name}, {
+        $push: {
+          levels: newlev.name
+        }
+      }, {upsert: true})
+      await levelsSchema.insertMany([newlev])
+      webhook(`A new level by the name of ${newlev.name} has been added at #${req.body.position}. (completion: [${obj.name} on ${obj.hertz}${isNaN(obj.hertz) ? "" : "hz"}](${obj.link}))`, null, {
         event: "LEVEL_ADD",
         data: {
           name: newlev.name,
@@ -223,43 +216,32 @@ router.route("/bans")
       return res.status(200).send(newlev)
     })
     .delete(async (req, res) => {
-      var level = await levelsSchema.findOne({ name: req.body.name.trim() })
+      let level = await levelsSchema.findById(req.body._id)
       if (!level) return res.status(400).json({ error: config["400"], message: "Please input a valid level name!" })
-      for (let i = 0; i < level.list.length; i++) {
-        var player = await leaderboardSchema.findOne({ name: level.list[i].name })
-        if (player) {
-          player.levels = player.levels.filter(e => e != level.name)
-          await player.save()
-          if (player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
-            await leaderboardSchema.findByIdAndDelete(player._id.toString())
-          }
-        } else {
-          console.log(level.list[i].name)
-        }
-      }
-      if (level.progresses) {
-        if (level.progresses[0] != "none") {
-          for (let i = 0; i < level.progresses.length; i++) {
-            var player = await leaderboardSchema.findOne({ name: level.progresses[i].name })
-            if (player) {
-              player.progs = player.progs.filter(e => e.name != level.name)
-              if (player.progs.length == 0) {
-                player.progs[0] = "none"
+      await leaderboardSchema.updateMany({name: {$in: level.list.map(e => e.name)}}, [{
+          $set: {
+            levels: {
+              $filter: {
+                input: "$levels",
+                cond: {
+                  $ne: [level.name, "$$this"]
+                }
               }
-              await player.save()
-              if (player.levels.length + player.progs.length == 0 || !player.levels[0] && player.progs[0] == "none") {
-                await leaderboardSchema.findByIdAndDelete(player._id.toString())
+            },
+            progs: {
+              $filter: {
+                input: "$progs",
+                cond: {
+                  $ne: [level.name, "$$this.name"]
+                }
               }
-            } else {
-              console.log(level.progresses[i].name)
             }
           }
-        }
-      }
+      }])
       if (req.body.reason != "") {
-        var everything = await levelsSchema.find().sort({ position: 1 })
+        var everything = await levelsSchema.count()
         let obj4 = {
-          position: everything.length + 1,
+          position: everything + 1,
           name: level.name,
           ytcode: level.ytcode,
           removalDate: dayjs(Date.now()).format("MMMM D, YYYY"),
@@ -276,21 +258,86 @@ router.route("/bans")
         await levelsSchema.create(obj4)
         await levelsSchema.findByIdAndDelete(level._id.toString())
       } else {
-        await levelsSchema.findOneAndDelete({ name: req.body.name.trim() })
+        await levelsSchema.findByIdAndDelete(level._id.toString())
       }
-      var everything = await levelsSchema.find().sort({ position: 1 })
-      for (let i = level.position - 1; i < everything.length; i++) {
-        await levelsSchema.findOneAndUpdate({ name: everything[i].name }, {
-          $set: {
-            position: i + 1
-          }
-        })
-      }
-      webhook(`A level by the name of ${req.body.name.trim()} has been deleted. (reason: ${req.body.reason ? req.body.reason.trim() : "not provided"})`, {
+      await levelsSchema.updateMany({position: {$gt: level.position}}, {
+        $inc: {
+          position: -1
+        }
+      })
+      webhook(`A level by the name of ${level.name} has been deleted. (reason: ${req.body.reason ? req.body.reason.trim() : "not provided"})`, null, {
         event: "LEVEL_DELETE",
         data: {
-          name: req.body.name.trim(),
+          name: level.name.trim(),
           reason: req.body.reason ? req.body.reason.trim() : "not provided"
+        }
+      })
+      return res.status(200).send(level)
+    })
+
+    router.route("/levels/61hertz")
+    .post(async (req, res) => {
+      let obj = req.body.completion
+      req.body.list = [obj]
+      req.body.progresses = ["none"]
+      req.body.minimumPercent = 57
+      req.body.name = req.body.name.trim()
+      req.body.ytcode = req.body.ytcode.trim()
+      req.body.publisher = req.body.publisher.trim()
+      let length = await sixtyoneSchema.count()
+      if(length+1 < req.body.position || req.body.position <= 0) return res.status(400).json({ error: config["400"], message: "Not a valid position number" })
+      var newlev = new sixtyoneSchema(req.body)
+      await sixtyoneSchema.updateMany({position: {$gte: req.body.position}}, {
+          $inc: {
+            position: 1
+          }
+        })
+        await leaderboardSchema.updateOne({name: obj.name}, {
+          $push: {
+            sixtyOneHertz: newlev.name
+          }
+        }, {upsert: true})
+        await sixtyoneSchema.insertMany([newlev])
+      webhook(`A new 61hz level by the name of ${newlev.name} has been added at #${req.body.position}. (completion: [${obj.name} on ${obj.hertz}${isNaN(obj.hertz) ? "" : "hz"}](${obj.link}))`, null, {
+        event: "61HERTZ_LEVEL_ADD",
+        data: {
+          name: newlev.name,
+          placement: req.body.position,
+          completion: {
+            name: obj.name,
+            link: obj.link,
+            hertz: obj.hertz
+          }
+        }
+      })
+      return res.status(200).send(newlev)
+    })
+    .delete(async (req, res) => {
+      var level = await sixtyoneSchema.findById(req.body._id)
+      if (!level) return res.status(400).json({ error: config["400"], message: "Please input a valid level name!" })
+      await leaderboardSchema.updateMany({name: {$in: level.list.map(e => e.name)}}, [{
+          $set: {
+            sixtyOneHertz: {
+              $filter: {
+                input: "$sixtyOneHertz",
+                cond: {
+                  $ne: [level.name, "$$this"]
+                }
+              }
+            }
+          }
+      }])
+        await sixtyoneSchema.findByIdAndDelete(level._id.toString())
+      await sixtyoneSchema.updateMany({position: {$gt: level.position}}, {
+        $inc: {
+          position: -1
+        }
+      })
+      webhook(`A 61hz level by the name of ${level.name.trim()} has been deleted. (reason: ${req.body.reason ? req.body.reason.trim() : "not provided"})`, null, {
+        event: "61HERTZ_LEVEL_DELETE",
+        data: {
+          name: level.name.trim(),
+          reason: req.body.reason ? req.body.reason?.trim() : "not provided"
         }
       })
       return res.status(200).send(level)

@@ -31,7 +31,7 @@ document.getElementById(smt).style.height = "20px"
     async function make() {
       let text = document.getElementById("newDM").value
       if(text == "") return
-      let content = await fetch("https://gdlrrlist.com/api/v1/client/dm", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/client/dm", {
         method: "POST",
         headers: {
           'content-type': "application/json",

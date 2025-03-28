@@ -8,7 +8,7 @@ module.exports = (obj) => {
 
   app.post("/editlevel/:name", async(req, res) => {
     req.body.name = req.params.name
-    let response = await request("https://gdlrrlist.com/api/helper/levels", {
+    let response = await request("https://test.gdlrrlist.com/api/helper/levels", {
       method: "PATCH",
       body: JSON.stringify(req.body),
       headers: {
@@ -24,7 +24,7 @@ module.exports = (obj) => {
   app.post("/editrecordcomp/:level/:id", async (req, res) => {
   req.body.level = req.params.level
     req.body.id = req.params.id
-    let response = await request("https://gdlrrlist.com/api/helper/records/comp", {
+    let response = await request("https://test.gdlrrlist.com/api/helper/records/comp", {
       method: "PATCH",
       body: JSON.stringify(req.body),
       headers: {
@@ -43,7 +43,7 @@ module.exports = (obj) => {
 app.post("/editrecordprog/:level/:id", async (req, res) => {
    req.body.level = req.params.level
     req.body.id = req.params.id
-    let response = await request("https://gdlrrlist.com/api/helper/records/prog", {
+    let response = await request("https://test.gdlrrlist.com/api/helper/records/prog", {
       method: "PATCH",
       body: JSON.stringify(req.body),
       headers: {
@@ -66,7 +66,7 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
   return res.render("../adding/addlevel.ejs", {loggedIn, editing, editable})
 })
 .post(async (req, res) => {
-  let response = await request("https://gdlrrlist.com/api/mods/levels", {
+  let response = await request("https://test.gdlrrlist.com/api/mods/levels", {
     method: "POST",
     body: JSON.stringify(req.body),
     headers: {
@@ -83,7 +83,7 @@ app.post("/editrecordprog/:level/:id", async (req, res) => {
 app.route("/deletelevel/:name") 
 .post(async (req, res) => {
   req.body.name = req.params.name
-  let response = await request("https://gdlrrlist.com/api/mods/levels", {
+  let response = await request("https://test.gdlrrlist.com/api/mods/levels", {
     method: "DELETE",
     body: JSON.stringify(req.body),
     headers: {

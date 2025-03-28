@@ -6,6 +6,7 @@ const {request} = require("undici")
 const { JSDOM } = require("jsdom");
 const opinionSchema = require("../../schemas/opinions.js")
 const levelsSchema = require("../../schemas/levels.js")
+const sixtyoneSchema = require("../../schemas/61hertz.js")
 const dayjs = require("dayjs")
 const {validFields} = require("../functions")
 let reg  = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/
@@ -60,6 +61,18 @@ async function generate(page) {
 
 router.get("/ML", validFields({name: "simplify", type: Number, description: "Simplifies the amount of data recieved.", optional: true}), async (req, res) => {
   try {
+    let missing = {
+      "https://youtu.be/5syD5fzNDr0": "8/8/2021",
+      "https://youtu.be/arovnunYKdI": "5/17/2022",
+      "https://youtu.be/emW1nzNe-z0": "3/28/2023",
+      "https://youtu.be/0LH2n5-uZTk": "12/17/2020",
+      "https://youtu.be/0jStfh5jTpU": "1/31/2022",
+      "https://youtu.be/kXdbZSDWkuo": "7/26/2020",
+      "https://youtu.be/cHU0RVgvR3o": "8/16/2022",
+      "https://youtu.be/kqMiAstJSsc": "10/3/2023",
+      "https://youtu.be/8rGAEbAjFf8": "6/16/2021",
+      "https://youtu.be/4H5_WPUntQE": "10/10/2021"
+    }
   let ok = await request("https://sites.google.com/view/gd-mobile-lists/top-100-demons-completed")
   let html = await ok.body.text()
   const dom = new JSDOM(html);
@@ -111,9 +124,10 @@ for(let x = 0; x < records.length; x++) {
   ).replace("-", "").trim()
   recordarr.push({
     name,
-    link: parts.find(e => e.toLowerCase().includes("youtu") || e.toLowerCase().startsWith("https://"))
+    link: parts.find(e => e.toLowerCase().includes("youtu") || e.toLowerCase().startsWith("https://")).trim()
   })
   if(!req.query.simplify) {
+    console.log(recordarr[x].link)
     arr_of_yt_ids.push(reg.exec(recordarr[x].link)[1])
   }
   if(!recordarr[x].link.startsWith("https://")) {
@@ -145,7 +159,7 @@ obj.push(g)
       let data = arr_of_yt_results.find(o => o.id == reg.exec(e.link)[1])
       
       if(!data) {
-    e.uploadDate = dayjs().format("M/D/YYYY")
+    e.uploadDate = missing[e.link] || dayjs().format("M/D/YYYY")
   } else {
     e.uploadDate = dayjs(Date.parse(data.snippet.publishedAt)).format("M/D/YYYY")
   }
@@ -153,6 +167,7 @@ obj.push(g)
         
       }
     })
+    item.records.sort((a,b) => dayjs(a.uploadDate, "M/D/YYYY").toDate().getTime() - dayjs(b.uploadDate, "M/D/YYYY").toDate().getTime())
   })
   }
   if(req.query.amp) {
@@ -239,7 +254,7 @@ router.get("/random", async (req, res) => {
 })
 
 router.get("/MLL", async (req, res) => {
-  let list = await request(`https://gdlrrlist.com/api/v1/demons/ML?simplify=true`)
+  let list = await request(`https://test.gdlrrlist.com/api/v1/demons/ML?simplify=true`)
   let array = await list.body.json()
   let obj = {}
   for(let item of array) {
@@ -290,12 +305,34 @@ router.get("/", validFields({name: "start", type: Number, description: "What pla
   res.json(everything)
 })
 
+router.get("/61hertz", validFields({name: "start", type: Number, description: "What placement do you want to start from?", optional: true}, {name: "end", type: Number, description: "What placement do you want to end the query at?", optional: true}), async (req, res) => {
+  let config = {
+    position: {
+      $gt: (req.query.start ?? 1)-1,
+      $lt: req.query.end
+    }
+  }
+   if(config.position["$lt"] === undefined) {
+     delete config.position["$lt"]
+   }
+  let everything = await sixtyoneSchema.find(config).sort({position: 1})
+  res.json(everything)
+})
+
 router.get("/:id", validFields({name: "id", type: Number, body_type: "params", description: "The placement of the level on the list"}), async (req, res) => {
   if(isNaN(req.params.id)) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})
   let level = await levelsSchema.findOne({position: req.params.id})
   if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})
   res.json(level)
 })
+
+router.get("/61hertz/:id", validFields({name: "id", type: Number, body_type: "params", description: "The placement of the level on the list"}), async (req, res) => {
+  if(isNaN(req.params.id)) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})
+  let level = await sixtyoneSchema.findOne({position: req.params.id})
+  if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level position!"})
+  res.json(level)
+})
+
 
 
 

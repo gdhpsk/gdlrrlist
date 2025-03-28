@@ -13,7 +13,7 @@ module.exports = (obj) => {
   return res.render("../deleting/deletesub.ejs", {editing, loggedIn, editable})
 })
 .post(async (req, res) => {
-  let response = await request("https://gdlrrlist.com/api/helper/records", {
+  let response = await request("https://test.gdlrrlist.com/api/helper/records", {
     method: "DELETE",
     headers: {
       'authorization': `Helper ${getCookie("token", req)}`,
@@ -36,7 +36,7 @@ app.route("/add")
   let {loggedIn, editing, editable} = await getDetails(req)
   if(req.query.record) {
     try {
-     const submissions = await request(`https://gdlrrlist.com/api/v1/client/submissions`, {
+     const submissions = await request(`https://test.gdlrrlist.com/api/v1/client/submissions`, {
     headers: {
       authorization: `Helper ${getCookie("token", req)}`
     }
@@ -56,7 +56,7 @@ app.route("/add")
 })
 .post(async (req, res) => {
   req.body.record = req.query.record
-  let response = await request("https://gdlrrlist.com/api/helper/records", {
+  let response = await request("https://test.gdlrrlist.com/api/helper/records", {
     method: "PUT",
     headers: {
       'authorization': `Helper ${getCookie("token", req)}`,

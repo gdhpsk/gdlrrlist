@@ -12,7 +12,7 @@
   </style>
   <script>
     async function leave() {
-      let session = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+      let session = await fetch("https://test.gdlrrlist.com/api/v1/roulette/session", {
         method: "PATCH",
         headers: {
           'content-type': "application/json",
@@ -33,7 +33,7 @@
     }
     async function join() {
       let value = document.getElementById("join").value
-       let content = await fetch("https://gdlrrlist.com/api/v1/roulette/start", {
+       let content = await fetch("https://test.gdlrrlist.com/api/v1/roulette/start", {
         method: "PUT",
         headers: {
           'content-type': "application/json",
@@ -54,7 +54,7 @@
     async function bind() {
       let div = document.getElementById("levels-container")
       let checked = !!document.getElementById("bind_check").checked
-      let session = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+      let session = await fetch("https://test.gdlrrlist.com/api/v1/roulette/session", {
         method: "PATCH",
         headers: {
           'content-type': "application/json",
@@ -78,7 +78,7 @@
     }
     async function end() {
       let div = document.getElementById("levels-container")
-      let session = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+      let session = await fetch("https://test.gdlrrlist.com/api/v1/roulette/session", {
         method: "GET",
         headers: {
           'content-type': "application/json",
@@ -86,7 +86,7 @@
         }
       })
       let user_levs = await session.json()
-      let content = await fetch("https://gdlrrlist.com/api/v1/roulette/session", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/roulette/session", {
         method: "DELETE",
         headers: {
           'content-type': "application/json",
@@ -102,7 +102,7 @@
           let len = document.getElementsByClassName("column").length
           document.getElementsByClassName("column")[len-1].style.display = "none"
           let last_level = user_levs.levels[user_levs.levels.length-1]
-           div.innerHTML += `<hr/><h1 style="text-align: center;">You have ended the roulette at ${last_level.percent}% on <a href="https://gdlrrlist.com/level/${last_level.position}">${last_level.name}</a>. Thanks for playing :)</h1>`
+           div.innerHTML += `<hr/><h1 style="text-align: center;">You have ended the roulette at ${last_level.percent}% on <a href="https://test.gdlrrlist.com/level/${last_level.position}">${last_level.name}</a>. Thanks for playing :)</h1>`
           return
         }
       }
@@ -111,7 +111,7 @@
       
       let div = document.getElementById("levels-container")
       let div2 = document.getElementById("disappear")
-      let content = await fetch("https://gdlrrlist.com/api/v1/roulette/generate", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/roulette/generate", {
         method: "POST",
         headers: {
           'content-type': "application/json",
@@ -193,7 +193,7 @@
           filters.push(item[0])
         }
       }
-      let content = await fetch("https://gdlrrlist.com/api/v1/roulette/start", {
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/roulette/start", {
         method: "PUT",
         headers: {
           'content-type': "application/json",

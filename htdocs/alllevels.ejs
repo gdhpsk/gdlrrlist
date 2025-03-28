@@ -1,21 +1,5 @@
 <!DOCTYPE html>
 <html>
-  <script>
-    function topFunction() {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
-}
-    function deep(smt) {
-      let visibility = document.getElementById(smt).style.visibility
-        if(visibility == "hidden") {
-  document.getElementById(smt).style.visibility = "visible"
-document.getElementById(smt).style.height = "20px"
-    } else {
-    document.getElementById(smt).style.visibility = "hidden"
-          document.getElementById(smt).style.height = "0px"
-    }
-              }
-  </script>
    <% 
      function score(position) {
      let score = 0 
@@ -41,6 +25,7 @@ document.getElementById(smt).style.height = "20px"
     <meta name="description" content="A demon list dedicated to low-refresh-rate (60hz, 75hz, Mobile) Geometry Dash players.">
     <title>GD LRR Demon List</title>
   <link href="CSS/levelcards.css?v=2022-03-30" rel="stylesheet" type="text/css" />
+  <link href="CSS/leaderboard.css?v=2021-11-15" rel="stylesheet" type="text/css" />
     <link href="CSS/nav.css?v=2021-07-30" rel="stylesheet" type="text/css" />
     <link href="CSS/list.css?v=2020-10-29" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter|Bitter:light,bold">
@@ -51,6 +36,402 @@ document.getElementById(smt).style.height = "20px"
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <script>
+      function decodeHTMLEntities(text) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      return doc.documentElement.textContent;
+  }
+  let editingLevel = {}
+  let deletingLevel = {}
+  let addingLevel = {
+    completion: {}}
+
+  let originalLevels = JSON.parse(decodeHTMLEntities("<%= JSON.stringify(levels) %>"))
+        let filteredLevels = JSON.parse(decodeHTMLEntities("<%= JSON.stringify(levels) %>"))
+        let edits = []
+        var type = "levels"
+    function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+  }
+    function deep(smt) {
+      let visibility = document.getElementById(smt).style.visibility
+        if(visibility == "hidden") {
+  document.getElementById(smt).style.visibility = "visible"
+  document.getElementById(smt).style.height = "20px"
+    } else {
+    document.getElementById(smt).style.visibility = "hidden"
+          document.getElementById(smt).style.height = "0px"
+    }
+              }
+  
+              function allowDrop(ev) {
+        ev.preventDefault();
+      }
+
+      function cancel() {
+        filteredLevels = structuredClone(originalLevels)
+        edits = []
+        renderLevels(originalLevels)
+        document.getElementById("save").disabled = true
+        document.getElementById("add").disabled = false
+        document.getElementById("cancel").disabled = true
+      }
+
+      async function save() {
+        document.getElementById("update-text").innerText = "Updating..."
+        let response = await fetch(`https://test.gdlrrlist.com/api/helper/levels/position${type == "levels" ? "" : "/61hertz"}`, {
+      method: "PATCH",
+      body: JSON.stringify(edits),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Helper ${getCookie("token")}`
+      }
+    })
+    if(response.ok) {
+        document.getElementById("update-text").innerText = "Refreshing..."
+      let req = await fetch(`https://test.gdlrrlist.com/api/v1/demons${type == "levels" ? "" : "/61hertz"}`)
+      originalLevels = await req.json()
+      cancel()
+      document.getElementById("update-text").innerText = "Success!"
+      setTimeout(() => {
+      document.getElementById("update-text").innerText = ""
+      }, 3000)
+    } else {
+      document.getElementById("update-text").innerText = "Something went wrong. Check the console"
+    }
+  }
+
+  async function switchLevs() {
+    if(type == "61hertz") {
+      let req = await fetch("https://test.gdlrrlist.com/api/v1/demons")
+      originalLevels = await req.json()
+      cancel()
+    } else if(type == "levels") {
+      let req = await fetch("https://test.gdlrrlist.com/api/v1/demons/61hertz")
+      originalLevels = await req.json()
+      cancel()
+    }
+    type = type == "levels" ? "61hertz" : "levels"
+    document.getElementById("switch").innerText = `Switch to ${type == "levels" ? "61hertz" : "levels"}`
+  }
+
+  async function add() {
+        let swal = await Swal.fire({
+          title: "Adding Level",
+          showDenyButton: true,
+          confirmButtonColor: "#3085d6",
+        denyButtonColor: "red",
+        confirmButtonText: "Save",
+        denyButtonText: "Cancel",
+        html: `<div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Position:</p>
+                <input type="number" style="height: fit-content;" onchange="addEntry(parseInt(event.target.value), 'position')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Name:</p>
+                <input type="text" style="height: fit-content;" onchange="addEntry(event.target.value, 'name')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Publisher:</p>
+                <input type="text" style="height: fit-content;" onchange="addEntry(event.target.value, 'publisher')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>YT Code:</p>
+                <input type="text" style="height: fit-content;" onchange="addEntry(event.target.value, 'ytcode')"/>
+            </div>
+           ${type == "levels" ? `<div style="display: flex; gap: 10px; align-items: center;">
+                <p>minimumPercent?:</p>
+                <input type="number" style="height: fit-content;" onchange="addEntry(parseInt(event.target.value), 'minimumPercent')"/>
+            </div>` : ``}
+            <br><h3>Completion</h3><br>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Name:</p>
+                <input style="height: fit-content;" onchange="addEntry(event.target.value, 'completion', 'name')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Link:</p>
+                <input style="height: fit-content;" onchange="addEntry(event.target.value, 'completion', 'link')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Hertz:</p>
+                <input style="height: fit-content;" onchange="addEntry(event.target.value, 'completion', 'hertz')"/>
+            </div>
+          </div>`
+        })
+        if(swal.isConfirmed) {
+          document.getElementById("update-text").innerText = "Updating..."
+        let response = await fetch(`https://test.gdlrrlist.com/api/mods/levels${type == "levels" ? "" : "/61hertz"}`, {
+      method: "POST",
+      body: JSON.stringify(addingLevel),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Moderator ${getCookie("token")}`
+      }
+    })
+    if(response.ok) {
+        document.getElementById("update-text").innerText = "Refreshing..."
+      let req = await fetch(`https://test.gdlrrlist.com/api/v1/demons${type == "levels" ? "" : "/61hertz"}`)
+      originalLevels = await req.json()
+      cancel()
+      document.getElementById("update-text").innerText = "Success!"
+      setTimeout(() => {
+      document.getElementById("update-text").innerText = ""
+      }, 3000)
+    } else {
+      document.getElementById("update-text").innerText = "Something went wrong. Check the console"
+    }
+        }
+        addingLevel = {
+          completion: {}}
+      }
+  
+      function renderLevels(levels) {
+        let children = []
+        for(let i = 0; i < levels.length; i++) {
+          let div = document.createElement("div")
+          div.className = "card"
+          div.style = "border: 1px solid black; width:200px"
+          div.draggable = true
+          div.ondragstart = drag
+          div.ondragover = allowDrop
+          div.ondrop = drop
+          div.onclick = () => {
+            popup(i)
+          }
+          div.id = levels[i]._id.toString()
+          div.innerHTML = `<p>${levels[i].position}. ${levels[i].name} by ${levels[i].publisher}${!levels[i].difference ? "" : levels[i].difference > 0 ? `&nbsp;<span style='color: green;'>+${levels[i].difference}</span>` : `&nbsp;<span style='color: red;'>${levels[i].difference}</span>`}</p>`
+          children.push(div)
+        }
+        document.getElementById("levels").replaceChildren(...children)
+      }
+      
+      function drag(ev) {
+        ev.dataTransfer.setData("pos", ev.target.id);
+      }
+      
+      function drop(ev) {
+        ev.preventDefault();
+        let levPos = parseInt(filteredLevels.find(e => e._id.toString() == ev.dataTransfer.getData("pos"))?.position);
+        let newLevPos = parseInt(filteredLevels.find(e => e._id.toString() == ev.currentTarget.id)?.position)
+        let levels = structuredClone(filteredLevels)
+        edits.push({
+            id: ev.dataTransfer.getData("pos"),
+            position: newLevPos
+        })
+        levels.filter(e => e.difference).map(x => {
+            if(x.position >= newLevPos && levPos > x.position) {
+                x.difference--
+            }
+            if(x.position < newLevPos && levPos < x.position) {
+                x.difference++
+            }
+            return x
+        })
+        for(let i = Math.min(levPos, newLevPos)-1; i < Math.max(levPos, newLevPos); i++) {
+            if(i == levPos-1) {
+                levels[i].difference = originalLevels.find(x => x._id.toString() == levels[i]._id.toString())?.position - newLevPos
+                levels[i].position = newLevPos
+                continue;
+            }
+            if(levPos > newLevPos) {
+                levels[i].position += 1
+                continue;
+            }
+            if(levPos < newLevPos) {
+                levels[i].position -= 1
+                continue;
+            }
+        }
+        levels.sort((a,b) => a.position - b.position)
+        filteredLevels = structuredClone(levels)
+        document.getElementById("save").disabled = false
+        document.getElementById("add").disabled = true
+        document.getElementById("cancel").disabled = false
+        renderLevels(filteredLevels)
+      }
+
+      function addEntry(value, ...args) {
+        let depth = `["${args.join('"]["')}"]`
+        eval(`addingLevel${depth} = ${JSON.stringify(value)}`)
+      }
+
+      function editEntry(value, ...args) {
+        let depth = `["${args.join('"]["')}"]`
+        eval(`editingLevel${depth} = ${JSON.stringify(value)}`)
+      }
+
+      function deleteEntry(value, ...args) {
+        let depth = `["${args.join('"]["')}"]`
+        eval(`deletingLevel${depth} = ${JSON.stringify(value)}`)
+      }
+
+      function deleteRecord(id, type) {
+        let record = editingLevel[type].findIndex(e => e.name == id)
+        editingLevel[type].splice(record, 1)
+        renderListSelection(false, type)
+        renderRecords("", type)
+      }
+
+      function renderRecords(id, type) {
+          let record = editingLevel[type].find(e => e.name == id)
+          let ind = editingLevel[type].findIndex(e => e.name == id)
+          if(!record) {
+            document.getElementById(type == "list" ? "record" : "progress").innerHTML = ""
+          }
+          document.getElementById(type == "list" ? "record" : "progress").innerHTML = `<div style="display: grid; place-items: center"><button style="background-color: red; color:white; padding: 10px; border-radius: 5px;" onclick="deleteRecord('${id}', '${type}')">Delete</button></div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Name:</p>
+                <input type="text" value="${record.name}" style="height: fit-content;" onchange="editEntry(event.target.value, '${type}', ${ind}, 'name')"/>
+            </div><div style="display: flex; gap: 10px; align-items: center;">
+                <p>Link:</p>
+                <input type="text" value="${record.link}" style="height: fit-content;" onchange="editEntry(event.target.value, '${type}', ${ind}, 'link')"/>
+            </div><div style="display: flex; gap: 10px; align-items: center;">
+                <p>Hertz:</p>
+                <input type="text" value="${record.hertz}" style="height: fit-content;" onchange="editEntry(event.target.value, '${type}', ${ind}, 'hertz')"/>
+            </div>
+          ${type == "progresses" ? `<div style="display: flex; gap: 10px; align-items: center;">
+                <p>Percent:</p>
+                <input type="number" value="${record.percent}" style="height: fit-content;" onchange="editEntry(parseInt(event.target.value), '${type}', ${ind}, 'percent')"/>
+            </div>` : ""}`
+        }
+
+        function renderListSelection(shouldReturn, type) {
+          if(shouldReturn) {
+            return `<select onchange="renderRecords(event.target.value, '${type}')">
+                  <option>Select a record</option>
+                  ${editingLevel[type].map(x => `<option value="${x.name}">${x.name}</option>`).join("")}
+                </select>`
+          } else {
+            document.getElementById(`${type}-selection`).innerHTML = `<select onchange="renderRecords(event.target.value, '${type}')">
+                  <option>Select a record</option>
+                  ${editingLevel[type].map(x => `<option value="${x.name}">${x.name}</option>`).join("")}
+                </select>`
+          }
+        }
+
+      async function popup(index = 0) {
+        let {position} = originalLevels.find(e => filteredLevels[index]._id == e._id)
+        let req = await fetch(`https://test.gdlrrlist.com/api/v1/demons/${type == "levels" ? "" : "61hertz/"}${position}`)
+        let json = await req.json()
+        json.progresses = json.progresses.filter(e => typeof e !== 'string')
+        editingLevel = structuredClone(json)
+        let swal = await Swal.fire({
+          title: "Level Editor",
+          showCancelButton: true,
+          showDenyButton: true,
+          confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        denyButtonColor: "red",
+        confirmButtonText: "Save",
+        denyButtonText: "Cancel",
+        cancelButtonText: "Delete",
+        html: `<div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Position:</p>
+                <input type="number" value="${filteredLevels[index].position}" style="height: fit-content;" onchange="editEntry(parseInt(event.target.value), 'position')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Name:</p>
+                <input type="text" value="${filteredLevels[index].name}" style="height: fit-content;" onchange="editEntry(event.target.value, 'name')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>Publisher:</p>
+                <input type="text" value="${filteredLevels[index].publisher}" style="height: fit-content;" onchange="editEntry(event.target.value, 'publisher')"/>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>YT Code:</p>
+                <input type="text" value="${filteredLevels[index].ytcode}" style="height: fit-content;" onchange="editEntry(event.target.value, 'ytcode')"/>
+            </div>
+            ${index > 74 ? "" : `<div style="display: flex; gap: 10px; align-items: center;">
+                <p>minimumPercent:</p>
+                <input type="number" value="${json.minimumPercent}" style="height: fit-content;" onchange="editEntry(parseInt(event.target.value), 'minimumPercent')"/>
+            </div>`}
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <p>List:</p>
+                <div id="list-selection">
+            ${renderListSelection(true, "list")}
+            </div>
+            </div>
+            <div style="margin-left: 20px" id="record">
+                
+            </div>
+          ${index > 74 ? "" : `<div style="display: flex; gap: 10px; align-items: center;">
+                <p>Progresses:</p>
+                <div id="progresses-selection">
+            ${renderListSelection(true, "progresses")}
+            </div>
+            </div>
+            <div style="margin-left: 20px" id="progress">
+                
+            </div>`}
+          </div>`
+        })
+        if(swal.isConfirmed) {
+          document.getElementById("update-text").innerText = "Updating..."
+        let response = await fetch(`https://test.gdlrrlist.com/api/helper/levels${type == "levels" ? "" : "/61hertz"}`, {
+      method: "PATCH",
+      body: JSON.stringify(editingLevel),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Helper ${getCookie("token")}`
+      }
+    })
+    if(response.ok) {
+        document.getElementById("update-text").innerText = "Refreshing..."
+      let req = await fetch(`https://test.gdlrrlist.com/api/v1/demons${type == "levels" ? "" : "/61hertz"}`)
+      originalLevels = await req.json()
+      cancel()
+      document.getElementById("update-text").innerText = "Success!"
+      setTimeout(() => {
+      document.getElementById("update-text").innerText = ""
+      }, 3000)
+    } else {
+      document.getElementById("update-text").innerText = "Something went wrong. Check the console"
+    }
+        }
+        console.log(swal)
+        if(swal.dismiss == "cancel") {
+          deletingLevel._id = editingLevel._id.toString()
+          deletingLevel.reason = ""
+          let swal2 = await Swal.fire({
+          title: "Delete Level",
+          showDenyButton: true,
+          confirmButtonColor: "#3085d6",
+        denyButtonColor: "red",
+        confirmButtonText: "Continue",
+        denyButtonText: "Cancel",
+        html: `<div style="display: flex; gap: 10px; align-items: center;">
+                <p>Reason?:</p>
+                <input style="height: fit-content;" onchange="deleteEntry(event.target.value, 'reason')"/>
+            </div>`
+          })
+          if(swal2.isConfirmed) {
+            document.getElementById("update-text").innerText = "Updating..."
+        let response = await fetch(`https://test.gdlrrlist.com/api/mods/levels${type == "levels" ? "" : "/61hertz"}`, {
+      method: "DELETE",
+      body: JSON.stringify(deletingLevel),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Moderator ${getCookie("token")}`
+      }
+    })
+        document.getElementById("update-text").innerText = "Refreshing..."
+      let req = await fetch(`https://test.gdlrrlist.com/api/v1/demons${type == "levels" ? "" : "/61hertz"}`)
+      originalLevels = await req.json()
+      cancel()
+      document.getElementById("update-text").innerText = "Success!"
+      setTimeout(() => {
+      document.getElementById("update-text").innerText = ""
+      }, 3000)
+          }
+      deletingLevel = {}
+    }
+        editingLevel = {}
+      }
+  </script>
   </head>
   <body class = "" id="wesure">
 
@@ -59,172 +440,31 @@ document.getElementById(smt).style.height = "20px"
     <!-- <p><a href = "leaderboard.html">Leaderboard page</a></p>
     <p><a href = "Extendedlist.html">Extended page</a></p> -->
       <br>
-      <p style="text-align: center;">Want to be able to edit other stuff? Go to the everything link <a href="/everything">Here</a></p>
-      <br>
       <div class="search-bar" style="display: grid; place-items: center;">
-        <div class="search-bar-input">
-          <i class="fa fa-search"></i>
-          <input id = "search-field" placeholder="type to search...">
-        </div>
+        <h1 style="text-align: center;">Level Editor</h1>
       </div>
       <br>
+      <div style="display: grid; place-items: center;">
+        <button style="padding: 10px; border-radius: 5px;" onclick="switchLevs()" id="switch">Switch to 61hertz</button>
+      </div>
       <br>
-    <div id="levels-container"> 
+      <div style="display: flex; gap: 30px; justify-content: center;">
+        <button id="save" style="background-color: blueviolet; color:white; padding: 10px; border-radius: 5px;" onclick="save()" disabled>Save</button>
+        <button id="add" style="background-color: blueviolet; color:white; padding: 10px; border-radius: 5px;" onclick="add()">+</button>
+        <button id="cancel" onclick="cancel()" style="background-color: red; color:white; padding: 10px; border-radius: 5px;" disabled>Cancel</button>
+      </div>
+      <br>
+      <p style="text-align: center;" id="update-text"></p>
+      <br>
+    <div id="levels" style="display: flex; flex-wrap: wrap; gap: 10px;"> 
       <% for(let i = 0; i < levels.length; i++) { %>
-        <% let bannedUsers = 0 %>
-              <% for(let j = 0; j < levels[i].list.length; j++) {
-                let user = locals.leaderboards.find(e => e.name == levels[i].list[j].name)
-                if(user?.ban) {
-                  bannedUsers += 1
-                }
-               } %>
-        <div class="column">
-        <div class="card">
-          <input type="button" value="Delete level" id="notgood<%= i %>"></input>
-          <div id="smt<%= i %>" style="visibility: hidden; height: 0px;"><form action="/deletelevel/<%= levels[i].name %>" method="post"><input placeholder="Reason?" name="reason"></input><input type="submit" value="Submit"></input></form></div> <br>
-          <form action="/editlevel/<%= levels[i].name %>" method="post">
-          ytcode: <input type="text" name="ytcode" value="<%= levels[i].ytcode %>"></input>
-        <button type="button" class = "collapsible" onclick="window.location.href = '/level/<%= levels[i].position %>'">
-            <section class = "LevelCard flex">
-            <div class="thumb ratio-16-9 js-delay-css" 
-            style="position: relative;  
-            background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
-            data-property="background-image" 
-            data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=<%= levels[i].ytcode %>','_blank')"
-            title="Clicking on the image will take you to the verification video.">
-            </div>
-        <div class = "title">
-        <h2><input type="number" name="placement" value="<%= levels[i].position %>" style="width: 5ch"/>. <%= levels[i].name %> by <input type="text" name="publisher" value="<%= levels[i].publisher %>" style="width: <%= levels[i].publisher.length %>ch"></input></h2>
-        <h3>Victors: <%= levels[i].list.length - bannedUsers %><% if(i < 150) { %><br>Score: <%= score(i+1) %> <% } %><% if(i < 75) { %><br>minimumPercent: <input type="text" name="minimumPercent" value="<%= levels[i].minimumPercent %>" style="width: 3ch"></input><% } %><br><input type="submit" value="Submit New Info"></input><br>
-        </h3>
-        </div>
-       </section>
-        <hr/></button>
-          <div class="content"></div>
-        </div>
-          </div>
+              <div class="card" style="border: 1px solid black; width:200px" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)" onclick="popup(<%= i %>)" id="<%= levels[i]._id %>">
+                <p><%= levels[i].position %>. <%= levels[i].name %> by <%= levels[i].publisher %></p>
+              </div>
           </form>
       <% } %>
          
     </div>
-        <p class = "toTop" onclick = "topFunction()">To the top</p>
-
-        <script>
-  let shit = document.getElementsByTagName("input")
-  for(let i = 0; i < shit.length; i++) {
-    shit[i].onclick = function(e) {
-    if(this.id.startsWith("notgood")) {
-      let number = this.id.split("notgood")[1]
-      deep("smt"+number)
-    }
-    e.stopPropagation();
-    }
-  }
-</script>
-
- <script>
-   let score = <%- score %>
-    let data = <%- JSON.stringify(locals.levels) %>
-     let leaderboard_data = <%- JSON.stringify(locals.leaderboards) %>
-    var searchBar = document.getElementById("search-field");
-var div = document.getElementById("levels-container");
-
-document.getElementById("search-field").addEventListener("input", onTextEntered)
-
-async function onTextEntered() {
-  let obj = {}
-  let searchText = this.value.toLowerCase();
-  document.getElementById("search-field").addEventListener("input", onTextEntered)
-  
-     data.forEach(user => {
-      if(user.name.toLowerCase().includes(searchText)) {
-       obj[user.name] = data.find(e => e.name == user.name)
-      }
-     })
-        let txt = ""
-        if(searchText != "") {
-        for(const key in obj) {
-          let i = Object.keys(obj).indexOf(key)
-          let bannedPeople = 0
-          let levels = Object.values(obj)
-          for(let j = 0; j < levels[i].list.length; j++) {
-            let user = leaderboard_data.find(e => e.name == levels[i].list[j].name)
-                if(user?.ban) {
-                  bannedPeople += 1
-                }
-          }
-          txt += `
-               <div class="column">
-        <div class="card">
-          <input type="button" value="Delete level" id="notgood${i}"></input>
-          <div id="smt${i}" style="visibility: hidden; height: 0px;"><form action="/deletelevel/${levels[i].name}" method="post"><input placeholder="Reason?" name="reason"></input><input type="submit" value="Submit"></input></form></div> <br>
-          <form action="/editlevel/${levels[i].name}" method="post">
-          ytcode: <input type="text" name="ytcode" value="${levels[i].ytcode}"></input>
-        <button type="button" class = "collapsible" onclick="window.location.href = '/level/${levels[i].position}'">
-            <section class = "LevelCard flex">
-            <div class="thumb ratio-16-9 js-delay-css" 
-            style="position: relative;  
-            background-image: url(&quot;https://i.ytimg.com/vi/${levels[i].ytcode}/mqdefault.jpg&quot;);" 
-            data-property="background-image" 
-            data-property-value="url('https://i.ytimg.com/vi/${levels[i].ytcode}/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=${levels[i].ytcode}','_blank')"
-            title="Clicking on the image will take you to the verification video.">
-            </div>
-        <div class = "title">
-        <h2><input type="number" name="placement" value="${levels[i].position}" style="width: 5ch"/>. ${levels[i].name} by <input type="text" name="publisher" value="${levels[i].publisher}" style="width: ${levels[i].publisher.length}ch"></input></h2>
-        <h3>Victors: ${levels[i].list.length - bannedPeople}${levels[i].position < 150 ? `<br>Score: ${score(levels[i].position)}` : ""}${levels[i].position < 75 ? `<br>minimumPercent: <input type="text" name="minimumPercent" value="${levels[i].minimumPercent}" style="width: 3ch"></input><br>` : ""}<br><input type="submit" value="Submit New Info"></input><br>
-        </h3>
-        </div>
-       </section>
-        <hr/></button>
-          <div class="content"></div>
-        </div>
-          </div>
-          </form>
-            `
-        }
-        } else {
-          txt = `<% for(let i = 0; i < levels.length; i++) { %>
-        <div class="column">
-        <div class="card">
-          <input type="button" value="Delete level" id="notgood<%= i %>"></input>
-          <div id="smt<%= i %>" style="visibility: hidden; height: 0px;"><form action="/deletelevel/<%= levels[i].name %>" method="post"><input placeholder="Reason?" name="reason"></input><input type="submit" value="Submit"></input></form></div> <br>
-          <form action="/editlevel/<%= levels[i].name %>" method="post">
-          ytcode: <input type="text" name="ytcode" value="<%= levels[i].ytcode %>"></input>
-        <button type="button" class = "collapsible" onclick="window.location.href = '/level/<%= levels[i].position %>'">
-            <section class = "LevelCard flex">
-            <div class="thumb ratio-16-9 js-delay-css" 
-            style="position: relative;  
-            background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
-            data-property="background-image" 
-            data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=<%= levels[i].ytcode %>','_blank')"
-            title="Clicking on the image will take you to the verification video.">
-            </div>
-        <div class = "title">
-        <h2><input type="number" name="placement" value="<%= levels[i].position %>" style="width: 5ch"/>. <%= levels[i].name %> by <input type="text" name="publisher" value="<%= levels[i].publisher %>" style="width: <%= levels[i].publisher.length %>ch"></input></h2>
-        <h3>Victors: <%= levels[i].list.length %><% if(i < 150) { %><br>Score: <%= score(i+1) %> <% } %><% if(i < 75) { %><br>minimumPercent: <input type="text" name="minimumPercent" value="<%= levels[i].minimumPercent %>" style="width: 3ch"></input><% } %><br><input type="submit" value="Submit New Info"></input><br>
-        </h3>
-        </div>
-       </section>
-        <hr/></button>
-          <div class="content"></div>
-        </div>
-          </div>
-          </form>
-      <% } %>`
-        }
-        document.getElementById("levels-container").innerHTML = txt
-  let shit = document.getElementsByTagName("input")
-  for(let i = 0; i < shit.length; i++) {
-    shit[i].onclick = function(j) {
-    if(this.id.startsWith("notgood")) {
-      let number = this.id.split("notgood")[1]
-      deep("smt"+number)
-    }
-    j.stopPropagation();
-    }
-  }
-}
-  </script>
     <!-- scripts to include -->
     <script src="JS/dropdown.js"></script><script src="JS/videoresize.js"></script><script src="JS/darkbutton.js?v=2022-07-30"></script>
   </body>

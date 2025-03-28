@@ -9,7 +9,7 @@ module.exports = (obj) => {
   let { getDetails, getCookie, submitSchema } = obj
   app.route("/")
 .get(async (req, res) => {
-  let mail = await request("https://gdlrrlist.com/api/v1/client/dm", {
+  let mail = await request("https://test.gdlrrlist.com/api/v1/client/dm", {
     method: "GET",
     headers: {
       'content-type': "application/json",
@@ -21,7 +21,7 @@ module.exports = (obj) => {
     return res.render("404.ejs", body)
   }
 
-  let mail2 = await request("https://gdlrrlist.com/api/v1/client/unread", {
+  let mail2 = await request("https://test.gdlrrlist.com/api/v1/client/unread", {
     method: "GET",
     headers: {
       'content-type': "application/json",
@@ -33,7 +33,7 @@ module.exports = (obj) => {
     return res.render("404.ejs", body2)
   }
 
-  let everyone = await request(`https://gdlrrlist.com/api/v1/client/login`, {
+  let everyone = await request(`https://test.gdlrrlist.com/api/v1/client/login`, {
     method: "GET",
     headers: {
       'content-type': "application/json",
@@ -57,7 +57,7 @@ module.exports = (obj) => {
 
 app.route("/:id")
 .get(async (req, res) => {
-  let mail = await request(`https://gdlrrlist.com/api/v1/client/messages?id=${req.params.id}`, {
+  let mail = await request(`https://test.gdlrrlist.com/api/v1/client/messages?id=${req.params.id}`, {
     method: "GET",
     headers: {
       'content-type': "application/json",
@@ -68,7 +68,7 @@ app.route("/:id")
   if(mail.statusCode != 200) {
     return res.render("404.ejs", body)
   }
-  let everyone = await request(`https://gdlrrlist.com/api/v1/client/login`, {
+  let everyone = await request(`https://test.gdlrrlist.com/api/v1/client/login`, {
     method: "GET",
     headers: {
       'content-type': "application/json",

@@ -14,7 +14,7 @@ module.exports = (obj) => {
 })
 .post(async (req, res) => {
   let {loggedIn, editing, editable} = await getDetails(req)
-  let response = await request("https://gdlrrlist.com/api/mods/bans", {
+  let response = await request("https://test.gdlrrlist.com/api/mods/bans", {
       method: "POST",
       body: JSON.stringify(req.body),
       headers: {
@@ -29,7 +29,7 @@ module.exports = (obj) => {
 
 app.route("/ban/:id")
 .get(async (req, res) => {
-  let response = await request("https://gdlrrlist.com/api/mods/bans", {
+  let response = await request("https://test.gdlrrlist.com/api/mods/bans", {
       method: "GET",
       headers: {
         'content-type': 'application/json',
@@ -45,7 +45,7 @@ app.route("/ban/:id")
 
 app.get("/bans", async (req, res) => {
    let {loggedIn, editing, editable} = await getDetails(req)
-  let response = await request("https://gdlrrlist.com/api/mods/bans", {
+  let response = await request("https://test.gdlrrlist.com/api/mods/bans", {
       method: "GET",
       headers: {
         'content-type': 'application/json',
@@ -63,7 +63,7 @@ app.get("/bans", async (req, res) => {
 
 app.get("/bans/delete/:id", async (req, res) => {
   req.body.id = req.params.id
-  let response = await request("https://gdlrrlist.com/api/mods/bans", {
+  let response = await request("https://test.gdlrrlist.com/api/mods/bans", {
       method: "DELETE",
      body: JSON.stringify(req.body),
       headers: {

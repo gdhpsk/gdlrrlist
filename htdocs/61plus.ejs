@@ -51,7 +51,6 @@ document.getElementById(smt).style.height = "20px"
         NOTE: Unless you COMPLETE one of these levels on 60hz, please do NOT submit records for these levels.
         <br>
         <br></p>
-      <% if(!locals.editing) { %>
       <% for(let i = 0; i < levels.length; i++) { %>
          <div class="column">
         <div class="card">
@@ -82,50 +81,6 @@ document.getElementById(smt).style.height = "20px"
         </div>
          </div>
         <% } %>
-          <% } else { %>
-            <% for(let i = 0; i < levels.length; i++) { %>
-          <div class="column">
-        <div class="card">
-          <button type="button" class = "collapsible">
-          <form action="/delete61hertz/<%= levels[i].name %>" method="post"><input type="submit" value="Delete level"></input></form>
-          <br>
-          <input type="button" value="Add level onto the list" id="notgood<%= i %>"></input>
-          <div id="smt<%= i %>" style="visibility: hidden; height: 0px;"><form action="/move61hzlevel/<%= levels[i].name %>" method="post"><input placeholder="minimumPercent?" name="minimumPercent" type="number"></input><br><input type = "number" placeholder="Add at #?" name="placement" required></input><input type="submit" value="Submit"></input></form></div> <br>
-          <br>
-          <form action="/edit61hzlevel/<%= levels[i].name %>" method="post">
-          ytcode: <input type="text" name="ytcode" value="<%= levels[i].ytcode %>"></input>
-          
-      <section class = "LevelCard flex">
-      <div class="thumb ratio-16-9 js-delay-css" 
-      style="position: relative; background-image: url(&quot;https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg&quot;);" 
-      data-property="background-image" 
-      data-property-value="url('https://i.ytimg.com/vi/<%= levels[i].ytcode %>/mqdefault.jpg')" onclick="window.open('https://www.youtube.com/watch?v=<%= levels[i].ytcode %>','_blank')"
-      title="Clicking on the image will take you to the verification video.">
-      </div>
-      <div class = "title">
-      <h2><input type="number" name="placement" value="<%= levels[i].position %>" style="width: 3ch"/>. <%= levels[i].name %> by <input type="text" name="publisher" value="<%= levels[i].publisher %>" style="width: <%= levels[i].publisher.length %>ch"></input></h2>
-      <h3>Estimated <input type="text" name="ranking" value="<%= levels[i].ranking %>" style="width: 30ch"></input></h3><input type="submit" value="Submit New Info"></input><br><br>
-      </div>
-      </section>
-      <hr/></button>
-             </form>
-        <div class="content" style>
-          <% for(let j = 0; j < levels[i].list.length; j++) { %>
-            <div style="margin-bottom: 25px;">
-            <% if(j == 0) { %> <h5>Completions<br></h5> <% } %>
-          <%  if (objOfNations[levels[i].list[j].name]) { %>
-                    <abbr title='<%= objOfNations[levels[i].list[j].name].replace(/_/g, " ") %>'><img class="nationality" src="https://raw.githubusercontent.com/lipis/flag-icons/4f420bdd2e954f6da11220f1136fa181ed7019e7/flags/4x3/<%= nationabbr[objOfNations[levels[i].list[j].name].replace(/_/g, ' ').toLowerCase()] %>.svg" style="display: inline;"></img></abbr>
-            <% } %>
-              <form action="/edit61hzrecord/<%= levels[i].name %>/<%= levels[i].list[j]._id %>" method="post">
-              <h6 style="display:inline;">(<input type="text" name="hertz" value="<%= levels[i].list[j].hertz %>" style="width: 3ch;"/>) <input type="text" name="name" value="<%= levels[i].list[j].name %>" style="width: <%= levels[i].list[j].name.length+2 %>ch;"/> - <input type="text" name="link" value="<%= levels[i].list[j].link %>" style="width: <%= levels[i].list[j].link.length+2 %>ch;"/> <input type="submit" value="Submit"/></h6>
-              </form>
-              </div>
-         <% } %>
-       </div>
-        </div>
-         </div>
-        <% } %>
-            <% } %>
           <p class = "toTop" onclick = "topFunction()">To the top</p>
     </div>
 

@@ -1,4 +1,4 @@
-<script src="https://kit.fontawesome.com/b65d578950.js" crossorigin="anonymous"></script>
+<link href="https://test.gdlrrlist.com/assets/css/all.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script defer>
@@ -45,7 +45,7 @@
     localStorage.setItem("notif-1", "seen")
   }
 
-  let url = "https://gdlrrlist.com/api/v1/client/unread"
+  let url = "https://test.gdlrrlist.com/api/v1/client/unread"
 <% if(locals.active != "notifications") { %>
   fetch(url, {
     method: "GET",
@@ -61,7 +61,7 @@
   .then(function (data) {
     console.log(data)
     if(data.length) {
-      alert(`Please check your DMs! You have ${data.length} unread notifications. You can check by either going to https://gdlrrlist.com/notifications or clicking on the "More..." navigation bar button and then clicking on "Notifications".`)
+      alert(`Please check your DMs! You have ${data.length} unread notifications. You can check by either going to https://test.gdlrrlist.com/notifications or clicking on the "More..." navigation bar button and then clicking on "Notifications".`)
     }
   })
   .catch(function (err) {
@@ -130,7 +130,7 @@ function requestAndShowPermission() {
     let password = document.getElementById(`password-${type}`).value
     if(!password || !name) return
     let password2 = document.getElementById(`password2-${type}`)?.value
-            $.post(`https://gdlrrlist.com/${type}`, {name: name, password2: password2, password: password}, function(data, status, xhr) {
+            $.post(`https://test.gdlrrlist.com/${type}`, {name: name, password2: password2, password: password}, function(data, status, xhr) {
               let message = JSON.parse(data)?.message
               let error_message_p = type == "signup" ? "deeping" : "deepin"
                if(message) {
@@ -159,9 +159,9 @@ function requestAndShowPermission() {
       </div>
 </form>
 <br>
-<button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="window.location.href = 'https://discord.com/api/oauth2/authorize?client_id=1033274582855065704&redirect_uri=https%3A%2F%2Fgdlrrlist.com&response_type=code&scope=identify'"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Login with Discord</p></button>
+<button style="border-radius: 25px; border: 2px solid #0a0dbf; background-color: #0a0dbf; color: white;" onclick="window.location.href = 'https://discord.com/api/oauth2/authorize?client_id=1033274582855065704&redirect_uri=https%3A%2F%2Ftest.gdlrrlist.com&response_type=code&scope=identify'"><p><img style="height: 25px; margin: -4px;" src="https://imgur.com/DXB750X.png"></img>&nbsp;&nbsp;Login with Discord</p></button>
 <p>
-      <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="window.location.href = 'https://gdlrrlist.com/google_signin'"><p><img style="height: 25px; margin: -4px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1200px-Google_%22G%22_Logo.svg.png"></img>&nbsp;&nbsp;Login with Google</p></button>
+      <button style="border-radius: 25px; border: 2px solid #9193f2; background-color: #9193f2; color: white;" onclick="window.location.href = 'https://test.gdlrrlist.com/google_signin'"><p><img style="height: 25px; margin: -4px;" src="https://test.gdlrrlist.com/icons/google.png"></img>&nbsp;&nbsp;Login with Google</p></button>
 <br>
       <p id="deepin"></p>
       <p>Want to make a new account? Sign up here:</p>
@@ -188,20 +188,20 @@ function requestAndShowPermission() {
 <ul class="nav">
          <li class="redir"><a class="nav-buttons extendedNav" onclick="showRemainingNav()">More...</a></li>
       <%- include("./extendednav.ejs") %>
-    <li class="redir"><a class="nav-buttons <%= locals.active == 'leaderboard' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/leaderboard.html">Leaderboard</a></li>
-    <li class="redir"><a class="nav-buttons <%= locals.active == '61plus' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/61plus.html">61hz+ Levels</a></li>
-    <li class="redir"><a class="nav-buttons <%= locals.active == 'legacy' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/legacy.html">Legacy List</a></li>
-    <li class="redir"><a class="nav-buttons <%= locals.active == 'extended' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/extended.html">Extended List</a></li>
-    <li class="redir"><a class="nav-buttons <%= locals.active == 'index' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/index.html">Main List</a></li>
-    <li class="titlebox"><a href="https://gdlrrlist.com" class="titlebox-href">GD LRR Demon List</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'leaderboard' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/leaderboard.html">Leaderboard</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == '61plus' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/61plus.html">61hz+ Levels</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'legacy' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/legacy.html">Legacy List</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'extended' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/extended.html">Extended List</a></li>
+    <li class="redir"><a class="nav-buttons <%= locals.active == 'index' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/index.html">Main List</a></li>
+    <li class="titlebox"><a href="https://test.gdlrrlist.com" class="titlebox-href">GD LRR Demon List</a></li>
     <li>
     <button onclick="dropMenu()" class="dropbtn">Go To...</button>
         <div id="myDropdown" class="dropdown-content">
-            <a class="nav-buttons <%= locals.active == 'index' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/index.html">Main List</a>
-            <a class="nav-buttons <%= locals.active == 'extended' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/extended.html">Extended List</a>
-            <a class="nav-buttons <%= locals.active == 'legacy' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/legacy.html">Legacy List</a>
-            <a class="nav-buttons <%= locals.active == '61plus' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/61plus.html">61hz+ levels</a>
-            <a class="nav-buttons <%= locals.active == 'leaderboard' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/leaderboard.html">Leaderboard</a>
+            <a class="nav-buttons <%= locals.active == 'index' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/index.html">Main List</a>
+            <a class="nav-buttons <%= locals.active == 'extended' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/extended.html">Extended List</a>
+            <a class="nav-buttons <%= locals.active == 'legacy' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/legacy.html">Legacy List</a>
+            <a class="nav-buttons <%= locals.active == '61plus' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/61plus.html">61hz+ levels</a>
+            <a class="nav-buttons <%= locals.active == 'leaderboard' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/leaderboard.html">Leaderboard</a>
           <a class="nav-buttons extendedNav" onclick="showRemainingNav()">More...</a>
         </div>
     </li>
@@ -224,23 +224,23 @@ function requestAndShowPermission() {
       }
     if(firstTime) {
       if(theme == "dark") {
-        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun-o"></i>&nbsp;&nbsp;Day`
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun"></i>&nbsp;&nbsp;Day`
         document.getElementById("wesure").className = "dark-theme"
       } else {
-        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-moon-o"></i>&nbsp;&nbsp;Night`
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-moon"></i>&nbsp;&nbsp;Night`
         document.getElementById("wesure").className = ""
       }
     } else {
       if(theme != "dark") {
-        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun-o"></i>&nbsp;&nbsp;Day`
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-sun"></i>&nbsp;&nbsp;Day`
       } else {
-        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-moon-o"></i>&nbsp;&nbsp;Night`
+        document.getElementsByClassName("dark-button")[0].innerHTML = `<i class="fa fa-moon"></i>&nbsp;&nbsp;Night`
       }
     }
   }
   changeTXT(true)
 </script>
-<script src="https://gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
+<script src="https://test.gdlrrlist.com/JS/darkbutton.js?v=2022-07-30"></script>
 <script defer>
   document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter' && e.srcElement?.className == "login-class") {

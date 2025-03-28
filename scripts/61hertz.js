@@ -108,7 +108,7 @@ app.route("/delete61hertz/:name")
   var level = await sixtyoneSchema.findOne({name: req.body.name.trim()})
   if(!level) return res.render("404.ejs", {error: "400 Bad Request", message: "Please input a valid level name!"})
   for(const record of level.list) {
-  await request("https://gdlrrlist.com/api/helper/records", {
+  await request("https://test.gdlrrlist.com/api/helper/records", {
     method: "DELETE",
     headers: {
       "content-type": "application/json",
@@ -146,7 +146,7 @@ app.route("/move61hzlevel/:name")
   
   let level = await sixtyoneSchema.findOne({name: req.params.name})
   if(!level) return res.render("404.ejs", {error: "400 BAD REQUEST", message: "This level does not exist!"})
-  let ok = await request("https://gdlrrlist.com/addlevel", {
+  let ok = await request("https://test.gdlrrlist.com/addlevel", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -163,7 +163,7 @@ app.route("/move61hzlevel/:name")
       hertz: level.list[0].hertz
     })
   })
-  let lol = await request(`https://gdlrrlist.com/delete61hertz/${level.name}`, {
+  let lol = await request(`https://test.gdlrrlist.com/delete61hertz/${level.name}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",

@@ -15,7 +15,7 @@ const urlB64ToUint8Array = base64String => {
 }
 
 const saveSubscription = async subscription => {
-  const url = 'https://gdlrrlist.com/api/v1/notifications/subscribe'
+  const url = 'https://test.gdlrrlist.com/api/v1/notifications/subscribe'
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -48,7 +48,7 @@ self.addEventListener('push', function(event) {
   if (event.data) {
     let data = event.data.json()
     let title = data.subject;
-   let icon = "https://gdlrrlist.com/icon.png"
+   let icon = "https://test.gdlrrlist.com/icon.png"
    let body = data.message;
     try {
      navigator.serviceWorker.ready.then(function(swreg) {
@@ -80,7 +80,7 @@ async function handlePush() {
   const newSubscription = await self.registration.pushManager.getSubscription();
   if(newSubscription.endpoint !== sub.endpoint) {
     sub = newSubscription
-    const req = new Request('https://gdlrrlist.com/api/v1/notifications/subscribe', {
+    const req = new Request('https://test.gdlrrlist.com/api/v1/notifications/subscribe', {
       method: 'POST',
       headers: {'content-type': "application/json"},
       body: JSON.stringify(newSubscription)

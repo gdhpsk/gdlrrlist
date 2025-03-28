@@ -18,7 +18,7 @@ const {Routes} = require("discord-api-types/v10")
 const rest = new REST({version: '10'}).setToken(process.env.discord_token);
 
 webpush.setVapidDetails(
-  'https://gdlrrlist.com',
+  'https://test.gdlrrlist.com',
   process.env.vapid_public,
   process.env.vapid_private
 )

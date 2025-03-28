@@ -194,7 +194,7 @@ app.get("/google_signin", async (req, res) => {
   const oauth2Client = new google.auth.OAuth2(
   process.env.google_id,
   process.env.google_secret,
-  "https://gdlrrlist.com/google_signin"
+  "https://test.gdlrrlist.com/google_signin"
 );
 const scopes = [
   'openid',
@@ -278,7 +278,7 @@ app.get("/", async (req, res) => {
 					client_secret,
 					code,
 					grant_type: 'authorization_code',
-					redirect_uri: `https://gdlrrlist.com`,
+					redirect_uri: `https://test.gdlrrlist.com`,
 					scope: 'identify', 
 				}),
 				headers: {
@@ -403,9 +403,9 @@ app.get("/roulette", async (req, res) => {
 
 app.get("/61plus.html", async (req, res) => {
   let everything = await sixtyoneSchema.find().sort({position: 1})
-  let obj = await request("https://gdlrrlist.com/api/v1/leaderboard/nationalities")
+  let obj = await request("https://test.gdlrrlist.com/api/v1/leaderboard/nationalities")
   let objOfNations = await obj.body.json()
-   let obj2 = await request("https://gdlrrlist.com/api/v1/leaderboard/nations")
+   let obj2 = await request("https://test.gdlrrlist.com/api/v1/leaderboard/nations")
   let nationabbr = await obj2.body.json()
    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)
@@ -551,9 +551,9 @@ app.get("/leaderboard.html", async (req, res) => {
       }
     }
   }
-  let dat = await request("https://gdlrrlist.com/api/v1/leaderboard/nations")
+  let dat = await request("https://test.gdlrrlist.com/api/v1/leaderboard/nations")
   let nationabbr = await dat.body.json()
-  let everything = await levelsSchema.find().sort({position: 1})
+  let everything = await levelsSchema.find({}, {name: 1, minimumPercent: 1}).sort({position: 1})
   let everything2 = await leaderboardSchema.find({ban: {$exists: false}})
   const levels = everything.reduce(function(acc, cur, i) {
             acc[everything[i].name] = cur;
@@ -622,8 +622,7 @@ app.get("/leaderboard.html", async (req, res) => {
 })
 
 app.get("/alllevels", async (req, res) => {
-  let everything = await levelsSchema.find().sort({position: 1})
-  let leaderboards = await leaderboardSchema.find()
+  let everything = await levelsSchema.find({}, {name: 1, position: 1, publisher: 1, ytcode: 1}).sort({position: 1})
    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)
   let editing = false
@@ -635,12 +634,12 @@ app.get("/alllevels", async (req, res) => {
   }
   }
   if(!loggedIn || !editable) return res.render("404.ejs")
-  res.render("alllevels.ejs", {levels: everything, editing: editing, editable, loggedIn: loggedIn.exists, active: "search", leaderboards})
+  res.render("alllevels.ejs", {levels: everything, editing: editing, editable, loggedIn: loggedIn.exists, active: "search"})
 })
 
 app.get("/index.html", async (req, res) => {
   let everything = await levelsSchema.find().sort({position: 1})
-  let leaderboards = await leaderboardSchema.find()
+  let leaderboards = await leaderboardSchema.find({}, {name: 1, ban: 1})
    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)
   let editing = false
@@ -656,7 +655,7 @@ app.get("/index.html", async (req, res) => {
 
 app.get("/extended.html", async (req, res) => {
   let everything = await levelsSchema.find().sort({position: 1})
-  let leaderboards = await leaderboardSchema.find()
+  let leaderboards = await leaderboardSchema.find({}, {name: 1, ban: 1})
    let allowed = (await allowedPeople.findById("6270b923564c64eb5ed912a4")).allowed
   let loggedIn = await findToken(req)
   let editing = false
@@ -708,8 +707,9 @@ app.get("/level/:id", async (req, res) => {
             acc[everything[i].name] = cur;
             return acc;
           }, {});
+          let nations_users = await leaderboardSchema.find({name: {$in: obj.list.map(e => e?.name)}}, {name: 1, ban: 1, nationality: 1})
   for(let i = 0; i < obj["list"].length; i++) {
-     let user = await leaderboardSchema.findOne({name: obj.list[i].name})
+    let user = nations_users.find(e => e.name == obj.list[i].name)
     if(!user?.ban) {
     if(user?.nationality) {
       let data = require("./flagsjson.json")
@@ -727,11 +727,10 @@ app.get("/level/:id", async (req, res) => {
      obj.prog_points = levels_progs_calc(level.name, level.minimumPercent, everything)
   }
   if(obj["progresses"] && obj.position < 76) {
- //   if(!editing) {
     obj.progresses.sort((a, b) => b.percent - a.percent)
- //   }
+    let nations_users = await leaderboardSchema.find({name: {$in: obj.progresses.map(e => e?.name)}}, {name: 1, ban: 1, nationality: 1})
   for(let i = 0; i < obj["progresses"].length; i++) {
-     let user = await leaderboardSchema.findOne({name: obj.progresses[i].name})
+    let user = nations_users.find(e => e.name == obj.list[i].name)
   if(!user?.ban) {
     if(user?.nationality) {
       let data = require("./flagsjson.json")
@@ -781,7 +780,7 @@ app.get("/level/:id", async (req, res) => {
 app.get("/leaderboard/:name", async (req, res) => {
   let profile = await leaderboardSchema.findOne({name: req.params.name, ban: {$exists: false}})
   if(!profile) return res.render("404.ejs")
-  let everything = await levelsSchema.find().sort({position: 1})
+  let everything = await levelsSchema.find({}, {name: 1, minimumPercent: 1}).sort({position: 1})
   let everything2 = await leaderboardSchema.find()
   const levels = everything.reduce(function(acc, cur, i) {
             acc[everything[i].name] = cur;

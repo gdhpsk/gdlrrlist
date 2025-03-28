@@ -23,7 +23,7 @@ const {request} = require("undici")
 const http_server = require("http").createServer(app);
 
 webpush.setVapidDetails(
-  'https://gdlrrlist.com',
+  'https://test.gdlrrlist.com',
   process.env.vapid_public,
   process.env.vapid_private
 )
@@ -498,7 +498,7 @@ app.route("/submit")
 })
 .post(async (req, res) => {
   let {loggedIn, editing, editable} = await getDetails(req)
-  let submit = await request("https://gdlrrlist.com/api/v1/client/submissions", {
+  let submit = await request("https://test.gdlrrlist.com/api/v1/client/submissions", {
     method: "POST",
     headers: {
       'content-type': 'application/json',
@@ -526,4 +526,6 @@ app.all('*', (req, res) =>{
   return res.render("404.ejs")
 })
 
-http_server.listen(process.env.PORT)
+http_server.listen(process.env.PORT, () => {
+  console.log(`Listening on port ${process.env.PORT}`)
+})

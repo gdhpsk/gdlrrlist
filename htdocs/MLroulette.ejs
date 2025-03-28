@@ -43,7 +43,7 @@
     async function start() {
       if(localStorage.getItem("roulette")) return;
       localStorage.setItem("roulette", {})
-      let content = await fetch("https://gdlrrlist.com/api/v1/demons/ML?simplify=true")
+      let content = await fetch("https://test.gdlrrlist.com/api/v1/demons/ML?simplify=true")
       let json = await content.json()
       for(let i = 0; i < json.length; i++) {
         json[i].position = i+1

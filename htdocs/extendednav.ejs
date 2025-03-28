@@ -2,30 +2,26 @@
   <div id="myExtendedNav" class="dropdown-extendedNav">
     <a class="nav-buttons" href="https://gdmobilewrlist.com"><i class="fa fa-desktop"></i>&nbsp;&nbsp;MobileWRList</a>
           <a onclick="changeTXT()" class="btn-toggle2 nav-buttons dark-button"><i class="fa-solid fa-circle-half-stroke"></i>&nbsp;&nbsp;</a>
-           <a class="nav-buttons <%= locals.active == 'submit' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/submit"><i class="fa fa-file-o"></i>&nbsp;&nbsp;Submit</a>
+           <a class="nav-buttons <%= locals.active == 'submit' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/submit"><i class="fa-regular fa-file-lines"></i>&nbsp;&nbsp;Submit</a>
     <% if(locals.loggedIn) {%>
-    <a class="nav-buttons <%= locals.active == 'notifications' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/notifications"><i class="fa fa-bell"></i>&nbsp;&nbsp;Notifications</a>
+    <a class="nav-buttons <%= locals.active == 'notifications' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/notifications"><i class="fa fa-bell"></i>&nbsp;&nbsp;Notifications</a>
       <% } %>
            <% if(locals.editable) { %>
-          <a class="nav-buttons <%= locals.active == 'settings' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/settings"><i class="fa fa-gear"></i>&nbsp;&nbsp;Mod Settings</a>
-            <a class="nav-buttons <%= locals.active == 'search' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/alllevels"><i class="fa fa-search"></i>&nbsp;&nbsp;Search</a>
-             <% if(["61plus", "lrr-levels"].includes(locals.active)) { %>
-            <a onclick="addCook()"><i class='fas fa-edit'></i>&nbsp;&nbsp;Edit Info</a>
-              <% } %>
-             <a class="nav-buttons <%= locals.active == 'submissions' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/submissions"><i class="fas fa-book"></i>&nbsp;&nbsp;Submissions</a>
-                <a class="nav-buttons <%= locals.active == 'sheets' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/sheets"><i class="fa fa-file-text-o"></i>&nbsp;&nbsp;Sheets</a>
-                <a class="nav-buttons <%= locals.active == 'bans' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/bans"><i class="fas fa-hammer"></i>&nbsp;&nbsp;Bans</a>
-              <a href="https://gdlrrlist.com/everything"><i class="fas fa-tools"></i>&nbsp;&nbsp;Everything Link</a>
+          <a class="nav-buttons <%= locals.active == 'settings' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/settings"><i class="fa fa-gear"></i>&nbsp;&nbsp;Mod Settings</a>
+            <a class="nav-buttons <%= locals.active == 'search' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/alllevels"><i class="fa fa-search"></i>&nbsp;&nbsp;Search</a>
+             <a class="nav-buttons <%= locals.active == 'submissions' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/submissions"><i class="fa fa-book"></i>&nbsp;&nbsp;Submissions</a>
+                <a class="nav-buttons <%= locals.active == 'sheets' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/sheets"><i class="fa-regular fa-file-text"></i>&nbsp;&nbsp;Sheets</a>
+                <a class="nav-buttons <%= locals.active == 'bans' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/bans"><i class="fa fa-hammer"></i>&nbsp;&nbsp;Bans</a>
             <% } %>
               <% if(!locals.loggedIn) {%>
     <a onclick="openSwal()"><i class="fa fa-sign-in"></i>&nbsp;&nbsp;Log In</a>
     <% } else { %>
-      <a class="nav-buttons" href="https://gdlrrlist.com/user_settings"><i class="fas fa-user-cog"></i>&nbsp;&nbsp;Settings</a>
-      <a class="nav-buttons <%= locals.active == 'user_submissions' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/submissions/user"><i class="fa fa-address-book"></i>&nbsp;&nbsp;Your Submissions</a>
-      <a onclick="logout()"><i class='fas fa-sign-out'></i>&nbsp;&nbsp;Log Out</a>
+      <a class="nav-buttons" href="https://test.gdlrrlist.com/user_settings"><i class="fa fa-user-cog"></i>&nbsp;&nbsp;Settings</a>
+      <a class="nav-buttons <%= locals.active == 'user_submissions' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/submissions/user"><i class="fa fa-address-book"></i>&nbsp;&nbsp;Your Submissions</a>
+      <a onclick="logout()"><i class='fa fa-sign-out'></i>&nbsp;&nbsp;Log Out</a>
       <% } %>
-         <a class="nav-buttons <%= locals.active == 'ldms' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/ldms">LRR List LDMs</a>
-         <a class="nav-buttons <%= locals.active == 'roulette' ? 'active-nav-item' : '' %>" href="https://gdlrrlist.com/roulette"><i class="far fa-life-ring"></i>&nbsp;&nbsp;LRR Roulette</a>
-        <a class="nav-buttons" href="https://gdlrrlist.com/documentation"><i class="fas fa-code"></i>&nbsp;&nbsp;Documentation</a>
+         <a class="nav-buttons <%= locals.active == 'ldms' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/ldms">LRR List LDMs</a>
+         <a class="nav-buttons <%= locals.active == 'roulette' ? 'active-nav-item' : '' %>" href="https://test.gdlrrlist.com/roulette"><i class="fa fa-life-ring"></i>&nbsp;&nbsp;LRR Roulette</a>
+        <a class="nav-buttons" href="https://test.gdlrrlist.com/documentation"><i class="fa fa-code"></i>&nbsp;&nbsp;Documentation</a>
         
 </div>

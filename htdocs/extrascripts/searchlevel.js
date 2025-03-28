@@ -13,7 +13,7 @@ searchInput.addEventListener("input", e => {
   })
 })
 
-fetch("https://gdlrrlist.com/api/v1/leaderboard")
+fetch("https://test.gdlrrlist.com/api/v1/leaderboard")
   .then(res => res.json())
   .then(real => {
     const data = Object.values(real)
@@ -21,7 +21,7 @@ fetch("https://gdlrrlist.com/api/v1/leaderboard")
       const card = userCardTemplate.content.cloneNode(true).children[0]
       const header = card.querySelector("[data-header]")
       const body = card.querySelector("[data-body]")
-      header.innerHTML = `<a href="https://gdlrrlist.com/search/leaderboard/${encodeURIComponent(user.name)}">${user.name}</a>`
+      header.innerHTML = `<a href="https://test.gdlrrlist.com/search/leaderboard/${encodeURIComponent(user.name)}">${user.name}</a>`
       userCardContainer.append(card)
       return { name: user.name, element: card }
     })

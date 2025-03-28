@@ -16,7 +16,7 @@ module.exports = (obj) => {
 app.post("/:id/:op", async (req, res) => {
   req.body.name = req.params.id
   req.body.id = req.params.op
- let response = await request("https://gdlrrlist.com/api/helper/sheets/opinion", {
+ let response = await request("https://test.gdlrrlist.com/api/helper/sheets/opinion", {
     method: "PATCH",
     headers: {
       "authorization": `Helper ${getCookie("token", req)}`,

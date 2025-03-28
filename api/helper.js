@@ -184,53 +184,230 @@ router.use(express.urlencoded({ extended: true }))
   res.sendStatus(201)
 })
 
+router.route("/levels/position")
+.patch(async (req, res) => {
+  let edits = req.body
+  for(const edit of edits) {
+    let level = await levelsSchema.findByIdAndUpdate(edit.id, {
+      $set: {
+        position: edit.position
+      }
+    })
+    if(level.position == edit.position) continue;
+    if(level.position > edit.position) {
+      await levelsSchema.updateMany({position: {$lt: level.position, $gte: edit.position}, _id: {$ne: level._id}}, {
+        $inc: {
+          position: 1
+        }
+      })
+    } else {
+      await levelsSchema.updateMany({position: {$gt: level.position, $lte: edit.position}, _id: {$ne: level._id}}, {
+        $inc: {
+          position: -1
+        }
+      })
+    }
+  }
+  webhook("Level positions have been edited.", null, {
+    event: "LEVEL_POSITION_EDIT",
+    edits
+  })
+  return res.sendStatus(204)
+})
+
+router.route("/levels/position/61hertz")
+.patch(async (req, res) => {
+  let edits = req.body
+  for(const edit of edits) {
+    let level = await sixtyoneSchema.findByIdAndUpdate(edit.id, {
+      $set: {
+        position: edit.position
+      }
+    })
+    if(level.position == edit.position) continue;
+    if(level.position > edit.position) {
+      await sixtyoneSchema.updateMany({position: {$lt: level.position, $gte: edit.position}, _id: {$ne: level._id}}, {
+        $inc: {
+          position: 1
+        }
+      })
+    } else {
+      await sixtyoneSchema.updateMany({position: {$gt: level.position, $lte: edit.position}, _id: {$ne: level._id}}, {
+        $inc: {
+          position: -1
+        }
+      })
+    }
+  }
+  webhook("61hz level positions have been edited.", null, {
+    event: "61_HERTZLEVEL_POSITION_EDIT",
+    edits
+  })
+  return res.sendStatus(204)
+})
+
   router.route("/levels")
   .patch(async (req, res) => {
   let data = {}
-  let level = await levelsSchema.findOne({name: req.body.name})
-  if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level name!"})
-  data.old = level
+  let level = await levelsSchema.findById(req.body._id)
+  if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level!"})
+  data.old = level.$clone()
   let message = `The following info on the level ${level.name} has been changed:\n`
    for(const key in req.body) {
+    if(key == "list") {
+      message += `list: Check site lmao\n`
+      await leaderboardSchema.updateMany({name: {$in: level.list.map(e => e.name)}}, {
+        $pull: {
+          levels: data.old.name
+        }
+      })
+      for(const record of req.body[key]) {
+        if(record.name.trim() == "Removed") continue;
+        await leaderboardSchema.updateOne({name: record.name}, {
+          $setOnInsert: {
+            name: record.name
+          }
+        }, {upsert: true})
+        await leaderboardSchema.updateOne({name: record.name}, {
+          $push: {
+            levels: req.body.name || data.old.name
+          }
+        })
+      }
+      level[key] = req.body[key]
+    }
+    if(key == "progresses") {
+      if(level.position > 75) continue;
+      message += `progresses: Check site lmao\n`
+      await leaderboardSchema.updateMany({name: {$in: level.progresses.map(e => e.name)}}, {
+        $pull: {
+          progs: {name: data.old.name}
+        }
+      })
+      if(req.body.position > 75) continue;
+      for(const record of req.body[key]) {
+        await leaderboardSchema.updateOne({name: record.name}, {
+          $setOnInsert: {
+            name: record.name
+          },
+          $pull: {
+            progs: "none"
+          }
+        }, {upsert: true})
+        await leaderboardSchema.updateOne({name: record.name}, {
+          $push: {
+            progs: {
+              name: req.body.name || data.old.name,
+              percent: record.percent
+            }
+          }
+        })
+      }
+      level[key] = req.body[key]
+    }
+    if(key != "position" && key != "list" && key != "progresses" && key != "_id") {
      level[key] = req.body[key]
-     if(key != "position") {
      message += `${key}: ${req.body[key]}\n`
      }
    }
   await level.save()
   data.new = level
-    data.position = {
-      old: req.body.placement,
-      new: level.position
+  if(req.body.position != level.position) {
+    req.body.position = parseInt(req.body.position)
+    var everything = await levelsSchema.count()
+    if(req.body.position == 0 || req.body.position > everything) return res.status(400).json({error: config["400"], message: `Please input a valid placement between 1 and ${everything}!`})
+    message += `placement: #${data.old.position} to #${req.body.placement}`
+  if(data.old.position > req.body.position) {
+    await levelsSchema.updateMany({position: {$lt: data.old.position, $gte: req.body.position}}, {
+      $inc: {
+        position: 1
+      }
+    })
+  } else {
+    await levelsSchema.updateMany({position: {$gt: data.old.position, $lte: req.body.position}}, {
+      $inc: {
+        position: -1
+      }
+    })
+  }
+  await levelsSchema.findByIdAndUpdate(req.body._id, {
+    $set: {
+      position: req.body.position
     }
-  if(req.body.placement != level.position) {
-    req.body.placement = parseInt(req.body.placement)
-    var everything = await levelsSchema.find().sort({position: 1})
-    var index = everything.findIndex(e => e._id == level._id.toString())
-    if(req.body.placement == 0 || req.body.placement > everything.length) return res.status(400).json({error: config["400"], message: `Please input a valid placement between 1 and ${everything.length+1}!`})
-    let newlev = new levelsSchema(everything[index])
-    let add = index+1 > req.body.placement ? 1 : 0
-    newlev.position = req.body.placement-add
-    await levelsSchema.findByIdAndDelete(everything[index]._id)
-   await levelsSchema.insertMany([newlev])
-    message += `placement: #${index+1} to #${req.body.placement}`
-    // Fix these algs later
-    let start = index+1 > req.body.placement ? req.body.placement-1 : index
-    let end = req.body.placement
-    everything = await levelsSchema.find().sort({position: 1})
-    for(let i = 0; i < everything.length; i++) {
-      await levelsSchema.findOneAndUpdate({name: everything[i].name},   {
-        $set: {
-          position: i+1
-        }
-      })
-    }
+  })
   }
   webhook(message, null, {
     event: "LEVEL_EDIT",
     data
   })
   res.status(200).send(level)
+})
+
+router.route("/levels/61hertz")
+.patch(async (req, res) => {
+let data = {}
+let level = await sixtyoneSchema.findById(req.body._id)
+if(!level) return res.status(400).json({error: config["400"], message: "Please input a valid level!"})
+data.old = level.$clone()
+let message = `The following info on the 61hz level ${level.name} has been changed:\n`
+ for(const key in req.body) {
+  if(key == "list") {
+    message += `list: Check site lmao\n`
+    await leaderboardSchema.updateMany({name: {$in: level.list.map(e => e.name)}}, {
+      $pull: {
+        sixtyOneHertz: data.old.name
+      }
+    })
+    for(const record of req.body[key]) {
+      await leaderboardSchema.updateOne({name: record.name}, {
+        $setOnInsert: {
+          name: record.name
+        }
+      }, {upsert: true})
+      await leaderboardSchema.updateOne({name: record.name}, {
+        $push: {
+          sixtyOneHertz: req.body.name || data.old.name
+        }
+      })
+    }
+    level[key] = req.body[key]
+  }
+  if(key != "position" && key != "list" && key != "_id") {
+   level[key] = req.body[key]
+   message += `${key}: ${req.body[key]}\n`
+   }
+ }
+await level.save()
+data.new = level
+if(req.body.position != level.position) {
+  req.body.position = parseInt(req.body.position)
+  var everything = await levelsSchema.count()
+  if(req.body.position == 0 || req.body.position > everything) return res.status(400).json({error: config["400"], message: `Please input a valid placement between 1 and ${everything}!`})
+  message += `placement: #${data.old.position} to #${req.body.placement}`
+if(data.old.position > req.body.position) {
+  await sixtyoneSchema.updateMany({position: {$lt: data.old.position, $gte: req.body.position}}, {
+    $inc: {
+      position: 1
+    }
+  })
+} else {
+  await sixtyoneSchema.updateMany({position: {$gt: data.old.position, $lte: req.body.position}}, {
+    $inc: {
+      position: -1
+    }
+  })
+}
+await sixtyoneSchema.findByIdAndUpdate(req.body._id, {
+  $set: {
+    position: req.body.position
+  }
+})
+}
+webhook(message, null, {
+  event: "61HERTZ_LEVEL_EDIT",
+  data
+})
+res.status(200).send(level)
 })
 
   router.route("/submissions/mod")
@@ -277,7 +454,7 @@ if(submission.status != req.body.status) {
         try {
          let exists = await messageSchema.findOne({users: [submission.account, name]}) 
           if(!exists) {
-           let makeNew = await request("https://gdlrrlist.com/api/v1/client/dm", {
+           let makeNew = await request("https://test.gdlrrlist.com/api/v1/client/dm", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
@@ -290,7 +467,7 @@ if(submission.status != req.body.status) {
       })
             exists = await makeNew.body.json()
           }
-   let alr = await request("https://gdlrrlist.com/api/v1/client/messages", {
+   let alr = await request("https://test.gdlrrlist.com/api/v1/client/messages", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
@@ -310,7 +487,7 @@ if(submission.status != req.body.status) {
      try {
        let exists = await messageSchema.findOne({users: [submission.account, name]}) 
           if(!exists) {
-            let makeNew = await request("https://gdlrrlist.com/api/v1/client/dm", {
+            let makeNew = await request("https://test.gdlrrlist.com/api/v1/client/dm", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
@@ -323,7 +500,7 @@ if(submission.status != req.body.status) {
       })
             exists = await makeNew.body.json()
           }
-        let alr = await request("https://gdlrrlist.com/api/v1/client/messages", {
+        let alr = await request("https://test.gdlrrlist.com/api/v1/client/messages", {
         method: "POST",
         headers: {
           'content-type': 'application/json',
@@ -452,7 +629,7 @@ if(submission.status != req.body.status) {
   let {name} = await loginSchema.findById(id)
       let something = await submitSchema.findById(req.body.record)
   if(something) {
-   await request("https://gdlrrlist.com/api/helper/submissions/mod", {
+   await request("https://test.gdlrrlist.com/api/helper/submissions/mod", {
         method: "PATCH",
         headers: {
           'content-type': 'application/json',
