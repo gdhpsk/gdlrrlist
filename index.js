@@ -190,7 +190,8 @@ mongoose.connect(process.env.MONGODB_URI, {
                     readPreference: "primaryPreferred",
                     authSource: "$external",
                     authMechanism: "MONGODB-X509",
-                    tlsCertificateKeyFile: process.env.keyPath
+    				tlsCAFile: process.env.CA_PATH,
+    				tlsCertificateKeyFile: process.env.CLIENT_PEM_PATH,
                 })
 app.set('views', path.join(__dirname, 'htdocs'))
 app.set('view engine', "ejs")
